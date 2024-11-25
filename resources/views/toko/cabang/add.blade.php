@@ -27,12 +27,12 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('headingApp') }}" class="btn btn-block btn-success"><i
+                        <a href="{{ route('tokoCabang') }}" class="btn btn-block btn-success"><i
                                 class="fa fa-arrow-left"></i>
                             Kembali</a>
                     </div>
                 </div>
-                <form action="{{ route('aksiUpdateHeadingApp', [$detail->app_heading_id]) }}" method="POST">
+                <form action="{{ route('aksiTambahTokoCabang') }}" method="POST">
                     @method('POST')
                     @csrf
                     <div class="card-body">
@@ -53,24 +53,18 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Nama Induk Menu</label>
-                                    <input type="text" value="{{ old('app_heading_name', $detail->app_heading_name) }}"
-                                        name="app_heading_name" class="form-control" placeholder="Nama Induk Menu">
+                                    <label>Nama Toko Cabang</label>
+                                    <input type="text" value="{{ old('cabang_nama') }}" name="cabang_nama"
+                                        class="form-control" placeholder="Nama Toko Cabang">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Urutan</label>
-                                    <input type="text" value="{{ old('app_heading_urut', $detail->app_heading_urut) }}"
-                                        name="app_heading_urut" class="form-control" placeholder="Urutan">
+                                    <label>Alamat Cabang</label>
+                                    <input type="text" value="{{ old('cabang_alamat') }}" name="cabang_alamat"
+                                        class="form-control" placeholder="Alamat Toko Cabang">
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Nama Induk Icon</label>
-                            <input type="text" value="{{ old('app_heading_icon', $detail->app_heading_icon) }}"
-                                name="app_heading_icon" class="form-control" placeholder="Nama Induk Icon">
                         </div>
                     </div>
                     <!-- /.card-body -->

@@ -11,7 +11,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Blank Page</li>
+                            <li class="breadcrumb-item active">{{ $title ?? '' }}</li>
                         </ol>
                     </div>
                 </div>
@@ -31,7 +31,7 @@
                             Kembali</a>
                     </div>
                 </div>
-                <form action="{{route('aksiTambahUser')}}" method="POST">
+                <form action="{{ route('aksiTambahUser') }}" method="POST">
                     @method('POST')
                     @csrf
                     <div class="card-body">
@@ -44,11 +44,11 @@
                                 </ul>
                             </div>
                         @endif
-                       @session('success')
-                       <div class="alert alert-success">
-                            {{session('success')}}
-                       </div>
-                       @endsession
+                        @session('success')
+                            <div class="alert alert-success">
+                                {{ session('success') }}
+                            </div>
+                        @endsession
                         <div class="form-group">
                             <label>Nama lengkap</label>
                             <input type="text" value="{{ old('name') }}" name="name" class="form-control"
@@ -59,17 +59,21 @@
                             <select class="form-control select2" name="role_id" style="width: 100%;">
                                 <option value=""></option>
                                 @foreach ($rs_role as $role)
-                                    <option value="{{ $role->role_id }}" {{ (old('role_id') == $role->role_id ? 'selected' : '' ) }}>{{ $role->role_name }}</option>
+                                    <option value="{{ $role->role_id }}"
+                                        {{ old('role_id') == $role->role_id ? 'selected' : '' }}>{{ $role->role_name }}
+                                    </option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Username</label>
-                            <input type="text" value="{{old('username')}}" name="username" class="form-control" placeholder="Username">
+                            <input type="text" value="{{ old('username') }}" name="username" class="form-control"
+                                placeholder="Username">
                         </div>
                         <div class="form-group">
                             <label>Password</label>
-                            <input type="password" value="{{old('password')}}" name="password" class="form-control" placeholder="Password">
+                            <input type="password" value="{{ old('password') }}" name="password" class="form-control"
+                                placeholder="Password">
                         </div>
                     </div>
                     <!-- /.card-body -->

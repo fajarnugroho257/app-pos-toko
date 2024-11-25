@@ -28,8 +28,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         // View::share('rs_heading', $this->getMenuByRole());
         //compose all the views....
-        view()->composer('*', function ($view)
-        {
+        view()->composer('*', function ($view) {
             // dd(Auth::user()->role_id);
             if (Auth::check()) {
                 View::share('rs_heading', $this->getMenuByRole());
@@ -37,18 +36,22 @@ class AuthServiceProvider extends ServiceProvider
         });
     }
 
-    public function getMenuByRole() {
+    public function getMenuByRole()
+    {
         //
         // $heading = Heading::whereRelation('menu', 'menu_id', '=', 'M0004')->get();
         // $heading = Heading::with('menu', 'menu.role_menu')->whereRelation('menu.role_menu', 'role_id', '=', 'R0001')->get();
         // $heading = Role_menu::with('menu')->where('role_id', '=', Auth::user()->role_id)->get();
-        $heading = Heading::with('menu', 'menu.role_menu')->whereRelation('menu.role_menu', 'role_id', '=', Auth::user()->role_id)->get();
+        $heading = Heading::with('menu', 'menu.role_menu')
+            ->whereRelation('menu.role_menu', 'role_id', '=', Auth::user()->role_id)
+            ->orderBy('app_heading_urut', 'ASC')
+            ->get();
         foreach ($heading as $key => $value) {
             // echo $value->app_heading_id;
             $data_menu = Role_menu::with('menu')
-            ->where('role_id', Auth::user()->role_id)
-            ->whereRelation('menu.role_menu', 'app_heading_id', $value->app_heading_id)
-            ->get();
+                ->where('role_id', Auth::user()->role_id)
+                ->whereRelation('menu.role_menu', 'app_heading_id', $value->app_heading_id)
+                ->get();
             if (!empty($data_menu)) {
                 $heading[$key]['data_menu'] = $data_menu;
             }

@@ -49,4 +49,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
+    public function toko_pusat()
+    {
+        return $this->hasMany(TokoPusat::class, 'user_id', 'user_id');
+    }
 }

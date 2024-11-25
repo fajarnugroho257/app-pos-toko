@@ -11,7 +11,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Blank Page</li>
+                            <li class="breadcrumb-item active">{{ $title ?? '' }}</li>
                         </ol>
                     </div>
                 </div>
@@ -27,8 +27,7 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('menuApp') }}" class="btn btn-block btn-success"><i
-                                class="fa fa-arrow-left"></i>
+                        <a href="{{ route('menuApp') }}" class="btn btn-block btn-success"><i class="fa fa-arrow-left"></i>
                             Kembali</a>
                     </div>
                 </div>
@@ -63,11 +62,13 @@
                         </div>
                         <div class="form-group">
                             <label>Nama Child Menu</label>
-                            <input type="text" value="{{ old('menu_name') }}" name="menu_name" class="form-control" placeholder="Nama Child Menu">
+                            <input type="text" value="{{ old('menu_name') }}" name="menu_name" class="form-control"
+                                placeholder="Nama Child Menu">
                         </div>
                         <div class="form-group">
                             <label>Route</label>
-                            <input type="text" value="{{ old('menu_url') }}" name="menu_url" class="form-control" placeholder="Route">
+                            <input type="text" value="{{ old('menu_url') }}" name="menu_url" class="form-control"
+                                placeholder="Route">
                         </div>
                     </div>
                     <!-- /.card-body -->

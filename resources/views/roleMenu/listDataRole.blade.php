@@ -11,7 +11,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Blank Page</li>
+                            <li class="breadcrumb-item active">{{ $title ?? '' }}</li>
                         </ol>
                     </div>
                 </div>
@@ -30,7 +30,8 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('roleMenu') }}" class="btn btn-block btn-success"><i class="fa fa-arrow-left"></i> Kembali</a>
+                        <a href="{{ route('roleMenu') }}" class="btn btn-block btn-success"><i class="fa fa-arrow-left"></i>
+                            Kembali</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -88,13 +89,13 @@
                 } else if ($(this).is(":not(:checked)")) {
                     var status = 'hapus';
                 }
-                let token   = '{{ csrf_token() }}';
+                let token = '{{ csrf_token() }}';
                 $.ajax({
-                    url: `{{route('tambahRoleMenu')}}`,
+                    url: `{{ route('tambahRoleMenu') }}`,
                     type: "POST",
                     cache: false,
                     data: {
-                        "role_id": `{{$detail->role_id}}`,
+                        "role_id": `{{ $detail->role_id }}`,
                         "menu_id": menu_id,
                         "status": status,
                         "_token": token
@@ -108,7 +109,7 @@
                         console.log(data_error);
                         var errorString = '';
                         var errorString = '<div class="alert alert-danger"> <ul>';
-                        $.each( data_error, function( key, value) {
+                        $.each(data_error, function(key, value) {
                             errorString += '<li>' + value + '</li>';
                         });
                         errorString += '</ul></div>';

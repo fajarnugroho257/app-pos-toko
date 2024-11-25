@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\toko\TokocabangController;
+use App\Http\Controllers\toko\TokopusatController;
+use App\Http\Controllers\TransaksiController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
@@ -75,6 +78,43 @@ Route::middleware(['auth'])->group(function () {
     });
 
     /* YOUR ROUTE APLICATION */
+
+    Route::middleware(['hasRole.page:dataPenduduk'])->group(function () {
+        Route::get('/data-transaksi', [TransaksiController::class, 'index'])->name('dataPenduduk');
+        Route::get('/print-data', function () {
+            return response()->json([
+                'content' => "Test Print Thermal",
+                'options' => [
+                    'printer' => "POS-58", // Sesuaikan nama printer
+                    'font-size' => 12
+                ]
+            ]);
+        })->name('dataPrint');
+
+        Route::get('/test', [TransaksiController::class, 'cetakNota'])->name('cetakNota');
+        // Route::get('/add-data-user', [UserController::class, 'create'])->name('tambahUser');
+        // Route::post('/process-add-data-user', [UserController::class, 'store'])->name('aksiTambahUser');
+        // Route::get('/update-data-user/{user_id}', [UserController::class, 'edit'])->name('UpdateUser');
+        // Route::post('/process-update-data-user/{user_id}', [UserController::class, 'update'])->name('aksiUpdateUser');
+        // Route::get('/process-delete-data-user/{user_id}', [UserController::class, 'destroy'])->name('deleteUser');
+    });
+    // Toko Pusat
+    Route::middleware(['hasRole.page:tokoPusat'])->group(function () {
+        Route::get('/data-toko-pusat', [TokopusatController::class, 'index'])->name('tokoPusat');
+        Route::get('/add-toko-pusat', [TokopusatController::class, 'create'])->name('tambahTokoPusat');
+        Route::post('/process-add-toko-pusat', [TokopusatController::class, 'store'])->name('aksiTambahTokoPusat');
+        Route::get('/update-toko-pusat/{slug}', [TokopusatController::class, 'edit'])->name('UpdateTokoPusat');
+        Route::post('/process-update-toko-pusat', [TokopusatController::class, 'update'])->name('processUpdateTokoPusat');
+    });
+    // TOKO CABANG
+    Route::middleware(['hasRole.page:tokoCabang'])->group(function () {
+        Route::get('/data-toko-cabang', [TokocabangController::class, 'index'])->name('tokoCabang');
+        Route::get('/add-toko-cabang', [TokocabangController::class, 'create'])->name('tambahTokoCabang');
+        Route::post('/process-add-toko-cabang', [TokocabangController::class, 'store'])->name('aksiTambahTokoCabang');
+        Route::get('/update-toko-cabang/{slug}', [TokocabangController::class, 'edit'])->name('updateTokoCabang');
+        Route::post('/process-update-toko-cabang', [TokocabangController::class, 'update'])->name('processUpdatetokoCabang');
+        Route::get('/process-delete-toko-cabang/{id}', [TokocabangController::class, 'destroy'])->name('processDeletetokoCabang');
+    });
 
     /* END YOUR ROUTE APLICATION */
 });

@@ -14,7 +14,7 @@ class headingAppController extends Controller
     public function index()
     {
         $data['title'] = 'Data Heading Aplikasi';
-        $data['rs_head'] = Heading::paginate(5);
+        $data['rs_head'] = Heading::orderBy('app_heading_urut', 'ASC')->paginate(5);
         return view('heading.index', $data);
     }
 
@@ -34,7 +34,8 @@ class headingAppController extends Controller
     {
         $request->validate([
             'app_heading_name' => 'required',
-            'app_heading_icon' => 'required',
+            // 'app_heading_icon' => 'required',
+            'app_heading_urut' => 'required',
         ]);
         $app_heading_id = $this->last_heading_id();
         if ($app_heading_id) {
@@ -42,21 +43,23 @@ class headingAppController extends Controller
                 'app_heading_id' => $app_heading_id,
                 'app_heading_name' => $request->app_heading_name,
                 'app_heading_icon' => $request->app_heading_icon,
+                'app_heading_urut' => $request->app_heading_urut,
             ]);
         }
         //redirect
         return redirect()->route('headingApp')->with('success', 'Data berhasil disimpan');
     }
 
-    function last_heading_id() {
+    function last_heading_id()
+    {
         // get last data
         $last_data = Heading::select('app_heading_id')->orderBy('app_heading_id', 'DESC')->first();
         $last_number = substr($last_data->app_heading_id, 1, 6) + 1;
         $zero = '';
-        for ($i=strlen($last_number); $i <=3; $i++) {
+        for ($i = strlen($last_number); $i <= 3; $i++) {
             $zero .= '0';
         }
-        $new_id = 'H'.$zero.$last_number;
+        $new_id = 'H' . $zero . $last_number;
         //
         return $new_id;
     }
@@ -90,7 +93,8 @@ class headingAppController extends Controller
         ]);
         $detail->app_heading_name = $request->app_heading_name;
         $detail->app_heading_icon = $request->app_heading_icon;
-        if($detail->save()){
+        $detail->app_heading_urut = $request->app_heading_urut;
+        if ($detail->save()) {
             return redirect()->route('updateHeadingApp', [$app_heading_id])->with('success', 'Data berhasil diupdate');
         } else {
             return redirect()->route('headingApp')->with('error', 'Gagal update date');
@@ -107,7 +111,7 @@ class headingAppController extends Controller
         if (empty($detail)) {
             return redirect()->route('headingApp')->with('error', 'Data tidak ditemukan');
         }
-        if($detail->delete()){
+        if ($detail->delete()) {
             return redirect()->route('headingApp')->with('success', 'Data berhasil dihapus');
         } else {
             return redirect()->route('headingApp')->with('error', 'Data gagal dihapus');

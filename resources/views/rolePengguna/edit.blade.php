@@ -11,7 +11,7 @@
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">Blank Page</li>
+                            <li class="breadcrumb-item active">{{ $title ?? '' }}</li>
                         </ol>
                     </div>
                 </div>
@@ -52,7 +52,8 @@
                         @endsession
                         <div class="form-group">
                             <label>Nama Role</label>
-                            <input type="text" value="{{ old('role_name', $detail->role_name) }}" name="role_name" class="form-control" placeholder="Nama Role">
+                            <input type="text" value="{{ old('role_name', $detail->role_name) }}" name="role_name"
+                                class="form-control" placeholder="Nama Role">
                         </div>
                     </div>
                     <!-- /.card-body -->

@@ -11,7 +11,7 @@ class Heading extends Model
     public $incrementing = false;
     protected $table = 'app_heading_menu';
     protected $primaryKey = 'app_heading_id';
-    protected $fillable = ['app_heading_id', 'app_heading_name', 'app_heading_icon'];
+    protected $fillable = ['app_heading_id', 'app_heading_name', 'app_heading_urut', 'app_heading_icon'];
 
     public function menu()
     {

@@ -27,12 +27,12 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('headingApp') }}" class="btn btn-block btn-success"><i
+                        <a href="{{ route('tokoPusat') }}" class="btn btn-block btn-success"><i
                                 class="fa fa-arrow-left"></i>
                             Kembali</a>
                     </div>
                 </div>
-                <form action="{{ route('aksiUpdateHeadingApp', [$detail->app_heading_id]) }}" method="POST">
+                <form action="{{ route('aksiTambahTokoPusat') }}" method="POST">
                     @method('POST')
                     @csrf
                     <div class="card-body">
@@ -53,24 +53,40 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Nama Induk Menu</label>
-                                    <input type="text" value="{{ old('app_heading_name', $detail->app_heading_name) }}"
-                                        name="app_heading_name" class="form-control" placeholder="Nama Induk Menu">
+                                    <label>User Pimilik</label>
+                                    <select class="form-control select2" name="user_id" style="width: 100%;">
+                                        <option value=""></option>
+                                        @foreach ($rs_user as $user)
+                                            <option value="{{ $user->user_id }}"
+                                                {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
+                                                {{ $user->username }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Urutan</label>
-                                    <input type="text" value="{{ old('app_heading_urut', $detail->app_heading_urut) }}"
-                                        name="app_heading_urut" class="form-control" placeholder="Urutan">
+                                    <label>Nama Toko Pusat</label>
+                                    <input type="text" value="{{ old('pusat_nama') }}" name="pusat_nama"
+                                        class="form-control" placeholder="Nama Toko Pusat">
                                 </div>
                             </div>
                         </div>
-
-                        <div class="form-group">
-                            <label>Nama Induk Icon</label>
-                            <input type="text" value="{{ old('app_heading_icon', $detail->app_heading_icon) }}"
-                                name="app_heading_icon" class="form-control" placeholder="Nama Induk Icon">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Pemilik</label>
+                                    <input type="text" value="{{ old('pusat_pemilik') }}" name="pusat_pemilik"
+                                        class="form-control" placeholder="Pemilik">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Alamat</label>
+                                    <input type="text" value="{{ old('pusat_alamat') }}" name="pusat_alamat"
+                                        class="form-control" placeholder="Nama Toko Pusat">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->

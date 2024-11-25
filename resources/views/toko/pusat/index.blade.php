@@ -17,6 +17,7 @@
                 </div>
             </div><!-- /.container-fluid -->
         </section>
+
         <!-- Main content -->
         <section class="content">
             @session('success')
@@ -34,7 +35,9 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-
+                        <a href="{{ route('tambahTokoPusat') }}" class="btn btn-block btn-success"><i
+                                class="fa fa-plus"></i>
+                            Tambah</a>
                     </div>
                 </div>
                 <div class="card-body">
@@ -42,18 +45,25 @@
                         <thead>
                             <tr class="text-center">
                                 <th style="width: 10px">No</th>
-                                <th>Nama Role</th>
-                                <th style="width: 20%">Lihat Daftar menu</th>
+                                <th>Nama Pemilik</th>
+                                <th>Nama Toko</th>
+                                <th>Username</th>
+                                <th style="width: 10%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($rs_role as $key => $role)
+                            @foreach ($rs_toko as $key => $toko)
                                 <tr>
-                                    <td class="text-center">{{ $rs_role->firstItem() + $key }}</td>
-                                    <td>{{ $role->role_name }}</td>
+                                    <td class="text-center">{{ $rs_toko->firstItem() + $key }}</td>
+                                    <td>{{ $toko->pusat_pemilik }}</td>
+                                    <td>{{ $toko->pusat_nama }}</td>
+                                    <td class="text-center">{{ $toko->users->username }}</td>
                                     <td class="text-center">
-                                        <a href="{{ route('listDataRoleMenu', [$role->role_id]) }}"
-                                            class="btn btn-sm btn-info"><i class="fa fa-eye"></i></a>
+                                        <a href="{{ route('UpdateTokoPusat', [$toko->slug]) }}"
+                                            class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                        <a href="{{ route('deleteUser', [$toko->slug]) }}"
+                                            onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
+                                            class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                             @endforeach
@@ -63,12 +73,13 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-right">
-                        {{ $rs_role->links() }}
+                        {{ $rs_toko->links() }}
                     </ul>
                 </div>
                 <!-- /.card-footer-->
             </div>
             <!-- /.card -->
+
         </section>
         <!-- /.content -->
     </div>
