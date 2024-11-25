@@ -30,4 +30,9 @@ class TokoPusat extends Model
     {
         return $this->hasMany(User::class, 'pusat_id', 'id');
     }
+
+    public function barang_master()
+    {
+        return $this->hasMany(MasterBarang::class, 'pusat_id', 'id');
+    }
 }

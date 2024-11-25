@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\barang\BarangcabangController;
+use App\Http\Controllers\barang\MasterbarangController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\toko\TokocabangController;
 use App\Http\Controllers\toko\TokopusatController;
@@ -114,6 +116,29 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/update-toko-cabang/{slug}', [TokocabangController::class, 'edit'])->name('updateTokoCabang');
         Route::post('/process-update-toko-cabang', [TokocabangController::class, 'update'])->name('processUpdatetokoCabang');
         Route::get('/process-delete-toko-cabang/{id}', [TokocabangController::class, 'destroy'])->name('processDeletetokoCabang');
+    });
+    // MASTER BARANG
+    Route::middleware(['hasRole.page:masterBarang'])->group(function () {
+        Route::get('/data-master-barang', [MasterbarangController::class, 'index'])->name('masterBarang');
+        Route::get('/add-master-barang', [MasterbarangController::class, 'create'])->name('tambahMasterBarang');
+        Route::post('/process-add-master-barang', [MasterbarangController::class, 'store'])->name('aksiTambahMasterBarang');
+        Route::get('/update-master-barang/{slug}', [MasterbarangController::class, 'edit'])->name('updateMasterBarang');
+        Route::post('/process-update-master-barang', [MasterbarangController::class, 'update'])->name('processUpdateMasterBarang');
+        Route::get('/process-delete-master-barang/{id}', [MasterbarangController::class, 'destroy'])->name('processDeleteMasterBarang');
+        Route::post('/process-cari-master-barang', [MasterbarangController::class, 'search'])->name('cariMasterBarang');
+
+    });
+    // BARANG CABANG
+    Route::middleware(['hasRole.page:barangCabang'])->group(function () {
+        Route::get('/data-barang-cabang', [BarangcabangController::class, 'index'])->name('barangCabang');
+        Route::get('/show-barang-cabang/{slug}', [BarangcabangController::class, 'detail'])->name('showBarangCabang');
+        Route::post('/get-not-exist-barang-cabang', [BarangcabangController::class, 'get_barang_not_exits'])->name('getDataProduk');
+        Route::post('/process-add-barang-cabang', [BarangcabangController::class, 'store'])->name('processAddBarangCabang');
+        Route::get('/update-barang-cabang/{id}', [BarangcabangController::class, 'edit'])->name('updatebarangCabang');
+
+
+        Route::post('/process-update-barang-cabang', [BarangcabangController::class, 'update'])->name('processUpdatebarangCabang');
+        Route::get('/process-delete-barang-cabang/{id}', [BarangcabangController::class, 'destroy'])->name('processDeletebarangCabang');
     });
 
     /* END YOUR ROUTE APLICATION */
