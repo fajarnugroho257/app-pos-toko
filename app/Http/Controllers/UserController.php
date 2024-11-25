@@ -39,7 +39,7 @@ class UserController extends Controller
             'name' => 'required',
             'role_id' => 'required'
         ]);
-        $user_id = $this->lat_user_id();
+        $user_id = $this->last_user_id();
         if ($user_id) {
             User::create([
                 'user_id' => $user_id,
@@ -53,15 +53,16 @@ class UserController extends Controller
         return redirect()->route('tambahUser')->with('success', 'Data berhasil disimpan');
     }
 
-    function lat_user_id() {
+    function last_user_id()
+    {
         // get last user id
         $last_user = User::select('user_id')->orderBy('user_id', 'DESC')->first();
         $last_number = substr($last_user->user_id, 1, 6) + 1;
         $zero = '';
-        for ($i=strlen($last_number); $i <=3; $i++) {
+        for ($i = strlen($last_number); $i <= 3; $i++) {
             $zero .= '0';
         }
-        $new_id = 'U'.$zero.$last_number;
+        $new_id = 'U' . $zero . $last_number;
         //
         return $new_id;
     }
@@ -99,7 +100,7 @@ class UserController extends Controller
             return redirect()->route('dataUser')->with('error', 'Data tidak ditemukan');
         }
         $request->validate([
-            'username' => 'required|unique:users,username,'.$user_id.',user_id',
+            'username' => 'required|unique:users,username,' . $user_id . ',user_id',
             'password' => 'nullable|min:6',
             'name' => 'required',
             'role_id' => 'required'
@@ -110,7 +111,7 @@ class UserController extends Controller
         if (!empty($request->password)) {
             $detail->password = bcrypt($request->password);
         }
-        if($detail->save()){
+        if ($detail->save()) {
             return redirect()->route('UpdateUser', [$user_id])->with('success', 'Data berhasil diupdate');
         } else {
             return redirect()->route('dataUser')->with('error', 'Gagal update date');
@@ -127,7 +128,7 @@ class UserController extends Controller
         if (empty($detail)) {
             return redirect()->route('dataUser')->with('error', 'Data tidak ditemukan');
         }
-        if($detail->delete()){
+        if ($detail->delete()) {
             return redirect()->route('dataUser')->with('success', 'Data berhasil dihapus');
         } else {
             return redirect()->route('dataUser')->with('error', 'Data gagal dihapus');

@@ -53,4 +53,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(TokoPusat::class, 'user_id', 'user_id');
     }
+    public function users_data()
+    {
+        return $this->hasOne(UserData::class, 'user_id', 'user_id');
+    }
 }

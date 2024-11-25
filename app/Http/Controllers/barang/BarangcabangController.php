@@ -23,15 +23,6 @@ class BarangcabangController extends Controller
         // dd($data);
         return view('barang.cabang.index', $data);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
     /**
      * Store a newly created resource in storage.
      */
@@ -66,6 +57,11 @@ class BarangcabangController extends Controller
      */
     public function detail(string $slug)
     {
+        // cari
+        $barang_cabang_nama = session()->get('barang_cabang_nama');
+        $data['barang_cabang_nama'] = $barang_cabang_nama;
+        $barang_cabang_nama = empty($barang_cabang_nama) ? '%' : '%' . $barang_cabang_nama . '%';
+        //
         $data['title'] = 'Data Barang Cabang';
         $cabang = TokoCabang::where('slug', $slug)->first();
         if (empty($cabang)) {
@@ -76,7 +72,9 @@ class BarangcabangController extends Controller
             ->select('barang_cabang.*')
             ->join('barang_master', 'barang_master.id', '=', 'barang_cabang.barang_id')
             ->orderBy('barang_master.barang_nama')
-            ->where('cabang_id', $cabang->id)->paginate(50);
+            ->where('cabang_id', $cabang->id)
+            ->where('barang_master.barang_nama', 'LIKE', $barang_cabang_nama)
+            ->paginate(50);
         // dd($data);
         return view('barang.cabang.detail', $data);
     }
@@ -136,26 +134,46 @@ class BarangcabangController extends Controller
      */
     public function edit(string $id)
     {
-        $detail = BarangCabang::find($id);
+        $data['title'] = 'Ubah Data Barang Cabang';
+        $detail = BarangCabang::with('barang_master', 'toko_cabang')->find($id);
         if (empty($detail)) {
             return redirect()->route('barangCabang')->with('error', 'Data tidak ditemukan');
         }
-        dd($detail);
+        $data['detail'] = $detail;
+        return view('barang.cabang.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request)
     {
-        //
+        $request->validate([
+            'id' => 'required',
+            'barang_stok' => 'required|numeric',
+            'cabang_barang_harga' => 'required|numeric',
+            'barang_st' => 'required',
+        ]);
+        $detail = BarangCabang::find($request->id);
+        if (empty($detail)) {
+            return redirect()->route('barangCabang')->with('error', 'Data tidak ditemukan');
+        }
+        $detail->barang_stok = $request->barang_stok;
+        $detail->cabang_barang_harga = $request->cabang_barang_harga;
+        $detail->barang_st = $request->barang_st;
+        if ($detail->save()) {
+            return redirect()->route('updatebarangCabang', ['id' => $detail->id])->with('success', 'Data berhasil disimpan');
+        }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function search(Request $request)
     {
-        //
+        $cabang = TokoCabang::find($request->id);
+        if (empty($cabang)) {
+            return redirect()->route('barangCabang')->with('error', 'Data tidak ditemukan');
+        }
+        session([
+            'barang_cabang_nama' => $request->barang_cabang_nama
+        ]);
+        return redirect()->route('showBarangCabang', ['slug' => $cabang->slug]);
     }
 }

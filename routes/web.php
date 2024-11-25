@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\akun\AkunkasirController;
 use App\Http\Controllers\barang\BarangcabangController;
 use App\Http\Controllers\barang\MasterbarangController;
 use App\Http\Controllers\LoginController;
@@ -135,11 +136,19 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/get-not-exist-barang-cabang', [BarangcabangController::class, 'get_barang_not_exits'])->name('getDataProduk');
         Route::post('/process-add-barang-cabang', [BarangcabangController::class, 'store'])->name('processAddBarangCabang');
         Route::get('/update-barang-cabang/{id}', [BarangcabangController::class, 'edit'])->name('updatebarangCabang');
-
-
-        Route::post('/process-update-barang-cabang', [BarangcabangController::class, 'update'])->name('processUpdatebarangCabang');
-        Route::get('/process-delete-barang-cabang/{id}', [BarangcabangController::class, 'destroy'])->name('processDeletebarangCabang');
+        Route::post('/process-update-barang-cabang', [BarangcabangController::class, 'update'])->name('processUpdateBarangCabang');
+        Route::post('/process-cari-barang-cabang', [BarangcabangController::class, 'search'])->name('cariBarangCabang');
     });
+    // AKUN KASIR
+    Route::middleware(['hasRole.page:akunKasir'])->group(function () {
+        Route::get('/data-akun-kasir', [AkunkasirController::class, 'index'])->name('akunKasir');
+        Route::get('/add-akun-kasir', [AkunkasirController::class, 'create'])->name('tambahAkunKasir');
+        Route::post('/process-add-akun-kasir', [AkunKasirController::class, 'store'])->name('aksiTambahAkunKasir');
+        Route::get('/update-akun-kasir/{slug}', [AkunKasirController::class, 'edit'])->name('UpdateAkunKasir');
+        Route::post('/process-update-akun-kasir', [AkunKasirController::class, 'update'])->name('processUpdateAkunKasir');
+        Route::get('/process-delete-akun-kasir/{user_id}', [AkunKasirController::class, 'destroy'])->name('deleteAkunKasir');
+    });
+
 
     /* END YOUR ROUTE APLICATION */
 });

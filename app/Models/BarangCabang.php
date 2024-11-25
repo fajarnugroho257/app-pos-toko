@@ -14,4 +14,8 @@ class BarangCabang extends Model
     {
         return $this->belongsTo(MasterBarang::class, 'barang_id', 'id');
     }
+    public function toko_cabang()
+    {
+        return $this->belongsTo(TokoCabang::class, 'cabang_id', 'id');
+    }
 }

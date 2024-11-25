@@ -25,4 +25,12 @@ class TokoCabang extends Model
     {
         return $this->belongsTo(TokoPusat::class, 'pusat_id', 'id');
     }
+    public function barang_cabang()
+    {
+        return $this->hasMany(BarangCabang::class, 'cabang_id', 'id');
+    }
+    public function users_data()
+    {
+        return $this->hasMany(UserData::class, 'cabang_id', 'id');
+    }
 }

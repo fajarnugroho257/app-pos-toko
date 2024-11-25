@@ -50,13 +50,16 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <h4 class="mb-4 text-center">Daftar Barang Untuk Cabang <b>{{ $cabang->cabang_nama }}</b></h4>
-                    <form action="{{ route('cariMasterBarang') }}" method="POST">
+                    <h4 class="mb-4 text-center">Daftar Barang Untuk Cabang <b
+                            class="text-danger">{{ $cabang->cabang_nama }}</b></h4>
+                    <form action="{{ route('cariBarangCabang') }}" method="POST">
+                        <input type="hidden" name="id" value="{{ $cabang->id }}">
                         @method('POST')
                         @csrf
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
-                                <input type="text" name="barang_nama" class="form-control" placeholder="Nama Barang">
+                                <input type="text" name="barang_cabang_nama" class="form-control"
+                                    placeholder="Nama Barang">
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
