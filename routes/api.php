@@ -21,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/api-data-barang-cabang', [BarangController::class, 'show']);
+Route::get('/api-barcode-data-barang-cabang', [BarangController::class, 'detail']);
+Route::post('/detail-api-barcode-data-barang-cabang', [BarangController::class, 'detail_data']);

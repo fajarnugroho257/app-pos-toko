@@ -41,6 +41,24 @@ class BarangController extends Controller
         return response()->json($data);
     }
 
+    public function detail(Request $request)
+    {
+        $queryValue = request('query');
+        $data = DB::selectOne("SELECT a.id,
+                CONCAT(b.barang_barcode, ' | ', b.barang_nama, ' | ', b.barang_harga_jual) AS name
+                FROM barang_cabang a
+                INNER JOIN barang_master b ON a.barang_id = b.id
+                WHERE a.cabang_id = ?
+                AND b.barang_barcode = " . $queryValue, [6]);
+        return response()->json($data);
+    }
+
+    public function detail_data(Request $request)
+    {
+        $data = BarangCabang::with('barang_master')->where('id', $request->barang_cabang_id)->first();
+        return response()->json($data);
+    }
+
     /**
      * Update the specified resource in storage.
      */
