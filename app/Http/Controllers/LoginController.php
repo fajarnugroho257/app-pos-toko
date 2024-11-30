@@ -32,6 +32,9 @@ class LoginController extends Controller
             $request->session()->regenerate();
 
             // return redirect()->intended('dashboard');
+            if (Auth::user()->role_id == 'R0005') {
+                return redirect()->route('transaksi');
+            }
             return redirect()->route('dashboard');
         }
 

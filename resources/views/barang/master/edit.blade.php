@@ -61,9 +61,35 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label>Harga Barang</label>
-                                    <input type="number" value="{{ old('barang_harga', $detail->barang_harga) }}"
-                                        name="barang_harga" class="form-control" placeholder="Harga Barang">
+                                    <label>Barcode Barang</label>
+                                    <input type="text" value="{{ old('barang_barcode', $detail->barang_barcode) }}"
+                                        name="barang_barcode" class="form-control" placeholder="Barcode Barang">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><span class="text-primary">Harga Beli</span></label>
+                                    <input type="number"
+                                        value="{{ old('barang_harga_beli', $detail->barang_harga_beli) }}"
+                                        name="barang_harga_beli" class="form-control" placeholder="Harga Barang">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><span class="text-success">Harga Jual</span></label>
+                                    <input type="number"
+                                        value="{{ old('barang_harga_jual', $detail->barang_harga_jual) }}"
+                                        name="barang_harga_jual" class="form-control" placeholder="Harga Barang">
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label><span class="text-success">Stok Minimal</span></label>
+                                    <input type="number"
+                                        value="{{ old('barang_stok_minimal', $detail->barang_stok_minimal) }}"
+                                        name="barang_stok_minimal" class="form-control" placeholder="Stok Minimal">
                                 </div>
                             </div>
                         </div>

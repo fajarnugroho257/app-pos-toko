@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
-class TransaksiController extends Controller
+class DumpTransaksiController extends Controller
 {
     /**
      * Display a listing of the resource.

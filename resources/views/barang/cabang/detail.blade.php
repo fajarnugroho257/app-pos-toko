@@ -58,8 +58,8 @@
                         @csrf
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
-                                <input type="text" name="barang_cabang_nama" class="form-control"
-                                    placeholder="Nama Barang">
+                                <input type="text" name="barang_cabang_nama" class="form-control" autofocus
+                                    placeholder="Nama Barang / Barcode">
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
@@ -73,12 +73,14 @@
                     </form>
                     <a href="javascript:;" id="getProduk" class="btn btn-primary mb-3"><i class="fa fa-download"></i> Produk
                         baru</a>
+                    {{-- <p>Harga Jual Dicabang adalah harga jual </p> --}}
                     <table class="table table-bordered">
                         <thead>
                             <tr class="text-center">
                                 <th style="width: 10px">No</th>
                                 <th>Nama Barang</th>
-                                <th>Harga Cabang</th>
+                                <th>Harga Jual Dicabang</th>
+                                <th>Stok Minimal</th>
                                 <th>Stok</th>
                                 <th>Status</th>
                                 <th style="width: 10%">Aksi</th>
@@ -86,11 +88,12 @@
                         </thead>
                         <tbody>
                             @foreach ($rs_barang as $key => $barang)
-                                <tr>
+                                <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
                                     <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
                                     <td>{{ $barang->barang_master->barang_nama }}</td>
                                     <td class="text-center">Rp.
                                         {{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td>
+                                    <td class="text-center">{{ $barang->barang_master->barang_stok_minimal }}</td>
                                     <td class="text-center">{{ $barang->barang_stok }}</td>
                                     <td class="text-center">
                                         @if ($barang->barang_st == 'yes')
@@ -140,7 +143,8 @@
                                 <tr>
                                     <th class="text-center">No</th>
                                     <th class="text-center">Nama Barang</th>
-                                    <th class="text-center">Harga Barang</th>
+                                    <th class="text-center">Harga Beli</th>
+                                    <th class="text-center">Harga Jual</th>
                                 </tr>
                             </thead>
                             <tbody id="res-produk"></tbody>

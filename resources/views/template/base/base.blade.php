@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ env('APP_NAME') }}  | {{$title}}</title>
+    <title>{{ env('APP_NAME') }} | {{ $title }}</title>
 
     <!-- Google Font: Source Sans Pro -->
     <link rel="stylesheet"
@@ -16,6 +16,7 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="../../plugins/select2/css/select2.min.css">
     <link rel="stylesheet" href="../../plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+    @yield('css')
 </head>
 
 <body class="hold-transition sidebar-mini">
@@ -54,13 +55,13 @@
     <script src="{{ asset('dist/js/demo.js') }}"></script>
     <!-- Select2 -->
     <script src="../../plugins/select2/js/select2.full.min.js"></script>
+    @yield('javascript')
     <script>
-        $(function () {
+        $(function() {
             //Initialize Select2 Elements
             $('.select2').select2()
         });
     </script>
-    @yield('javascript')
 </body>
 
 </html>

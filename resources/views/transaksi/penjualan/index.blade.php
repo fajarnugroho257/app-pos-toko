@@ -1,4 +1,7 @@
 @extends('template.base.base')
+@section('css')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.css">
+@endsection
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -34,20 +37,14 @@
             <div class="card">
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
-                    <div class="card-tools">
-                        <a href="{{ route('tambahMasterBarang') }}" class="btn btn-block btn-success"><i
-                                class="fa fa-plus"></i>
-                            Tambah</a>
-                    </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('cariMasterBarang') }}" method="POST">
+                    {{-- <form action="{{ route('cariMasterBarang') }}" method="POST">
                         @method('POST')
                         @csrf
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
-                                <input type="text" name="barang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode">
+                                <input type="text" name="barang_nama" class="form-control" placeholder="Nama Barang">
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
@@ -58,46 +55,26 @@
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </form> --}}
+                    <h4 class="text-center mb-3"><b>Transaksi</b></h4>
+                    <div id="flipclock" class="clock"></div>
                     <table class="table table-bordered">
                         <thead>
                             <tr class="text-center">
                                 <th style="width: 10px">No</th>
-                                <th>Nama Barang</th>
-                                <th>Stok Minimal</th>
-                                <th>Barcode Barang</th>
-                                <th>Harga Beli</th>
-                                <th>Harga Jual</th>
+                                <th>Nama Cabang</th>
+                                <th>Alamat Cabang</th>
                                 <th style="width: 10%">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($rs_barang as $key => $barang)
-                                <tr>
-                                    <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
-                                    <td>{{ $barang->barang_nama }}</td>
-                                    <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
-                                    <td class="text-center">{{ $barang->barang_barcode }}</td>
-                                    <td class="text-right">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}
-                                    <td class="text-right">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('updateMasterBarang', [$barang->slug]) }}"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                        <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}"
-                                            onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                            class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
-                                    </td>
-                                </tr>
-                            @endforeach
+
                         </tbody>
                     </table>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-right">
-                        {{ $rs_barang->links() }}
-                    </ul>
+
                 </div>
                 <!-- /.card-footer-->
             </div>
@@ -106,4 +83,26 @@
         </section>
         <!-- /.content -->
     </div>
+@section('javascript')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inisialisasi FlipClock
+            const clock = new FlipClock(document.getElementById('flipclock'), {
+                autoStart: false,
+                clockFace: 'DailyCounter',
+                countdown: true,
+                callbacks: {
+                    stop: function() {
+                        alert('Countdown selesai!');
+                    }
+                }
+            });
+
+            // Atur timer (contoh: 10 detik)
+            clock.setTime(10);
+            clock.start();
+        });
+    </script>
+@endsection
 @endsection

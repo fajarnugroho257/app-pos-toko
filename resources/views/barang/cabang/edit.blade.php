@@ -57,13 +57,19 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">Nama Barang</th>
-                                            <th class="text-center">Harga Barang Pusat</th>
+                                            <th class="text-center">Stok Minimal</th>
+                                            <th class="text-center">Harga Beli Barang Pusat</th>
+                                            <th class="text-center">Harga Jual Barang Pusat</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr class="text-center">
                                             <td>{{ $detail->barang_master->barang_nama }}</td>
-                                            <td>Rp. {{ number_format($detail->barang_master->barang_harga, 0, ',', '.') }}
+                                            <td>{{ $detail->barang_master->barang_stok_minimal }}</td>
+                                            <td>Rp.
+                                                {{ number_format($detail->barang_master->barang_harga_beli, 0, ',', '.') }}
+                                            <td>Rp.
+                                                {{ number_format($detail->barang_master->barang_harga_jual, 0, ',', '.') }}
                                             </td>
                                         </tr>
                                     </tbody>
@@ -83,7 +89,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>Harga Barang</label>
+                                    <label>Harga Jual Barang Cabang</label>
                                     <input type="number"
                                         value="{{ old('cabang_barang_harga', $detail->cabang_barang_harga) }}"
                                         name="cabang_barang_harga" class="form-control" placeholder="Harga Barang">

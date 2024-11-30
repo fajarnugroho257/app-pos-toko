@@ -8,6 +8,7 @@ use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use Auth;
+use DB;
 use Illuminate\Http\Request;
 
 class BarangcabangController extends Controller
@@ -45,7 +46,7 @@ class BarangcabangController extends Controller
                 'barang_id' => $value,
                 'cabang_id' => $cabang->id,
                 'barang_stok' => 0,
-                'cabang_barang_harga' => $m_brg->barang_harga,
+                'cabang_barang_harga' => $m_brg->barang_harga_jual,
                 'barang_st' => 'yes'
             ]);
         }
@@ -73,7 +74,7 @@ class BarangcabangController extends Controller
             ->join('barang_master', 'barang_master.id', '=', 'barang_cabang.barang_id')
             ->orderBy('barang_master.barang_nama')
             ->where('cabang_id', $cabang->id)
-            ->where('barang_master.barang_nama', 'LIKE', $barang_cabang_nama)
+            ->where(DB::raw('CONCAT(barang_master.barang_nama, barang_master.barang_barcode)'), 'LIKE', $barang_cabang_nama)
             ->paginate(50);
         // dd($data);
         return view('barang.cabang.detail', $data);
@@ -107,7 +108,10 @@ class BarangcabangController extends Controller
                 $html .= $value['barang_nama'];
                 $html .= '  </td>';
                 $html .= '  <td>';
-                $html .= '      Rp. ' . number_format($value['barang_harga'], 0, ',', '.');
+                $html .= '      Rp. ' . number_format($value['barang_harga_beli'], 0, ',', '.');
+                $html .= '  </td>';
+                $html .= '  <td>';
+                $html .= '      Rp. ' . number_format($value['barang_harga_jual'], 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '</tr>';
                 $html .= '<input type="hidden" name="barang_id[]" value="' . $value['id'] . '">';

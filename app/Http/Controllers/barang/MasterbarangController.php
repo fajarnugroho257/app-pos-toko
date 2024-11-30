@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MasterBarang;
 use App\Models\TokoPusat;
 use Auth;
+use DB;
 use Illuminate\Http\Request;
 
 class MasterbarangController extends Controller
@@ -21,7 +22,7 @@ class MasterbarangController extends Controller
         $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
         $data['title'] = 'Master Data Barang';
         $data['rs_barang'] = MasterBarang::where('pusat_id', $pusat->id)
-            ->where('barang_nama', 'LIKE', $barang_nama)
+            ->where(DB::raw('CONCAT(barang_nama, barang_barcode)'), 'LIKE', $barang_nama)
             ->orderBy('barang_nama', 'ASC')
             ->paginate(50);
         // dd($data);
@@ -44,13 +45,19 @@ class MasterbarangController extends Controller
     {
         $request->validate([
             'barang_nama' => 'required',
-            'barang_harga' => 'required'
+            'barang_barcode' => 'required|unique:barang_master,barang_barcode',
+            'barang_harga_beli' => 'required',
+            'barang_harga_jual' => 'required',
+            'barang_stok_minimal' => 'required'
         ]);
         $pusat_id = TokoPusat::where('user_id', Auth::user()->user_id)->first();
         MasterBarang::create([
             'pusat_id' => $pusat_id->id,
+            'barang_barcode' => $request->barang_barcode,
             'barang_nama' => $request->barang_nama,
-            'barang_harga' => $request->barang_harga,
+            'barang_stok_minimal' => $request->barang_stok_minimal,
+            'barang_harga_beli' => $request->barang_harga_beli,
+            'barang_harga_jual' => $request->barang_harga_jual,
         ]);
         //redirect
         return redirect()->route('masterBarang')->with('success', 'Data berhasil disimpan');
@@ -89,11 +96,16 @@ class MasterbarangController extends Controller
         }
         $request->validate([
             'id' => 'required',
+            'barang_barcode' => 'required|unique:barang_master,barang_barcode,' . $request->id . ',id',
             'barang_nama' => 'required',
-            'barang_harga' => 'required'
+            'barang_harga_beli' => 'required',
+            'barang_stok_minimal' => 'required'
         ]);
         $detail->barang_nama = $request->barang_nama;
-        $detail->barang_harga = $request->barang_harga;
+        $detail->barang_barcode = $request->barang_barcode;
+        $detail->barang_harga_beli = $request->barang_harga_beli;
+        $detail->barang_harga_jual = $request->barang_harga_jual;
+        $detail->barang_stok_minimal = $request->barang_stok_minimal;
         //redirect
         if ($detail->save()) {
             return redirect()->route('updateMasterBarang', ['slug' => $detail->slug])->with('success', 'Data berhasil disimpan');
