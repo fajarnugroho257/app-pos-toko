@@ -17,8 +17,11 @@ class AkunkasirController extends Controller
      */
     public function index()
     {
+        // dd(Auth::user());
+        $pusat = User::with('toko_pusat')->where('user_id', Auth::user()->user_id)->first();
+        // dd($pusat->toko_pusat->id);
         $data['title'] = 'Data Akun Kasir';
-        $data['rs_user'] = User::with('users_data.toko_cabang')->where('role_id', 'R0005')->paginate(5);
+        $data['rs_user'] = User::with('users_data.toko_cabang')->whereRelation('users_data.toko_cabang', 'pusat_id', $pusat->toko_pusat->id)->where('role_id', 'R0005')->paginate(5);
         // dd($data);
         return view('akun.kasir.index', $data);
     }

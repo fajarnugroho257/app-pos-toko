@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Http\Controllers\api;
+
+use App\Http\Controllers\Controller;
+use App\Models\BarangCabang;
+use App\Models\Cart;
+use App\Models\CartData;
+use App\Models\Transaksi;
+use App\Models\User;
+use Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Mike42\Escpos\Printer;
+use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+
+class TransaksiController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        // validasi
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required',
+            'ttlBayar' => 'required',
+            'valInputBayar' => 'required',
+            'kembalian' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        //
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'errors' => 'user belum melakukan login'
+            ], 422);
+        }
+        // cart datas
+        $cart = Cart::where('cart_id', $request->cart_id)->first();
+        if (empty($cart)) {
+            return response()->json([
+                'success' => false,
+                'errors' => 'Data keranjang tidak tersedia..'
+            ], 422);
+        }
+        // insert to transaksi
+        $stTransaksi = Transaksi::create([
+            'cart_id' => $request->cart_id,
+            'user_id' => Auth::user()->user_id,
+            'trans_pelanggan' => $request->trans_pelanggan,
+            'trans_total' => $request->ttlBayar,
+            'trans_bayar' => $request->valInputBayar,
+            'trans_kembalian' => $request->kembalian,
+            'trans_date' => date('Y-m-d H:i:s')
+        ]);
+        if ($stTransaksi) {
+            // kurangi stok barang cabang
+            $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
+            $cartData = CartData::where('cart_id', $request->cart_id)->get();
+            // loop
+            foreach ($cartData as $key => $value) {
+                // find barang cabang
+                $barangCabang = BarangCabang::where('id', '=', $value['barang_cabang_id'])->where('cabang_id', $dataUser->users_data->cabang_id)->first();
+                // kurangi
+                $sisa = $barangCabang->barang_stok - $value['cart_qty'];
+                $barangCabang->barang_stok = $sisa;
+                // update stok
+                $barangCabang->save();
+            }
+            // update cart to yes
+            $cart->cart_st = 'yes';
+            if ($cart->save()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Berhasil melakukan transaksi',
+                    'data' => $request->all(),
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+
+    public function cetakNota()
+    {
+        try {
+            // exec('wmic printer get name', $printers);
+            // dd($printers);
+            // Nama printer sesuai konfigurasi sistem (lihat di 'Devices and Printers')
+            // $connector = new WindowsPrintConnector("POS-58");
+            // $connector = new WindowsPrintConnector("\\\\LAPTOP-1OLVA8NB\\POS-58");
+            $connector = new WindowsPrintConnector("smb://LAPTOP-1OLVA8NB/POS-58");
+            // $connector = new FilePrintConnector("LPT1");
+
+
+
+            // Inisialisasi printer
+            $printer = new Printer($connector);
+
+            // Tambahkan teks atau format nota
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("TOKO ANDA\n");
+            $printer->text("Jl. Contoh No.123\n");
+            $printer->feed();
+
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text("Item        Qty    Harga\n");
+            $printer->text("------------------------\n");
+            $printer->text("Produk A    2      10.000\n");
+            $printer->text("Produk B    1      15.000\n");
+            $printer->text("------------------------\n");
+            $printer->text("Total:         35.000\n");
+            $printer->feed(2);
+
+            // Akhiri cetakan
+            $printer->cut();
+            $printer->close();
+
+            return "Nota berhasil dicetak.";
+        } catch (\Exception $e) {
+            return "Terjadi kesalahan: " . $e->getMessage();
+        }
+    }
+}

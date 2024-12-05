@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\BarangCabang;
 use App\Models\MasterBarang;
+use App\Models\UserData;
+use Auth;
 use DB;
 use Illuminate\Http\Request;
 
@@ -31,13 +33,14 @@ class BarangController extends Controller
      */
     public function show(Request $request)
     {
+        $user_data = UserData::where('user_id', Auth::user()->user_id)->first();
         $queryValue = request('query');
         $data = DB::select("SELECT a.id,
                 CONCAT(b.barang_barcode, ' | ', b.barang_nama, ' | ', b.barang_harga_jual) AS name
                 FROM barang_cabang a
                 INNER JOIN barang_master b ON a.barang_id = b.id
                 WHERE a.cabang_id = ?
-                AND CONCAT(b.barang_barcode, b.barang_nama) LIKE '%" . $queryValue . "%'", [6]);
+                AND CONCAT(b.barang_barcode, b.barang_nama) LIKE '%" . $queryValue . "%'", [$user_data->cabang_id]);
         return response()->json($data);
     }
 
