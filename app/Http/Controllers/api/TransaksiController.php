@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BarangCabang;
+use App\Models\BarangLog;
 use App\Models\Cart;
 use App\Models\CartData;
 use App\Models\Transaksi;
@@ -84,11 +85,26 @@ class TransaksiController extends Controller
             foreach ($cartData as $key => $value) {
                 // find barang cabang
                 $barangCabang = BarangCabang::where('id', '=', $value['barang_cabang_id'])->where('cabang_id', $dataUser->users_data->cabang_id)->first();
+                //
+                $jlh_barang_sblm_tambah = $barangCabang->barang_stok;
                 // kurangi
                 $sisa = $barangCabang->barang_stok - $value['cart_qty'];
                 $barangCabang->barang_stok = $sisa;
                 // update stok
-                $barangCabang->save();
+                if ($barangCabang->save()) {
+                    // insert log barang
+                    BarangLog::create([
+                        'user_id' => Auth::user()->user_id,
+                        'pusat_id' => $dataUser->users_data->toko_cabang->toko_pusat->id,
+                        'cabang_id' => $dataUser->users_data->cabang_id,
+                        'barang_cabang_id' => $barangCabang->id,
+                        'barang_awal' => $jlh_barang_sblm_tambah,
+                        'barang_transaksi' => $value['cart_qty'],
+                        'barang_transaksi_id' => $stTransaksi->id,
+                        'barang_akhir' => $sisa,
+                        'barang_st' => 'transaksi',
+                    ]);
+                }
             }
             // update cart to yes
             $cart->cart_st = 'yes';

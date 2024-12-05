@@ -4,6 +4,7 @@ namespace App\Http\Controllers\barang;
 
 use App\Http\Controllers\Controller;
 use App\Models\BarangCabang;
+use App\Models\BarangLog;
 use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
@@ -157,15 +158,30 @@ class BarangcabangController extends Controller
             'barang_stok' => 'required|numeric',
             'cabang_barang_harga' => 'required|numeric',
             'barang_st' => 'required',
+            'barang_stok_penambahan' => 'required|numeric',
+            'barang_stok_hasil' => 'required|numeric',
         ]);
         $detail = BarangCabang::find($request->id);
         if (empty($detail)) {
             return redirect()->route('barangCabang')->with('error', 'Data tidak ditemukan');
         }
-        $detail->barang_stok = $request->barang_stok;
+        $jlh_barang_sblm_tambah = $detail->barang_stok;
+        $detail->barang_stok = $request->barang_stok_hasil;
         $detail->cabang_barang_harga = $request->cabang_barang_harga;
         $detail->barang_st = $request->barang_st;
         if ($detail->save()) {
+            // insert to barang log
+            $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+            BarangLog::create([
+                'user_id' => Auth::user()->user_id,
+                'pusat_id' => $pusat->id,
+                'cabang_id' => $detail->cabang_id,
+                'barang_cabang_id' => $request->id,
+                'barang_awal' => $jlh_barang_sblm_tambah,
+                'barang_perubahan' => $request->barang_stok_penambahan,
+                'barang_akhir' => $request->barang_stok_hasil,
+                'barang_st' => 'perubahan',
+            ]);
             return redirect()->route('updatebarangCabang', ['id' => $detail->id])->with('success', 'Data berhasil disimpan');
         }
     }

@@ -18,4 +18,8 @@ class BarangCabang extends Model
     {
         return $this->belongsTo(TokoCabang::class, 'cabang_id', 'id');
     }
+    public function barang_cabang_log()
+    {
+        return $this->hasMany(BarangLog::class, 'barang_cabang_id', 'id');
+    }
 }
