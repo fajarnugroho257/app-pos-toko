@@ -87,6 +87,7 @@
                                     <input readonly type="number" id="barang_stok"
                                         value="{{ old('barang_stok', $detail->barang_stok) }}" name="barang_stok"
                                         class="form-control" placeholder="Stok Barang">
+                                    <small class="text-primary">Diisi secara otomatis</small>
                                 </div>
                             </div>
                             <div>
@@ -98,6 +99,7 @@
                                     <input type="number" id="barang_stok_penambahan"
                                         value="{{ old('barang_stok_penambahan') }}" name="barang_stok_penambahan"
                                         class="form-control" placeholder="Penambahan Stok Barang">
+                                    <small class="text-danger">*isikan 0, jika tidak berubah</small>
                                 </div>
                             </div>
                             <div>
@@ -109,6 +111,7 @@
                                     <input readonly type="number" id="barang_stok_hasil"
                                         value="{{ old('barang_stok_hasil') }}" name="barang_stok_hasil"
                                         class="form-control" placeholder="Hasil Stok Tersedia">
+                                    <small class="text-primary">Diisi secara otomatis</small>
                                 </div>
                             </div>
                         </div>

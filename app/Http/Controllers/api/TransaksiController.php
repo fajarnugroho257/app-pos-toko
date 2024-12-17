@@ -71,7 +71,7 @@ class TransaksiController extends Controller
         $stTransaksi = Transaksi::create([
             'cart_id' => $request->cart_id,
             'user_id' => Auth::user()->user_id,
-            'trans_pelanggan' => $request->trans_pelanggan,
+            'trans_pelanggan' => $request->valInputPelanggan,
             'trans_total' => $request->ttlBayar,
             'trans_bayar' => $request->valInputBayar,
             'trans_kembalian' => $request->kembalian,

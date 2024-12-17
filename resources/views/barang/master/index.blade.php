@@ -47,13 +47,15 @@
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
                                 <input type="text" name="barang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode">
+                                    placeholder="Nama Barang / Barcode" value="{{ $barang_nama }}">
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i>
+                                    <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
+                                            class="fa fa-search"></i>
                                         Cari</button>
-                                    <button type="submit" class="btn btn-dark ml-2"><i class="fa fa-times"></i>
+                                    <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
+                                            class="fa fa-times"></i>
                                         Reset</button>
                                 </div>
                             </div>
@@ -64,8 +66,8 @@
                             <tr class="text-center">
                                 <th style="width: 10px">No</th>
                                 <th>Nama Barang</th>
-                                <th>Stok Minimal</th>
                                 <th>Barcode Barang</th>
+                                <th>Stok Minimal</th>
                                 <th>Harga Beli</th>
                                 <th>Harga Jual</th>
                                 <th style="width: 10%">Aksi</th>
@@ -76,8 +78,8 @@
                                 <tr>
                                     <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
                                     <td>{{ $barang->barang_nama }}</td>
-                                    <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
                                     <td class="text-center">{{ $barang->barang_barcode }}</td>
+                                    <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
                                     <td class="text-right">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}
                                     <td class="text-right">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}
                                     </td>

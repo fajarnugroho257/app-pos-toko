@@ -128,9 +128,13 @@ class MasterbarangController extends Controller
 
     public function search(Request $request)
     {
-        session([
-            'barang_nama' => $request->barang_nama
-        ]);
+        if ($request->aksi == 'reset') {
+            session()->forget('barang_nama');
+        } else {
+            session([
+                'barang_nama' => $request->barang_nama
+            ]);
+        }
         return redirect()->route('masterBarang');
     }
 }

@@ -41,7 +41,9 @@ class LoginController extends Controller
         // user ID
         $user_id = auth()->guard('api')->user()->user_id;
         // data user
-        $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', $user_id)->where('role_id', 'R0005')->first();
+        $dataUser = User::with('users_data.toko_cabang.toko_pusat')
+            ->whereRelation('users_data', 'user_st', 'yes')
+            ->where('user_id', $user_id)->where('role_id', 'R0005')->first();
         // dd($dataUser);
         if (empty($dataUser)) {
             return response()->json([

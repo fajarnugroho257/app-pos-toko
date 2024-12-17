@@ -78,4 +78,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(UserData::class, 'user_id', 'user_id');
     }
+    public function transaksi_cart()
+    {
+        return $this->belongsTo(Transaksi::class, 'user_id', 'user_id');
+    }
 }

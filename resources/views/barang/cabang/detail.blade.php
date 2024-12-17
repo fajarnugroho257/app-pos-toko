@@ -59,15 +59,15 @@
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
                                 <input type="text" name="barang_cabang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode">
+                                    placeholder="Nama Barang / Barcode" value="{{ $barang_cabang_nama }}">
                             </div>
-                            <div class="col-md-4 ml-0">
-                                <div class="d-flex item-center">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i>
-                                        Cari</button>
-                                    <button type="submit" class="btn btn-dark ml-2"><i class="fa fa-times"></i>
-                                        Reset</button>
-                                </div>
+                            <div class="d-flex item-center">
+                                <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
+                                        class="fa fa-search"></i>
+                                    Cari</button>
+                                <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
+                                        class="fa fa-times"></i>
+                                    Reset</button>
                             </div>
                         </div>
                     </form>

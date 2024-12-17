@@ -1,7 +1,4 @@
 @extends('template.base.base')
-@section('css')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.css">
-@endsection
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
@@ -56,8 +53,7 @@
                             </div>
                         </div>
                     </form> --}}
-                    <h4 class="text-center mb-3"><b>Transaksi</b></h4>
-                    <div id="flipclock" class="clock"></div>
+                    <h4 class="text-center mb-3"><b>Toko Cabang yang anda miliki</b></h4>
                     <table class="table table-bordered">
                         <thead>
                             <tr class="text-center">
@@ -68,13 +64,25 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                            @foreach ($rs_cabang as $key => $cabang)
+                                <tr>
+                                    <td class="text-center">{{ $rs_cabang->firstItem() + $key }}</td>
+                                    <td>{{ $cabang->cabang_nama }}</td>
+                                    <td>{{ $cabang->cabang_alamat }}</td>
+                                    <td class="text-center">
+                                        <a href="{{ route('transaksiCabang', [$cabang->slug]) }}" title="Lihat Transaksi"
+                                            class="btn btn-sm btn-info"><i class="fa fa-eye"></i></a>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
-
+                    <ul class="pagination pagination-sm m-0 float-right">
+                        {{ $rs_cabang->links() }}
+                    </ul>
                 </div>
                 <!-- /.card-footer-->
             </div>
@@ -83,26 +91,4 @@
         </section>
         <!-- /.content -->
     </div>
-@section('javascript')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Inisialisasi FlipClock
-            const clock = new FlipClock(document.getElementById('flipclock'), {
-                autoStart: false,
-                clockFace: 'DailyCounter',
-                countdown: true,
-                callbacks: {
-                    stop: function() {
-                        alert('Countdown selesai!');
-                    }
-                }
-            });
-
-            // Atur timer (contoh: 10 detik)
-            clock.setTime(10);
-            clock.start();
-        });
-    </script>
-@endsection
 @endsection

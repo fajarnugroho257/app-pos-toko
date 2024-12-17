@@ -52,20 +52,22 @@
                 <div class="card-body">
                     <h4 class="mb-4 text-center">Daftar Log Barang <br />Cabang <b
                             class="text-danger">{{ $cabang->cabang_nama }}</b></h4>
-                    <form action="{{ route('cariBarangCabang') }}" method="POST">
+                    <form action="{{ route('cariLogBarangCabang') }}" method="POST">
                         <input type="hidden" name="id" value="{{ $cabang->id }}">
                         @method('POST')
                         @csrf
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
                                 <input type="text" name="barang_cabang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode">
+                                    value="{{ $barang_cabang_nama ?? '' }}" placeholder="Nama Barang / Barcode">
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i>
+                                    <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
+                                            class="fa fa-search"></i>
                                         Cari</button>
-                                    <button type="submit" class="btn btn-dark ml-2"><i class="fa fa-times"></i>
+                                    <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
+                                            class="fa fa-times"></i>
                                         Reset</button>
                                 </div>
                             </div>

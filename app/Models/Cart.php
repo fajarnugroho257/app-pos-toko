@@ -17,4 +17,8 @@ class Cart extends Model
     {
         return $this->hasMany(CartData::class, 'cart_id', 'cart_id');
     }
+    public function transaksi_cart()
+    {
+        return $this->hasMany(Transaksi::class, 'cart_id', 'cart_id');
+    }
 }

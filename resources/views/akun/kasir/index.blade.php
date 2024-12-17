@@ -45,12 +45,13 @@
                         <thead>
                             <tr class="text-center">
                                 <th style="width: 10px">No</th>
+                                <th>Image/Profil</th>
                                 <th>Nama</th>
                                 <th>Cabang</th>
                                 <th>Gender</th>
                                 <th>Alamat</th>
                                 <th>Username</th>
-                                <th>Image/Profil</th>
+                                <th>Status</th>
                                 <th style="width: 10%">Aksi</th>
                             </tr>
                         </thead>
@@ -58,6 +59,10 @@
                             @foreach ($rs_user as $key => $user)
                                 <tr>
                                     <td class="text-center">{{ $rs_user->firstItem() + $key }}</td>
+                                    <td class="text-center"><img
+                                            src="{{ asset('image/profil/' . $user->users_data->user_image) }}"
+                                            height="150" width="150" class="img-fluid img-thumbnail" alt="">
+                                    </td>
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->users_data->toko_cabang->cabang_nama }}</td>
                                     <td class="text-center">
@@ -69,9 +74,12 @@
                                     </td>
                                     <td>{{ $user->users_data->user_alamat }}</td>
                                     <td class="text-center">{{ $user->username }}</td>
-                                    <td class="text-center"><img
-                                            src="{{ asset('image/profil/' . $user->users_data->user_image) }}"
-                                            height="150" width="150" class="img-fluid img-thumbnail" alt="">
+                                    <td class="text-center">
+                                        @if ($user->users_data->user_st == 'yes')
+                                            <span class="btn-sm btn-success">Active</span>
+                                        @else
+                                            <span class="btn-sm btn-danger">Non active</span>
+                                        @endif
                                     </td>
                                     <td class="text-center">
                                         <a href="{{ route('UpdateAkunKasir', [$user->user_id]) }}"

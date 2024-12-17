@@ -152,23 +152,16 @@ Route::middleware(['auth'])->group(function () {
     // TRANSAKSI
     Route::middleware(['hasRole.page:transaksi'])->group(function () {
         Route::get('/data-transaksi', [TransaksiController::class, 'index'])->name('transaksi');
-        // Route::get('/add-akun-kasir', [AkunkasirController::class, 'create'])->name('tambahAkunKasir');
-        // Route::post('/process-add-akun-kasir', [AkunKasirController::class, 'store'])->name('aksiTambahAkunKasir');
-        // Route::get('/update-akun-kasir/{slug}', [AkunKasirController::class, 'edit'])->name('UpdateAkunKasir');
-        // Route::post('/process-update-akun-kasir', [AkunKasirController::class, 'update'])->name('processUpdateAkunKasir');
-        // Route::get('/process-delete-akun-kasir/{user_id}', [AkunKasirController::class, 'destroy'])->name('deleteAkunKasir');
+        Route::get('/data-transaksi-cabang/{slug}', [TransaksiController::class, 'show'])->name('transaksiCabang');
+        Route::post('/show-nota', [TransaksiController::class, 'show_nota'])->name('show_nota');
+        Route::post('/process-cari-transaksi', [TransaksiController::class, 'search'])->name('cariTransaksi');
     });
     // Log Barang
     Route::middleware(['hasRole.page:logBarang'])->group(function () {
         Route::get('/data-log-barang', [LogBarangController::class, 'index'])->name('logBarang');
         Route::get('/show-data-log-barang/{slug}', [LogBarangController::class, 'show'])->name('showLogBarangCabang');
         Route::get('/show-detail-data-log-barang/{barang_cabang_id}/{cabang_id}/{pusat_id}', [LogBarangController::class, 'show_detail_log'])->name('showDetailLog');
-
-        // Route::get('/add-akun-kasir', [AkunkasirController::class, 'create'])->name('tambahAkunKasir');
-        // Route::post('/process-add-akun-kasir', [AkunKasirController::class, 'store'])->name('aksiTambahAkunKasir');
-        // Route::get('/update-akun-kasir/{slug}', [AkunKasirController::class, 'edit'])->name('UpdateAkunKasir');
-        // Route::post('/process-update-akun-kasir', [AkunKasirController::class, 'update'])->name('processUpdateAkunKasir');
-        // Route::get('/process-delete-akun-kasir/{user_id}', [AkunKasirController::class, 'destroy'])->name('deleteAkunKasir');
+        Route::post('/process-cari-log-barang-cabang', [LogBarangController::class, 'search'])->name('cariLogBarangCabang');
     });
 
     /* END YOUR ROUTE APLICATION */

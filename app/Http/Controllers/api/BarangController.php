@@ -40,6 +40,8 @@ class BarangController extends Controller
                 FROM barang_cabang a
                 INNER JOIN barang_master b ON a.barang_id = b.id
                 WHERE a.cabang_id = ?
+                AND a.barang_st = 'yes'
+                AND a.barang_stok > 0
                 AND CONCAT(b.barang_barcode, b.barang_nama) LIKE '%" . $queryValue . "%'", [$user_data->cabang_id]);
         return response()->json($data);
     }

@@ -8,6 +8,7 @@ use App\Models\BarangLog;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use Auth;
+use DB;
 use Illuminate\Http\Request;
 
 class LogBarangController extends Controller
@@ -45,7 +46,12 @@ class LogBarangController extends Controller
      */
     public function show(string $slug)
     {
-        $data['title'] = 'Data Barang Cabang';
+        // cari
+        $barang_cabang_nama = session()->get('log_barang_cabang_nama');
+        $data['barang_cabang_nama'] = $barang_cabang_nama;
+        $barang_cabang_nama = empty($barang_cabang_nama) ? '%' : '%' . $barang_cabang_nama . '%';
+        //
+        $data['title'] = 'Log Barang Cabang';
         $cabang = TokoCabang::where('slug', $slug)->first();
         if (empty($cabang)) {
             return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
@@ -55,6 +61,7 @@ class LogBarangController extends Controller
         $barangCabang = BarangCabang::select('barang_cabang.*')
             ->with(['barang_master', 'toko_cabang.toko_pusat'])->where('cabang_id', $cabang->id)
             ->join('barang_master', 'barang_cabang.barang_id', '=', 'barang_master.id')
+            ->where(DB::raw('CONCAT(barang_master.barang_nama, barang_master.barang_barcode)'), 'LIKE', $barang_cabang_nama)
             ->orderBy('barang_master.barang_nama')->paginate(50);
         $data['rs_brg_cabang'] = $barangCabang;
         // return
@@ -63,7 +70,7 @@ class LogBarangController extends Controller
 
     public function show_detail_log(string $barang_cabang_id, string $cabang_id, string $pusat_id)
     {
-        $data['title'] = 'Detail Log Data Barang Cabang';
+        $data['title'] = 'Detail Log Barang Cabang';
         $cabang = TokoCabang::find($cabang_id);
         if (empty($cabang)) {
             return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
@@ -86,27 +93,19 @@ class LogBarangController extends Controller
         return view('log.barang.detail', $data);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function search(Request $request)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $cabang = TokoCabang::find($request->id);
+        if (empty($cabang)) {
+            return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
+        }
+        if ($request->aksi == 'reset') {
+            session()->forget('log_barang_cabang_nama');
+        } else {
+            session([
+                'log_barang_cabang_nama' => $request->barang_cabang_nama
+            ]);
+        }
+        return redirect()->route('showLogBarangCabang', ['slug' => $cabang->slug]);
     }
 }

@@ -172,16 +172,20 @@ class BarangcabangController extends Controller
         if ($detail->save()) {
             // insert to barang log
             $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
-            BarangLog::create([
-                'user_id' => Auth::user()->user_id,
-                'pusat_id' => $pusat->id,
-                'cabang_id' => $detail->cabang_id,
-                'barang_cabang_id' => $request->id,
-                'barang_awal' => $jlh_barang_sblm_tambah,
-                'barang_perubahan' => $request->barang_stok_penambahan,
-                'barang_akhir' => $request->barang_stok_hasil,
-                'barang_st' => 'perubahan',
-            ]);
+            // if more than one
+            if ($request->barang_stok_penambahan > 0) {
+                BarangLog::create([
+                    'user_id' => Auth::user()->user_id,
+                    'pusat_id' => $pusat->id,
+                    'cabang_id' => $detail->cabang_id,
+                    'barang_cabang_id' => $request->id,
+                    'barang_awal' => $jlh_barang_sblm_tambah,
+                    'barang_perubahan' => $request->barang_stok_penambahan,
+                    'barang_akhir' => $request->barang_stok_hasil,
+                    'barang_st' => 'perubahan',
+                ]);
+            }
+
             return redirect()->route('updatebarangCabang', ['id' => $detail->id])->with('success', 'Data berhasil disimpan');
         }
     }
@@ -191,9 +195,13 @@ class BarangcabangController extends Controller
         if (empty($cabang)) {
             return redirect()->route('barangCabang')->with('error', 'Data tidak ditemukan');
         }
-        session([
-            'barang_cabang_nama' => $request->barang_cabang_nama
-        ]);
+        if ($request->aksi == 'reset') {
+            session()->forget('barang_cabang_nama');
+        } else {
+            session([
+                'barang_cabang_nama' => $request->barang_cabang_nama,
+            ]);
+        }
         return redirect()->route('showBarangCabang', ['slug' => $cabang->slug]);
     }
 }
