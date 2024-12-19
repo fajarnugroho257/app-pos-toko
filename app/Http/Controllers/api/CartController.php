@@ -50,6 +50,7 @@ class CartController extends Controller
             'keranjang.*.barang_cabang_id' => 'required|integer',
             'keranjang.*.barang_nama' => 'required|string',
             'keranjang.*.barang_barcode' => 'required|string|size:13', // contoh panjang barcode
+            'keranjang.*.barang_harga_beli' => 'required|numeric|min:1',
             'keranjang.*.barang_harga_jual' => 'required|numeric|min:1',
             'keranjang.*.pusat_id' => 'required|integer',
             'keranjang.*.cart_qty' => 'required|integer|min:1',
@@ -106,6 +107,7 @@ class CartController extends Controller
                     'cart_id' => $cart_id,
                     'barang_cabang_id' => $value['barang_cabang_id'],
                     'cart_barcode' => $value['barang_barcode'],
+                    'cart_harga_beli' => $value['barang_harga_beli'],
                     'cart_harga_jual' => $value['barang_harga_jual'],
                     'cart_nama' => $value['barang_nama'],
                     'cart_qty' => $value['cart_qty'],

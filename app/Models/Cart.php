@@ -21,4 +21,10 @@ class Cart extends Model
     {
         return $this->hasMany(Transaksi::class, 'cart_id', 'cart_id');
     }
+    public function sum_cart_data()
+    {
+        $data = CartData::sum('cart_harga_beli');
+        // dd($data);
+        return $data;
+    }
 }

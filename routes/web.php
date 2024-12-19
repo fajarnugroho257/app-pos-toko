@@ -3,6 +3,7 @@
 use App\Http\Controllers\akun\AkunkasirController;
 use App\Http\Controllers\barang\BarangcabangController;
 use App\Http\Controllers\barang\MasterbarangController;
+use App\Http\Controllers\laporan\LabarugiController;
 use App\Http\Controllers\log\LogBarangController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\toko\TokocabangController;
@@ -36,6 +37,11 @@ Route::middleware(['auth'])->group(function () {
     // dahsboard
     Route::middleware(['hasRole.page:dashboard'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+        Route::post('/process-cari-sumary', [DashboardController::class, 'search_summary'])->name('cariSumary');
+        Route::get('/show-barang-minim/{cabang_id}', [DashboardController::class, 'show_barang_minim'])->name('showBarangMinim');
+        Route::get('/show-pendapatan/{cabang_id}', [DashboardController::class, 'show_pendapatan'])->name('showPendapatan');
+        Route::get('/show-transaksi/{cabang_id}', [DashboardController::class, 'show_transaksi'])->name('showTransaksi');
+
     });
     // logout
     Route::get('/log-out', [LoginController::class, 'logOut'])->name('logOut');
@@ -163,7 +169,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/show-detail-data-log-barang/{barang_cabang_id}/{cabang_id}/{pusat_id}', [LogBarangController::class, 'show_detail_log'])->name('showDetailLog');
         Route::post('/process-cari-log-barang-cabang', [LogBarangController::class, 'search'])->name('cariLogBarangCabang');
     });
-
+    // LABA RUGI
+    Route::middleware(['hasRole.page:labaRugi'])->group(function () {
+        Route::get('/data-laba-rugi', [LabarugiController::class, 'index'])->name('labaRugi');
+        Route::get('/show-data-laba-rugi/{slug}', [LabarugiController::class, 'show'])->name('showLabaRugi');
+        // Route::get('/show-detail-data-log-barang/{barang_cabang_id}/{cabang_id}/{pusat_id}', [LogBarangController::class, 'show_detail_log'])->name('showDetailLog');
+        // Route::post('/process-cari-log-barang-cabang', [LogBarangController::class, 'search'])->name('cariLabaRugi');
+    });
     /* END YOUR ROUTE APLICATION */
 });
 

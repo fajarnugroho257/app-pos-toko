@@ -68,7 +68,6 @@ class TransaksiController extends Controller
             ->whereRelation('cart', 'pusat_id', $cabang->toko_pusat->id)
             ->orderBy('trans_date', 'DESC')
             ->whereBetween(DB::raw('DATE(trans_date)'), [$data['date_start'], $data['date_end']])
-
             ->get();
         // dd($rs_transaksi);
         $data['rs_transaksi'] = $rs_transaksi;
@@ -182,7 +181,6 @@ class TransaksiController extends Controller
             ]);
         }
         return redirect()->route('transaksiCabang', ['slug' => $cabang->slug]);
-
     }
 
 }
