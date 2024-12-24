@@ -81,6 +81,7 @@
                             <tbody>
                                 @php
                                     $no = 1;
+                                    $ttlTransTotal = 0;
                                 @endphp
                                 @foreach ($rs_transaksi as $key => $transaksi)
                                     <tr>
@@ -103,7 +104,16 @@
                                                     class="fa fa-sticky-note"></i></a>
                                         </td>
                                     </tr>
+                                    @php
+                                        $ttlTransTotal += $transaksi->trans_total;
+                                    @endphp
                                 @endforeach
+                                <tr>
+                                    <td class="text-right text-bold" colspan="4">Total</td>
+                                    <td class="text-right text-danger text-bold">
+                                        {{ 'Rp. ' . number_format($ttlTransTotal, 0, ',', '.') }}</td>
+                                    <td class="text-right text-bold" colspan="4"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

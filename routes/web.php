@@ -173,8 +173,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['hasRole.page:labaRugi'])->group(function () {
         Route::get('/data-laba-rugi', [LabarugiController::class, 'index'])->name('labaRugi');
         Route::get('/show-data-laba-rugi/{slug}', [LabarugiController::class, 'show'])->name('showLabaRugi');
-        // Route::get('/show-detail-data-log-barang/{barang_cabang_id}/{cabang_id}/{pusat_id}', [LogBarangController::class, 'show_detail_log'])->name('showDetailLog');
-        // Route::post('/process-cari-log-barang-cabang', [LogBarangController::class, 'search'])->name('cariLabaRugi');
+        Route::post('/process-cari-laba', [LabarugiController::class, 'search'])->name('cariLaba');
     });
     /* END YOUR ROUTE APLICATION */
 });

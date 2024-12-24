@@ -19,7 +19,7 @@ class Cart extends Model
     }
     public function transaksi_cart()
     {
-        return $this->hasMany(Transaksi::class, 'cart_id', 'cart_id');
+        return $this->hasOne(Transaksi::class, 'cart_id', 'cart_id');
     }
     public function sum_cart_data()
     {

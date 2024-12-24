@@ -64,7 +64,7 @@
                                 <i class="ion ion-bag"></i>
                             </div>
                             <a href="{{ route('showTransaksi', ['cabang_id' => $cabang_id]) }}"
-                                class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                                class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- ./col -->
@@ -79,8 +79,7 @@
                                 <i class="ion ion-stats-bars"></i>
                             </div>
                             <a href="{{ route('showPendapatan', ['cabang_id' => $cabang_id]) }}"
-                                class="small-box-footer">More
-                                info <i class="fas fa-arrow-circle-right"></i></a>
+                                class="small-box-footer">Selengkapnya<i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
                     <!-- ./col -->
@@ -94,7 +93,7 @@
                             <div class="icon">
                                 <i class="ion ion-person-add"></i>
                             </div>
-                            <a href="{{ route('tokoCabang') }}" class="small-box-footer">More info <i
+                            <a href="{{ route('tokoCabang') }}" class="small-box-footer">Selengkapnya <i
                                     class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>

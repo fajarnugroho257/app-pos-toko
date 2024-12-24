@@ -149,7 +149,7 @@ class CartController extends Controller
 
         $draft = DB::select("SELECT a.cart_id, a.cart_st, b.cart_barcode AS 'barang_barcode',
                                     b.barang_cabang_id, b.cart_nama AS 'barang_nama', b.cart_harga_jual AS 'barang_harga_jual',
-                                    a.pusat_id, b.cart_qty, b.cart_subtotal, b.cart_urut AS 'no_urut'
+                                    a.pusat_id, b.cart_qty, b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli'
                                     FROM cart a
                                     INNER JOIN cart_data b ON a.cart_id = b.cart_id
                                     WHERE a.cart_st = 'draft'

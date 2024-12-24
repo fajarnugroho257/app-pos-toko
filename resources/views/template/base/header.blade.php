@@ -120,16 +120,15 @@
         </li> --}}
         <li class="nav-item dropdown user-menu">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
-                <img src="../../dist/img/user2-160x160.jpg" class="user-image img-circle elevation-2"
-                    alt="User Image">
-                <span class="d-none d-md-inline">{{Auth::user()->name}}</span>
+                <img src="../../dist/img/user2-160x160.jpg" class="user-image img-circle elevation-2" alt="User Image">
+                <span class="d-none d-md-inline">{{ Auth::user()->name }}</span>
             </a>
             <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
                 <li class="user-header bg-primary">
                     <img src="../../dist/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                    <p>{{Auth::user()->name}}<small>{{Auth::user()->app_role->role_name}}</small></p>
+                    <p>{{ Auth::user()->name }}<small>{{ Auth::user()->app_role->role_name }}</small></p>
                 </li>
-                <li class="user-body">
+                {{-- <li class="user-body">
                     <div class="row">
                         <div class="col-4 text-center">
                             <a href="#">Followers</a>
@@ -141,10 +140,10 @@
                             <a href="#">Friends</a>
                         </div>
                     </div>
-                </li>
+                </li> --}}
                 <li class="user-footer">
                     <a href="#" class="btn btn-default btn-flat">Profile</a>
-                    <a href="{{route('logOut')}}" class="btn btn-default btn-flat float-right">Sign out</a>
+                    <a href="{{ route('logOut') }}" class="btn btn-default btn-flat float-right">Sign out</a>
                 </li>
             </ul>
         </li>

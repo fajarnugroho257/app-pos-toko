@@ -14,4 +14,8 @@ class CartData extends Model
     {
         return $this->hasMany(Transaksi::class, 'cart_id', 'cart_id');
     }
+    public function cart()
+    {
+        return $this->belongsTo(cart::class, 'cart_id', 'cart_id');
+    }
 }

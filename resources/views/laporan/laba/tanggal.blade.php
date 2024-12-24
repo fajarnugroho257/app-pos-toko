@@ -42,7 +42,7 @@
                 <div class="card-body">
                     <h4 class="text-center mb-4"><b>Laba / Rugi <br /><span
                                 class="text-danger">{{ $cabang->cabang_nama }}</span></b></h4>
-                    <form action="{{ route('cariTransaksi') }}" method="POST" class="mb-4">
+                    <form action="{{ route('cariLaba') }}" method="POST" class="mb-4">
                         @method('POST')
                         @csrf
                         <input type="hidden" name="id" value="{{ $cabang->id }}">
@@ -70,11 +70,9 @@
                                     <th>ID Keranjang</th>
                                     <th>Date Time</th>
                                     <th>Pelanggan</th>
-                                    <th>Barang</th>
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
+                                    <th>Laba</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,6 +82,9 @@
                                     $ttlJual = 0;
                                     $ttlQrt = 0;
                                     $grandTtl = 0;
+                                    $grandTtlCartBeli = 0;
+                                    $grandTtlCartJual = 0;
+                                    $grandTtlLaba = 0;
                                 @endphp
                                 @foreach ($rs_laba as $key => $laba)
                                     @php
@@ -91,7 +92,19 @@
                                         $ttlJual += $laba->cart_harga_jual * $laba->cart_qty;
                                         $ttlQrt += $laba->cart_qty;
                                         $grandTtl += $laba->cart_subtotal;
+                                        $jlhCartData = count($laba->cart_data);
+                                        //
+                                        $ttlCartBeli = 0;
+                                        $ttlCartJual = 0;
                                     @endphp
+                                    @foreach ($laba->cart_data as $item)
+                                        @php
+                                            $ttlCartBeli += $item->cart_harga_beli * $item->cart_qty;
+                                            $ttlCartJual += $item->cart_harga_jual * $item->cart_qty;
+                                            // laba
+                                            $ttlLaba = $ttlCartJual - $ttlCartBeli;
+                                        @endphp
+                                    @endforeach
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td class="text-center">{{ $laba->cart_id }}</td>
@@ -99,30 +112,27 @@
                                             {{ \Carbon\Carbon::parse($laba->trans_date)->translatedFormat('d F Y H:i') }}
                                         </td>
                                         <td>{{ $laba->trans_pelanggan }}</td>
-                                        <td>{{ $laba->cart_nama }}</td>
                                         <td class="text-right text-danger text-bold">
-                                            {{ 'Rp. ' . number_format($laba->cart_harga_beli, 0, ',', '.') }}</td>
+                                            {{ 'Rp. ' . number_format($ttlCartBeli, 0, ',', '.') }}</td>
                                         <td class="text-right text-info text-bold">
-                                            {{ 'Rp. ' . number_format($laba->cart_harga_jual, 0, ',', '.') }}</td>
-                                        <td class="text-center">{{ $laba->cart_qty }}</td>
+                                            {{ 'Rp. ' . number_format($ttlCartJual, 0, ',', '.') }}</td>
                                         <td class="text-right text-success text-bold">
-                                            {{ 'Rp. ' . number_format($laba->cart_subtotal, 0, ',', '.') }}</td>
-                                        {{-- <td class="text-center">{{ $laba->users->name }}</td> --}}
-                                        {{-- <td class="text-center">
-                                            <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
-                                                data-cart_id="{{ $laba->cart_id }}"><i class="fa fa-sticky-note"></i></a>
-                                        </td> --}}
+                                            {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}</td>
+                                        @php
+                                            $grandTtlCartBeli += $ttlCartBeli;
+                                            $grandTtlCartJual += $ttlCartJual;
+                                            $grandTtlLaba += $ttlLaba;
+                                        @endphp
                                     </tr>
                                 @endforeach
                                 <tr>
-                                    <td class="text-right" colspan="5"></td>
+                                    <td class="text-right" colspan="4"></td>
                                     <td class="text-right text-danger text-bold">
-                                        {{ 'Rp. ' . number_format($ttlBeli, 0, ',', '.') }}</td>
+                                        {{ 'Rp. ' . number_format($grandTtlCartBeli, 0, ',', '.') }}</td>
                                     <td class="text-right text-info text-bold">
-                                        {{ 'Rp. ' . number_format($ttlJual, 0, ',', '.') }}</td>
-                                    <td class="text-center">{{ $ttlQrt }}</td>
+                                        {{ 'Rp. ' . number_format($grandTtlCartJual, 0, ',', '.') }}</td>
                                     <td class="text-right text-success text-bold">
-                                        {{ 'Rp. ' . number_format($grandTtl, 0, ',', '.') }}</td>
+                                        {{ 'Rp. ' . number_format($grandTtlLaba, 0, ',', '.') }}</td>
                                 </tr>
                             </tbody>
                         </table>

@@ -12,7 +12,11 @@ class Transaksi extends Model
     protected $fillable = ['cart_id', 'user_id', 'trans_pelanggan', 'trans_total', 'trans_bayar', 'trans_kembalian', 'trans_date'];
     public function cart()
     {
-        return $this->belongsTo(Cart::class, 'cart_id', 'cart_id');
+        return $this->hasOne(Cart::class, 'cart_id', 'cart_id');
+    }
+    public function cart_data()
+    {
+        return $this->hasManyThrough(CartData::class, Cart::class, 'cart_id', 'cart_id', 'cart_id', 'cart_id');
     }
     public function users()
     {
