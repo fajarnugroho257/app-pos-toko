@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\toko\TokocabangController;
 use App\Http\Controllers\toko\TokopusatController;
 use App\Http\Controllers\transaksi\TransaksiController;
+use App\Http\Controllers\user\ProfilController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
@@ -174,6 +175,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-laba-rugi', [LabarugiController::class, 'index'])->name('labaRugi');
         Route::get('/show-data-laba-rugi/{slug}', [LabarugiController::class, 'show'])->name('showLabaRugi');
         Route::post('/process-cari-laba', [LabarugiController::class, 'search'])->name('cariLaba');
+    });
+    // Profil
+    Route::middleware(['hasRole.page:dashboard'])->group(function () {
+        Route::get('/data-user-profil', [ProfilController::class, 'index'])->name('profil');
+        Route::post('/process-update-data-user-profil', [ProfilController::class, 'update'])->name('processUpdateProfil');
     });
     /* END YOUR ROUTE APLICATION */
 });
