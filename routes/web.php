@@ -3,6 +3,7 @@
 use App\Http\Controllers\akun\AkunkasirController;
 use App\Http\Controllers\barang\BarangcabangController;
 use App\Http\Controllers\barang\MasterbarangController;
+use App\Http\Controllers\DumpTransaksiController;
 use App\Http\Controllers\laporan\LabarugiController;
 use App\Http\Controllers\log\LogBarangController;
 use App\Http\Controllers\LoginController;
@@ -90,25 +91,25 @@ Route::middleware(['auth'])->group(function () {
 
     /* YOUR ROUTE APLICATION */
 
-    Route::middleware(['hasRole.page:dataPenduduk'])->group(function () {
-        Route::get('/data-transaksi', [TransaksiController::class, 'index'])->name('dataPenduduk');
-        Route::get('/print-data', function () {
-            return response()->json([
-                'content' => "Test Print Thermal",
-                'options' => [
-                    'printer' => "POS-58", // Sesuaikan nama printer
-                    'font-size' => 12
-                ]
-            ]);
-        })->name('dataPrint');
+    // Route::middleware(['hasRole.page:dataPenduduk'])->group(function () {
+    Route::get('/data-transaksi', [TransaksiController::class, 'index'])->name('dataPenduduk');
+    Route::get('/print-data', function () {
+        return response()->json([
+            'content' => "Test Print Thermal",
+            'options' => [
+                'printer' => "POS-58", // Sesuaikan nama printer
+                'font-size' => 12
+            ]
+        ]);
+    })->name('dataPrint');
 
-        Route::get('/test', [TransaksiController::class, 'cetakNota'])->name('cetakNota');
-        // Route::get('/add-data-user', [UserController::class, 'create'])->name('tambahUser');
-        // Route::post('/process-add-data-user', [UserController::class, 'store'])->name('aksiTambahUser');
-        // Route::get('/update-data-user/{user_id}', [UserController::class, 'edit'])->name('UpdateUser');
-        // Route::post('/process-update-data-user/{user_id}', [UserController::class, 'update'])->name('aksiUpdateUser');
-        // Route::get('/process-delete-data-user/{user_id}', [UserController::class, 'destroy'])->name('deleteUser');
-    });
+    Route::get('/test', [DumpTransaksiController::class, 'cetakNota'])->name('cetakNota');
+    // Route::get('/add-data-user', [UserController::class, 'create'])->name('tambahUser');
+    // Route::post('/process-add-data-user', [UserController::class, 'store'])->name('aksiTambahUser');
+    // Route::get('/update-data-user/{user_id}', [UserController::class, 'edit'])->name('UpdateUser');
+    // Route::post('/process-update-data-user/{user_id}', [UserController::class, 'update'])->name('aksiUpdateUser');
+    // Route::get('/process-delete-data-user/{user_id}', [UserController::class, 'destroy'])->name('deleteUser');
+    // });
     // Toko Pusat
     Route::middleware(['hasRole.page:tokoPusat'])->group(function () {
         Route::get('/data-toko-pusat', [TokopusatController::class, 'index'])->name('tokoPusat');

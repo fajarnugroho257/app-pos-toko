@@ -126,6 +126,8 @@
                                 <a class="nav-item nav-link" id="product-comments-tab" data-toggle="tab"
                                     href="#product-comments" role="tab" aria-controls="product-comments"
                                     aria-selected="false">Transaksi</a>
+                                <a class="nav-item nav-link" id="most-buy-tab" data-toggle="tab" href="#most-buy"
+                                    role="tab" aria-controls="most-buy" aria-selected="false">Barang Paling Laku</a>
                                 <a class="nav-item nav-link" id="product-rating-tab" data-toggle="tab"
                                     href="#product-rating" role="tab" aria-controls="product-rating"
                                     aria-selected="false">Stok Minim</a>
@@ -143,6 +145,34 @@
                                 <figure class="highcharts-figure">
                                     <div id="transaksi"></div>
                                 </figure>
+                            </div>
+                            <div class="tab-pane fade" id="most-buy" role="tabpanel" aria-labelledby="most-buy-tab">
+                                <div class="text-center mb-4">
+                                    <h5>Barang Paling Laku</h5>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr class="text-center">
+                                                <th style="width: 10px">No</th>
+                                                <th>Nama Barang</th>
+                                                <th>Jumlah</th>
+                                            </tr>
+                                        </thead>
+                                        @php
+                                            $no = 1;
+                                        @endphp
+                                        <tbody>
+                                            @foreach ($rs_terbanyak as $key => $terbanyak)
+                                                <tr>
+                                                    <td class="text-center">{{ $no++ }}</td>
+                                                    <td>{{ $terbanyak->barang_cabang->barang_master->barang_nama }}</td>
+                                                    <td class="text-center">{{ $terbanyak->cart_qty }}</td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div class="tab-pane fade" id="product-rating" role="tabpanel"
                                 aria-labelledby="product-rating-tab">

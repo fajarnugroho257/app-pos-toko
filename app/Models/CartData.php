@@ -18,4 +18,8 @@ class CartData extends Model
     {
         return $this->belongsTo(cart::class, 'cart_id', 'cart_id');
     }
+    public function barang_cabang()
+    {
+        return $this->belongsTo(BarangCabang::class, 'barang_cabang_id', 'id');
+    }
 }

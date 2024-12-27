@@ -22,4 +22,8 @@ class BarangCabang extends Model
     {
         return $this->hasMany(BarangLog::class, 'barang_cabang_id', 'id');
     }
+    public function cart_data()
+    {
+        return $this->hasMany(CartData::class, 'barang_cabang_id', 'id');
+    }
 }

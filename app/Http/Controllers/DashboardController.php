@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\BarangCabang;
+use App\Models\Cart;
+use App\Models\CartData;
 use App\Models\TokoCabang;
 use App\Models\Transaksi;
 use App\Models\User;
@@ -66,6 +68,18 @@ class DashboardController extends Controller
             }
             // dd($tranMonth);
             $data['tranMonth'] = $tranMonth;
+            $rs_terbanyak = CartData::
+                select(DB::raw('SUM(cart_qty) as cart_qty'), 'barang_cabang_id')
+                ->with(['barang_cabang.barang_master'])
+                ->whereRelation('cart', 'pusat_id', $pusat_id)
+                ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang)
+                ->whereRelation('transaksi', DB::raw('DATE(trans_date)'), '>=', $data['startDateDash'])
+                ->whereRelation('transaksi', DB::raw('DATE(trans_date)'), '<=', $data['endDateDash'])
+                ->groupBy('barang_cabang_id')
+                ->orderBy(DB::raw('SUM(cart_qty)'), 'DESC')
+                ->get();
+            $data['rs_terbanyak'] = $rs_terbanyak;
+            // dd($rs_terbanyak);
             // return
             return view('dashboard.dashboard', $data);
         }
