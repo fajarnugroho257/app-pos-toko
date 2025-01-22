@@ -176,6 +176,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-laba-rugi', [LabarugiController::class, 'index'])->name('labaRugi');
         Route::get('/show-data-laba-rugi/{slug}', [LabarugiController::class, 'show'])->name('showLabaRugi');
         Route::post('/process-cari-laba', [LabarugiController::class, 'search'])->name('cariLaba');
+        Route::post('/detail-laba-rugi', [LabarugiController::class, 'detail_laba'])->name('detailLabaRugi');
     });
     // Profil
     Route::middleware(['hasRole.page:dashboard'])->group(function () {

@@ -82,4 +82,18 @@ class LoginController extends Controller
         }
     }
 
+
+    public function check_token()
+    {
+        try {
+            // Cek apakah token valid
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['message' => 'Token invalid or user not found'], 401);
+            }
+            return response()->json(['message' => 'Token is valid', 'user' => $user->name], 200);
+        } catch (JWTException $e) {
+            return response()->json(['message' => 'Token invalid', 'error' => $e->getMessage()], 401);
+        }
+    }
+
 }

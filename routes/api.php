@@ -39,6 +39,8 @@ Route::middleware(['jwt.verify'])->group(function () {
 Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/store-bayar', [TransaksiController::class, 'store']);
 });
+// check token
+Route::get('/api-cek-token', [App\Http\Controllers\api\LoginController::class, 'check_token']);
 
 // Route::get('/non-get-cart-draft', [CartController::class, 'show']);
 

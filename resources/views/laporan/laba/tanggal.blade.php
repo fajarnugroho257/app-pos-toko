@@ -73,6 +73,7 @@
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
                                     <th>Laba</th>
+                                    <th style="width: 30px">Detail</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -118,6 +119,11 @@
                                             {{ 'Rp. ' . number_format($ttlCartJual, 0, ',', '.') }}</td>
                                         <td class="text-right text-success text-bold">
                                             {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}</td>
+                                        <td class="text-center">
+                                            <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
+                                                data-cart_id="{{ $laba->cart_id }}"><i
+                                                    class="fa fa-sticky-note"></i></a>
+                                        </td>
                                         @php
                                             $grandTtlCartBeli += $ttlCartBeli;
                                             $grandTtlCartJual += $ttlCartJual;
@@ -148,4 +154,70 @@
         </section>
         <!-- /.content -->
     </div>
+    <div class="modal fade" id="modal-produk">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nota Penjualan</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th class="text-center">No</th>
+                                <th class="text-center">Nama Barang</th>
+                                <th class="text-center">Harga Beli</th>
+                                <th class="text-center">Harga Jual</th>
+                                <th class="text-center">Untung</th>
+                                <th class="text-center">Jumlah</th>
+                                <th class="text-center">Total Laba</th>
+                            </tr>
+                        </thead>
+                        <tbody id="res-produk"></tbody>
+                    </table>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button class="btn btn-default" data-dismiss="modal">Close</button>
+                    {{-- <button type="submit" class="btn btn-primary">Simpan Produk</button> --}}
+                </div>
+            </div>
+        </div>
+    </div>
+@endsection
+@section('javascript')
+    <script>
+        $(document).ready(function() {
+            $('.show-nota').on('click', function() {
+                const cart_id = $(this).data('cart_id');
+                // alert(cart_id);
+                $.ajax({
+                    url: "{{ route('detailLabaRugi') }}",
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        cart_id: cart_id,
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Tindakan jika permintaan berhasil
+                            $('#modal-produk').modal('show');
+                            $('#res-produk').html(response.html);
+
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        // Tindakan jika permintaan gagal
+                        alert('Terjadi kesalahan. Silakan coba lagi.');
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
 @endsection
