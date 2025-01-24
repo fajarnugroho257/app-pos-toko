@@ -62,7 +62,7 @@ class DashboardController extends Controller
             // grafik
             $period = CarbonPeriod::create($data['startDateDash'], $data['endDateDash']);
             foreach ($period as $key => $date) {
-                $tranMonth[$key]['pendapatan'] = $this->get_transaksi_perday($pusat_id, $date->toDateString(), $res_cabang)->sum('trans_total');
+                $tranMonth[$key]['pendapatan'] = (int) $this->get_transaksi_perday($pusat_id, $date->toDateString(), $res_cabang)->sum('trans_total');
                 $tranMonth[$key]['jlh_transaksi'] = $this->get_transaksi_perday($pusat_id, $date->toDateString(), $res_cabang)->count();
                 $tranMonth[$key]['tanggal'] = $date->toDateString();
             }
