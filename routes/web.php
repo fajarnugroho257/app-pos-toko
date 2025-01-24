@@ -33,6 +33,8 @@ use App\Http\Controllers\menu\roleMenuController;
 Route::middleware(['guest'])->group(function () {
     Route::get('/', [LoginController::class, 'index'])->name('login');
     Route::post('/login-process', [LoginController::class, 'loginProcess'])->name('login-process');
+    Route::get('/proses-cetak-nota', [DumpTransaksiController::class, 'cetakNota'])->name('proses-cetak-nota');
+    Route::get('/sendToLocalServer', [DumpTransaksiController::class, 'sendToLocalServer'])->name('cetak-nota');
 });
 
 Route::middleware(['auth'])->group(function () {
@@ -93,6 +95,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Route::middleware(['hasRole.page:dataPenduduk'])->group(function () {
     Route::get('/data-transaksi', [TransaksiController::class, 'index'])->name('dataPenduduk');
+    //
+    Route::get('/tray', [DumpTransaksiController::class, 'index'])->name('tray');
     Route::get('/print-data', function () {
         return response()->json([
             'content' => "Test Print Thermal",

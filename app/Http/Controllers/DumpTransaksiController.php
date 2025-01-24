@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CartData;
 use App\Models\Transaksi;
 use Auth;
+use Illuminate\Support\Facades\Http;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
@@ -67,6 +69,21 @@ class DumpTransaksiController extends Controller
         //
     }
 
+    public function sendToLocalServer(Request $request)
+    {
+        $client = new Client();
+        $response = $client->post('http://192.168.1.106:8000/proses-cetak-nota', [
+            'form_params' => [
+                'key' => 'value',
+                'another_key' => 'another_value',
+            ]
+        ]);
+
+        // Mendapatkan respons
+        $body = $response->getBody();
+        echo $body;
+    }
+
     public function cetakNota()
     {
 
@@ -88,8 +105,8 @@ class DumpTransaksiController extends Controller
 
             // Tambahkan teks atau format nota
             $printer->setJustification(Printer::JUSTIFY_CENTER);
-            $printer->text(Auth::user()->name . "\n");
-            $printer->text("Jl. Contoh No.123\n");
+            // $printer->text($dataUser->users_data->toko_cabang->toko_pusat->pusat_nama . "\n");
+            // $printer->text($dataUser->users_data->toko_cabang->cabang_nama . "\n");
             // $printer->feed();
             $grandTotal = 0;
             $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -105,15 +122,22 @@ class DumpTransaksiController extends Controller
             $printer->text(str_pad("Cash", 17) . str_pad('Rp.' . number_format($transaksiCart->trans_bayar, 0, ',', '.'), 15));
             $printer->text(str_pad("Kembalian", 17) . str_pad('Rp.' . number_format($transaksiCart->trans_kembalian, 0, ',', '.'), 15));
             // $printer->feed(2);
-            dd($printer);
-            // dd($cartData);
             // Akhiri cetakan
             $printer->cut();
             $printer->close();
-
-            return "Nota berhasil dicetak.";
+            // return
+            return response()->json([
+                'success' => true,
+                'message' => 'Berhasil melakukan transaksi',
+                // 'data' => $request->all(),
+            ]);
         } catch (\Exception $e) {
-            return "Terjadi kesalahan: " . $e->getMessage();
+            // return "Terjadi kesalahan: " . $e->getMessage();
+            return response()->json([
+                'success' => false,
+                'message' => "Terjadi kesalahan cetak: " . $e->getMessage(),
+                // 'data' => $request->all(),
+            ]);
         }
     }
 }
