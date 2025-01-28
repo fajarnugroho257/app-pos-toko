@@ -51,6 +51,11 @@
                                 {{ session('success') }}
                             </div>
                         @endsession
+                        @session('error')
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endsession
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
@@ -64,6 +69,8 @@
                                     <label>Barcode Barang</label>
                                     <input type="text" value="{{ old('barang_barcode', $detail->barang_barcode) }}"
                                         name="barang_barcode" class="form-control" placeholder="Barcode Barang">
+                                    <input type="hidden" value="{{ $detail->barang_barcode }}"
+                                    name="old_barang_barcode" class="form-control" placeholder="Barcode Barang">
                                 </div>
                             </div>
                         </div>

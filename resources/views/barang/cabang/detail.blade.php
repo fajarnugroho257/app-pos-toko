@@ -145,6 +145,7 @@
                                     <th class="text-center">Nama Barang</th>
                                     <th class="text-center">Harga Beli</th>
                                     <th class="text-center">Harga Jual</th>
+                                    <th class="text-center">Pilih</th>
                                 </tr>
                             </thead>
                             <tbody id="res-produk"></tbody>

@@ -114,8 +114,11 @@ class BarangcabangController extends Controller
                 $html .= '  <td>';
                 $html .= '      Rp. ' . number_format($value['barang_harga_jual'], 0, ',', '.');
                 $html .= '  </td>';
+                $html .= '  <td class="text-center">';
+                $html .= '      <input type="checkbox" name="barang_id[]" value="' . $value['id'] . '">';
+                $html .= '  </td>';
                 $html .= '</tr>';
-                $html .= '<input type="hidden" name="barang_id[]" value="' . $value['id'] . '">';
+                // $html .=
             }
         } else {
             $html .= '<tr>';

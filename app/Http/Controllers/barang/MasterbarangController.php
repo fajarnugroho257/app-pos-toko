@@ -45,12 +45,17 @@ class MasterbarangController extends Controller
     {
         $request->validate([
             'barang_nama' => 'required',
-            'barang_barcode' => 'required|unique:barang_master,barang_barcode',
+            'barang_barcode' => 'required',
             'barang_harga_beli' => 'required',
             'barang_harga_jual' => 'required',
             'barang_stok_minimal' => 'required'
         ]);
         $pusat_id = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        // check data by barcode & pusat ID
+        $stBarang = MasterBarang::where('pusat_id', $pusat_id->id)->where('barang_barcode', $request->barang_barcode)->count();
+        if ($stBarang >= 1) {
+            return redirect()->route('tambahMasterBarang')->with('error', 'Data berdasarkan barcode sudah tersedia')->withInput();
+        }
         MasterBarang::create([
             'pusat_id' => $pusat_id->id,
             'barang_barcode' => $request->barang_barcode,
@@ -96,11 +101,20 @@ class MasterbarangController extends Controller
         }
         $request->validate([
             'id' => 'required',
-            'barang_barcode' => 'required|unique:barang_master,barang_barcode,' . $request->id . ',id',
+            'barang_barcode' => 'required',
+            'old_barang_barcode' => 'required',
             'barang_nama' => 'required',
             'barang_harga_beli' => 'required',
             'barang_stok_minimal' => 'required'
         ]);
+        $pusat_id = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        // check data by barcode & pusat ID
+        if ($request->old_barang_barcode != $request->barang_barcode) {
+            $stBarang = MasterBarang::where('pusat_id', $pusat_id->id)->where('barang_barcode', $request->barang_barcode)->count();
+            if ($stBarang >= 1) {
+                return redirect()->route('updateMasterBarang', ['slug' => $detail->slug])->with('error', 'Data berdasarkan barcode sudah tersedia')->withInput();
+            }
+        }
         $detail->barang_nama = $request->barang_nama;
         $detail->barang_barcode = $request->barang_barcode;
         $detail->barang_harga_beli = $request->barang_harga_beli;

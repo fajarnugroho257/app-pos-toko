@@ -35,6 +35,7 @@ class BarangController extends Controller
     {
         $user_data = UserData::where('user_id', Auth::user()->user_id)->first();
         $queryValue = request('query');
+        $cabang_id = request('cabang_id');
         $data = DB::select("SELECT a.id,
                 CONCAT(b.barang_barcode, ' | ', b.barang_nama, ' | ', a.cabang_barang_harga) AS name
                 FROM barang_cabang a
@@ -42,25 +43,30 @@ class BarangController extends Controller
                 WHERE a.cabang_id = ?
                 AND a.barang_st = 'yes'
                 AND a.barang_stok > 0
-                AND CONCAT(b.barang_barcode, b.barang_nama) LIKE '%" . $queryValue . "%'", [$user_data->cabang_id]);
+                AND CONCAT(b.barang_barcode, b.barang_nama) LIKE '%" . $queryValue . "%'", [$cabang_id]);
         return response()->json($data);
     }
 
     public function detail(Request $request)
     {
+        $user_data = UserData::where('user_id', Auth::user()->user_id)->first();
         $queryValue = request('query');
+        $cabang_id = request('cabang_id');
         $data = DB::selectOne("SELECT a.id,
                 CONCAT(b.barang_barcode, ' | ', b.barang_nama, ' | ', b.barang_harga_jual) AS name
                 FROM barang_cabang a
                 INNER JOIN barang_master b ON a.barang_id = b.id
                 WHERE a.cabang_id = ?
-                AND b.barang_barcode = " . $queryValue, [6]);
+                AND a.barang_stok > 0
+                AND b.barang_barcode = " . $queryValue, [$cabang_id]);
         return response()->json($data);
     }
 
     public function detail_data(Request $request)
     {
-        $data = BarangCabang::with('barang_master')->where('id', $request->barang_cabang_id)->first();
+        $data = BarangCabang::with('barang_master')
+            ->where('cabang_id', $request->id_cabang)
+            ->where('id', $request->barang_cabang_id)->first();
         return response()->json($data);
     }
 

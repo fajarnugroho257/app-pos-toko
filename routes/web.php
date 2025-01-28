@@ -167,6 +167,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/data-transaksi-cabang/{slug}', [TransaksiController::class, 'show'])->name('transaksiCabang');
         Route::post('/show-nota', [TransaksiController::class, 'show_nota'])->name('show_nota');
         Route::post('/process-cari-transaksi', [TransaksiController::class, 'search'])->name('cariTransaksi');
+        Route::get('/cetak-transaksi', [TransaksiController::class, 'cetakNotaTransaksi'])->name('cetakNotaTransaksi');
     });
     // Log Barang
     Route::middleware(['hasRole.page:logBarang'])->group(function () {

@@ -50,6 +50,11 @@
                                 {{ session('success') }}
                             </div>
                         @endsession
+                        @session('error')
+                            <div class="alert alert-danger">
+                                {{ session('error') }}
+                            </div>
+                        @endsession
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
