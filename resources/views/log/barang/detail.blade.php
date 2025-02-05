@@ -54,50 +54,52 @@
                             class="text-primary"><b>{{ $barang->barang_master->barang_nama }}</b></span> <br />Cabang <b
                             class="text-danger">{{ $cabang->cabang_nama }}</b></h4>
                     {{-- <p>Harga Jual Dicabang adalah harga jual </p> --}}
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th style="width: 10px">No</th>
-                                <th>Nama Barang</th>
-                                <th>Status</th>
-                                <th>Stok Awal</th>
-                                <th>Perubahan</th>
-                                <th>Stok Akhir</th>
-                                <th>Date Time</th>
-                                <th>Nama Petugas</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rs_barang_log as $key => $barang_log)
-                                <tr>
-                                    <td class="text-center">{{ $rs_barang_log->firstItem() + $key }}</td>
-                                    <td>{{ $barang_log->barang_cabang->barang_master->barang_nama }}</td>
-                                    <td class="text-center">
-                                        @if ($barang_log->barang_st == 'transaksi')
-                                            <span class="btn btn-danger">Terjual</span>
-                                        @else
-                                            <span class="btn btn-success">Stok Masuk</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">{{ $barang_log->barang_awal }}</td>
-                                    <td class="text-center">
-                                        @if ($barang_log->barang_st == 'transaksi')
-                                            {{ $barang_log->barang_transaksi }} <i class="text-danger fa fa-arrow-up"></i>
-                                        @else
-                                            {{ $barang_log->barang_perubahan }}
-                                            <i class="text-success fa fa-arrow-down"></i>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">{{ $barang_log->barang_akhir }}</td>
-                                    <td class="text-center">
-                                        {{ \Carbon\Carbon::parse($barang_log->created_at)->translatedFormat('d F Y H:i') }}
-                                    </td>
-                                    <td class="text-center">{{ $barang_log->users->name }}</td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 10px">No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Status</th>
+                                    <th>Stok Awal</th>
+                                    <th>Perubahan</th>
+                                    <th>Stok Akhir</th>
+                                    <th>Date Time</th>
+                                    <th>Nama Petugas</th>
                                 </tr>
-                            @endforeach
+                            </thead>
+                            <tbody>
+                                @foreach ($rs_barang_log as $key => $barang_log)
+                                    <tr>
+                                        <td class="text-center">{{ $rs_barang_log->firstItem() + $key }}</td>
+                                        <td>{{ $barang_log->barang_cabang->barang_master->barang_nama }}</td>
+                                        <td class="text-center">
+                                            @if ($barang_log->barang_st == 'transaksi')
+                                                <span class="btn btn-danger">Terjual</span>
+                                            @else
+                                                <span class="btn btn-success">Stok Masuk</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">{{ $barang_log->barang_awal }}</td>
+                                        <td class="text-center">
+                                            @if ($barang_log->barang_st == 'transaksi')
+                                                {{ $barang_log->barang_transaksi }} <i class="text-danger fa fa-arrow-up"></i>
+                                            @else
+                                                {{ $barang_log->barang_perubahan }}
+                                                <i class="text-success fa fa-arrow-down"></i>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">{{ $barang_log->barang_akhir }}</td>
+                                        <td class="text-center">
+                                            {{ \Carbon\Carbon::parse($barang_log->created_at)->translatedFormat('d F Y H:i') }}
+                                        </td>
+                                        <td class="text-center">{{ $barang_log->users->name }}</td>
+                                    </tr>
+                                @endforeach
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">

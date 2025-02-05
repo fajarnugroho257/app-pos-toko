@@ -41,57 +41,59 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th style="width: 10px">No</th>
-                                <th>Image/Profil</th>
-                                <th>Nama</th>
-                                <th>Cabang</th>
-                                <th>Gender</th>
-                                <th>Alamat</th>
-                                <th>Username</th>
-                                <th>Status</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rs_user as $key => $user)
-                                <tr>
-                                    <td class="text-center">{{ $rs_user->firstItem() + $key }}</td>
-                                    <td class="text-center"><img
-                                            src="{{ asset('image/profil/' . $user->users_data->user_image) }}"
-                                            height="150" width="150" class="img-fluid img-thumbnail" alt="">
-                                    </td>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->users_data->toko_cabang->cabang_nama }}</td>
-                                    <td class="text-center">
-                                        @if ($user->users_data->user_jk == 'P')
-                                            Perempuan
-                                        @else
-                                            Laki - Laki
-                                        @endif
-                                    </td>
-                                    <td>{{ $user->users_data->user_alamat }}</td>
-                                    <td class="text-center">{{ $user->username }}</td>
-                                    <td class="text-center">
-                                        @if ($user->users_data->user_st == 'yes')
-                                            <span class="btn-sm btn-success">Active</span>
-                                        @else
-                                            <span class="btn-sm btn-danger">Non active</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('UpdateAkunKasir', [$user->user_id]) }}"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                        <a href="{{ route('deleteAkunKasir', [$user->user_id]) }}"
-                                            onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                            class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
-                                    </td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 10px">No</th>
+                                    <th>Image/Profil</th>
+                                    <th>Nama</th>
+                                    <th>Cabang</th>
+                                    <th>Gender</th>
+                                    <th>Alamat</th>
+                                    <th>Username</th>
+                                    <th>Status</th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($rs_user as $key => $user)
+                                    <tr>
+                                        <td class="text-center">{{ $rs_user->firstItem() + $key }}</td>
+                                        <td class="text-center"><img
+                                                src="{{ asset('image/profil/' . $user->users_data->user_image) }}"
+                                                height="150" width="150" class="img-fluid img-thumbnail" alt="">
+                                        </td>
+                                        <td>{{ $user->name }}</td>
+                                        <td>{{ $user->users_data->toko_cabang->cabang_nama }}</td>
+                                        <td class="text-center">
+                                            @if ($user->users_data->user_jk == 'P')
+                                                Perempuan
+                                            @else
+                                                Laki - Laki
+                                            @endif
+                                        </td>
+                                        <td>{{ $user->users_data->user_alamat }}</td>
+                                        <td class="text-center">{{ $user->username }}</td>
+                                        <td class="text-center">
+                                            @if ($user->users_data->user_st == 'yes')
+                                                <span class="btn-sm btn-success">Active</span>
+                                            @else
+                                                <span class="btn-sm btn-danger">Non active</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('UpdateAkunKasir', [$user->user_id]) }}"
+                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                            <a href="{{ route('deleteAkunKasir', [$user->user_id]) }}"
+                                                onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
+                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">

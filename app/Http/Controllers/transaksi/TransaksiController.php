@@ -156,7 +156,7 @@ class TransaksiController extends Controller
             $html .= '  <td colspan="4">';
             $html .= '  </td>';
             $html .= '  <td class="text-right">';
-            $html .= '      <a href=' . route('cetakNotaTransaksi') . ' class="btn btn-success"><i class="fa fa-print"></i> Print</a>';
+            $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-success"><i class="fa fa-print"></i> Print</a>';
             $html .= '  </td>';
             $html .= '<tr>';
             $html .= '</tr>';
@@ -249,6 +249,47 @@ class TransaksiController extends Controller
                 // 'data' => $request->all(),
             ]);
         }
+    }
+
+    public function getPrintData($cart_id)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'cart_id' => 'required',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'errors' => $validator->errors()
+        //     ], 422);
+        // }
+        // detail cart
+        $cart = Cart::with(relations: 'toko_pusat')->where('cart_id', $cart_id)->first();
+        $cabang = TokoCabang::where('id', $cart->cabang_id)->first();
+        //
+        $transaksiCart = Transaksi::where('cart_id', $cart_id)->first();
+        if (empty($transaksiCart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+            ], 422);
+        }
+
+        // cart data
+        $cartData = CartData::select('cart_harga_jual', 'cart_nama', 'cart_qty', 'cart_subtotal')
+            ->where('cart_id', $transaksiCart->cart_id)
+            ->orderBy('cart_urut', 'DESC')->get();
+
+        return response()->json([
+            'printer' => 'POS-58',
+            'font-size' => 12,
+            'items' => $cartData,
+            'pusat_nama' => $cart->toko_pusat->pusat_nama,
+            'cabang_nama' => $cabang->cabang_nama,
+            'trans_total' => $transaksiCart->trans_total,
+            'trans_bayar' => $transaksiCart->trans_bayar,
+            'trans_kembalian' => $transaksiCart->trans_kembalian,
+        ]);
     }
 
 }

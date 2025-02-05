@@ -73,43 +73,44 @@
                     </form>
                     <a href="javascript:;" id="getProduk" class="btn btn-primary mb-3"><i class="fa fa-download"></i> Produk
                         baru</a>
-                    {{-- <p>Harga Jual Dicabang adalah harga jual </p> --}}
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th style="width: 10px">No</th>
-                                <th>Nama Barang</th>
-                                <th>Harga Jual Dicabang</th>
-                                <th>Stok Minimal</th>
-                                <th>Stok</th>
-                                <th>Status</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rs_barang as $key => $barang)
-                                <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
-                                    <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
-                                    <td>{{ $barang->barang_master->barang_nama }}</td>
-                                    <td class="text-center">Rp.
-                                        {{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td>
-                                    <td class="text-center">{{ $barang->barang_master->barang_stok_minimal }}</td>
-                                    <td class="text-center">{{ $barang->barang_stok }}</td>
-                                    <td class="text-center">
-                                        @if ($barang->barang_st == 'yes')
-                                            <span class="btn-sm btn-success">Digunakan</span>
-                                        @else
-                                            <span class="btn-sm btn-danger">Tidak Digunakan</span>
-                                        @endif
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('updatebarangCabang', [$barang->id]) }}" title="Ubah barang"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                    </td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 10px">No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Harga Jual Dicabang</th>
+                                    <th>Stok Minimal</th>
+                                    <th>Stok</th>
+                                    <th>Status</th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($rs_barang as $key => $barang)
+                                    <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
+                                        <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
+                                        <td>{{ $barang->barang_master->barang_nama }}</td>
+                                        <td class="text-center">Rp.
+                                            {{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td>
+                                        <td class="text-center">{{ $barang->barang_master->barang_stok_minimal }}</td>
+                                        <td class="text-center">{{ $barang->barang_stok }}</td>
+                                        <td class="text-center">
+                                            @if ($barang->barang_st == 'yes')
+                                                <span class="btn-sm btn-success">Digunakan</span>
+                                            @else
+                                                <span class="btn-sm btn-danger">Tidak Digunakan</span>
+                                            @endif
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('updatebarangCabang', [$barang->id]) }}" title="Ubah barang"
+                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">

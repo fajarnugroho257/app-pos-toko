@@ -45,7 +45,7 @@ class MasterbarangController extends Controller
     {
         $request->validate([
             'barang_nama' => 'required',
-            'barang_barcode' => 'required',
+            'barang_barcode' => 'required|string|min:13',
             'barang_harga_beli' => 'required',
             'barang_harga_jual' => 'required',
             'barang_stok_minimal' => 'required'
@@ -101,7 +101,7 @@ class MasterbarangController extends Controller
         }
         $request->validate([
             'id' => 'required',
-            'barang_barcode' => 'required',
+            'barang_barcode' => 'required|string|min:13',
             'old_barang_barcode' => 'required',
             'barang_nama' => 'required',
             'barang_harga_beli' => 'required',

@@ -61,39 +61,41 @@
                             </div>
                         </div>
                     </form>
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th style="width: 10px">No</th>
-                                <th>Nama Barang</th>
-                                <th>Barcode Barang</th>
-                                <th>Stok Minimal</th>
-                                <th>Harga Beli</th>
-                                <th>Harga Jual</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rs_barang as $key => $barang)
-                                <tr>
-                                    <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
-                                    <td>{{ $barang->barang_nama }}</td>
-                                    <td class="text-center">{{ $barang->barang_barcode }}</td>
-                                    <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
-                                    <td class="text-right">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}
-                                    <td class="text-right">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}
-                                    </td>
-                                    <td class="text-center">
-                                        <a href="{{ route('updateMasterBarang', [$barang->slug]) }}"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                        <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}"
-                                            onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                            class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
-                                    </td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 10px">No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Barcode Barang</th>
+                                    <th>Stok Minimal</th>
+                                    <th>Harga Beli</th>
+                                    <th>Harga Jual</th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($rs_barang as $key => $barang)
+                                    <tr>
+                                        <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
+                                        <td>{{ $barang->barang_nama }}</td>
+                                        <td class="text-center">{{ $barang->barang_barcode }}</td>
+                                        <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
+                                        <td class="text-right">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}
+                                        <td class="text-right">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}"
+                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                            <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}"
+                                                onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
+                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">

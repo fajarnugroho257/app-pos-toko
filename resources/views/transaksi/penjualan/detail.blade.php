@@ -1,5 +1,6 @@
 @extends('template.base.base')
 @section('content')
+    <script src="https://cdn.jsdelivr.net/npm/qz-tray/qz-tray.js"></script>
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
@@ -191,5 +192,107 @@
                 });
             });
         });
+    </script>
+    <script>
+        qz.api.setPromiseType(resolver => new Promise(resolver));
+
+        // Setting hashing SHA-256
+        qz.api.setSha256Type(data =>
+            crypto.subtle.digest("SHA-256", new TextEncoder().encode(data))
+                .then(hash => Array.from(new Uint8Array(hash))
+                    .map(byte => byte.toString(16).padStart(2, "0")).join(""))
+        );
+
+        // Hubungkan ke QZ Tray
+        qz.websocket.connect()
+            .then(() => console.log("QZ Tray connected"))
+            .catch(err => console.error("QZ Tray connection failed", err));
+
+        async function printThermal(element) {
+            try {
+                var cartId = $(element).data('cart_id');
+                console.log(cartId);
+                // Cek apakah printer tersedia
+                const printer = await qz.printers.find("POS-58");
+                console.log("Printer ditemukan:", printer);
+
+                // Ambil data cetak dari Laravel (pastikan endpoint sesuai)
+                const response = await fetch(`{{ route('getPrintData', '') }}/${cartId}`);
+                const printData = await response.json();
+
+                // Format tabel dengan padding
+                const pusat_nama = printData.pusat_nama;
+                const cabang_nama = printData.cabang_nama;
+                const trans_total = printData.trans_total;
+                const trans_bayar = printData.trans_bayar;
+                const trans_kembalian = printData.trans_kembalian;
+                //
+                const now = new Date();
+                //
+                let content = padCenter(pusat_nama, 30, ' ') + "\n";
+                content += padCenter(cabang_nama, 30, ' ') + "\n";
+                content += padCenter(`${now.toLocaleString()}`, 30, ' ') + "\n";
+                content += "=============================" + "\n";
+                content += "| Item     |Qty| Price       |" + "\n";
+                content += "=============================" + "\n";
+
+                printData.items.forEach(item => {
+                    let nama = item.cart_nama;
+                    let qty = String(item.cart_qty).padStart(1, ' ');
+                    let harga = `${formatRupiah(item.cart_harga_jual)}`.padEnd(8, ' ');
+                    let subTotal = `${formatRupiah(item.cart_subtotal)}`.padStart(11, ' ');
+                    content += `| ${nama}\n| ${harga} | ${qty} | ${subTotal} |\n`;
+                });
+
+                content += "=============================" + "\n";
+                content += "| Total".padEnd(13, ' ') +`${formatRupiah(trans_total)}`.padStart(15, ' ') + " |\n";
+                content += "-----------------------------" + "\n";
+                content += "| Bayar".padEnd(13, ' ') +`${formatRupiah(trans_bayar)}`.padStart(15, ' ') + " |\n";
+                content += "| Kembalian".padEnd(13, ' ') +`${formatRupiah(trans_kembalian)}`.padStart(15, ' ') + " |\n";
+                content += "=============================" + "\n";
+                content += padCenter('Terimakasih', 30, ' ') + "\n";
+                console.log(content);
+                // Konfigurasi printer
+                const config = qz.configs.create(printData.printer, {
+                    fontSize: printData['font-size'],
+                });
+
+                // Data yang akan dikirim ke printer
+                const data = [{
+                    type: 'raw',
+                    format: 'plain',
+                    data: content
+                }];
+
+                // Kirim perintah cetak
+                await qz.print(config, data);
+                console.log("Print job successful");
+            } catch (error) {
+                console.error("Error printing", error);
+                alert("Error during print: " + error.message);
+            }
+        }
+
+        function padCenter(text, width, padChar = ' ') {
+            let padding = width - text.length;
+            let padStart = Math.floor(padding / 2);
+            let padEnd = padding - padStart;
+            return padChar.repeat(padStart) + text + padChar.repeat(padEnd);
+        }
+
+        function formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(angka).replace(/\s+/g, '');
+        }
+
+        // Pastikan QZ Tray terputus saat halaman ditutup
+        window.onbeforeunload = function() {
+            if (qz.websocket.isActive()) {
+                qz.websocket.disconnect();
+            }
+        };
     </script>
 @endsection

@@ -97,15 +97,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/data-transaksi', [TransaksiController::class, 'index'])->name('dataPenduduk');
     //
     Route::get('/tray', [DumpTransaksiController::class, 'index'])->name('tray');
-    Route::get('/print-data', function () {
-        return response()->json([
-            'content' => "Test Print Thermal",
-            'options' => [
-                'printer' => "POS-58", // Sesuaikan nama printer
-                'font-size' => 12
-            ]
-        ]);
-    })->name('dataPrint');
 
     Route::get('/test', [DumpTransaksiController::class, 'cetakNota'])->name('cetakNota');
     // Route::get('/add-data-user', [UserController::class, 'create'])->name('tambahUser');
@@ -168,6 +159,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/show-nota', [TransaksiController::class, 'show_nota'])->name('show_nota');
         Route::post('/process-cari-transaksi', [TransaksiController::class, 'search'])->name('cariTransaksi');
         Route::get('/cetak-transaksi', [TransaksiController::class, 'cetakNotaTransaksi'])->name('cetakNotaTransaksi');
+        // QZ TRAY
+        Route::get('/get-data-print/{cart_id}', [TransaksiController::class, 'getPrintData'])->name('getPrintData');
     });
     // Log Barang
     Route::middleware(['hasRole.page:logBarang'])->group(function () {

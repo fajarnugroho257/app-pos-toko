@@ -21,6 +21,10 @@ class Cart extends Model
     {
         return $this->hasOne(Transaksi::class, 'cart_id', 'cart_id');
     }
+    public function toko_pusat()
+    {
+        return $this->belongsTo(TokoPusat::class, 'pusat_id', 'id');
+    }
     public function sum_cart_data()
     {
         $data = CartData::sum('cart_harga_beli');

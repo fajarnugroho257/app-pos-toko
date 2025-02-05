@@ -74,32 +74,34 @@
                         </div>
                     </form>
                     {{-- <p>Harga Jual Dicabang adalah harga jual </p> --}}
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th style="width: 10px">No</th>
-                                <th>Nama Barang</th>
-                                <th>Stok Saat Ini</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rs_brg_cabang as $key => $barang)
-                                <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
-                                    <td class="text-center">{{ $rs_brg_cabang->firstItem() + $key }}</td>
-                                    <td>{{ $barang->barang_master->barang_barcode }}
-                                        || {{ $barang->barang_master->barang_nama }}</td>
-                                    <td class="text-center">{{ $barang->barang_stok }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ route('showDetailLog', ['barang_cabang_id' => $barang->id, 'cabang_id' => $barang->toko_cabang->id, 'pusat_id' => $barang->toko_cabang->toko_pusat->id]) }}"
-                                            title="Ubah barang" class="btn btn-sm btn-primary"><i
-                                                class="fa fa-book-open"></i></a>
-                                    </td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 10px">No</th>
+                                    <th>Nama Barang</th>
+                                    <th>Stok Saat Ini</th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
-                            @endforeach
+                            </thead>
+                            <tbody>
+                                @foreach ($rs_brg_cabang as $key => $barang)
+                                    <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
+                                        <td class="text-center">{{ $rs_brg_cabang->firstItem() + $key }}</td>
+                                        <td>{{ $barang->barang_master->barang_barcode }}
+                                            || {{ $barang->barang_master->barang_nama }}</td>
+                                        <td class="text-center">{{ $barang->barang_stok }}</td>
+                                        <td class="text-center">
+                                            <a href="{{ route('showDetailLog', ['barang_cabang_id' => $barang->id, 'cabang_id' => $barang->toko_cabang->id, 'pusat_id' => $barang->toko_cabang->toko_pusat->id]) }}"
+                                                title="Ubah barang" class="btn btn-sm btn-primary"><i
+                                                    class="fa fa-book-open"></i></a>
+                                        </td>
+                                    </tr>
+                                @endforeach
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">

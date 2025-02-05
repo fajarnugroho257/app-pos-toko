@@ -35,4 +35,8 @@ class TokoPusat extends Model
     {
         return $this->hasMany(MasterBarang::class, 'pusat_id', 'id');
     }
+    public function cart()
+    {
+        return $this->hasMany(Cart::class, 'pusat_id', 'id');
+    }
 }
