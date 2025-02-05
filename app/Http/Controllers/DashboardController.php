@@ -47,7 +47,16 @@ class DashboardController extends Controller
             // kurang stok
             $kurangStok = BarangCabang::with('barang_master')
                 ->whereRelation('barang_master', 'pusat_id', $pusat_id)
-                ->where(DB::raw('CONVERT(barang_stok, SIGNED)'), '<', '75')
+                ->where(
+                    DB::raw('CONVERT(barang_stok, SIGNED)'),
+                    '<',
+                    function ($query) {
+                        $query->select('barang_stok_minimal')
+                            ->from('barang_master')
+                            ->whereColumn('barang_master.id', 'barang_cabang.barang_id')
+                            ->limit(1);
+                    }
+                )
                 ->where('cabang_id', 'LIKE', $res_cabang);
             // jlh cabang
             $jlhCabang = TokoCabang::where('pusat_id', $pusat_id)->count();
