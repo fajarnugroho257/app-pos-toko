@@ -140,18 +140,20 @@
                 </div>
 
                 <div class="modal-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Nama Barang</th>
-                                <th class="text-center">Harga</th>
-                                <th class="text-center">Jumlah</th>
-                                <th class="text-center">SubTotal</th>
-                            </tr>
-                        </thead>
-                        <tbody id="res-produk"></tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">No</th>
+                                    <th class="text-center">Nama Barang</th>
+                                    <th class="text-center">Harga</th>
+                                    <th class="text-center">Jumlah</th>
+                                    <th class="text-center">SubTotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="res-produk"></tbody>
+                        </table>
+                    </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button class="btn btn-default" data-dismiss="modal">Close</button>

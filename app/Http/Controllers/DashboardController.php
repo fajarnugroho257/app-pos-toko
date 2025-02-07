@@ -38,8 +38,8 @@ class DashboardController extends Controller
             //
             $res_cabang = $data['cabang_id'] == 'all' ? '%' : $data['cabang_id'];
             //
-            $dataUser = User::with('toko_pusat')->where('user_id', $user_id)->first();
-            $pusat_id = $dataUser->toko_pusat->id;
+            $dataUser = User::with('toko_pusat_user')->where('user_id', $user_id)->first();
+            $pusat_id = $dataUser->toko_pusat_user->pusat_id;
             // daftar cabang
             $rs_cabang = TokoCabang::where('pusat_id', $pusat_id)->get();
             // dd($rs_cabang);

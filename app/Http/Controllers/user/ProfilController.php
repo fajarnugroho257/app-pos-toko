@@ -16,11 +16,13 @@ class ProfilController extends Controller
      */
     public function index()
     {
-        $detail = User::with('toko_pusat')->where('user_id', Auth::user()->user_id)->first();
+        $toko_pusat_user = User::with('toko_pusat_user')->where('user_id', Auth::user()->user_id)->first();
+        $detail = TokoPusat::where('id', $toko_pusat_user->toko_pusat_user->pusat_id)->first();
         if (empty($detail)) {
             return redirect()->route('dashboard')->with('error', 'Data tidak ditemukan');
         }
         $data['detail'] = $detail;
+        $data['user_id'] = Auth::user()->user_id;
         // dd($detail);
         $data['title'] = 'Edit Profil';
         return view('user.profil.index', $data);
@@ -40,7 +42,8 @@ class ProfilController extends Controller
             'pusat_alamat' => 'required',
         ]);
         // dd($request->all());
-        $detail = TokoPusat::with('users')->where('id', $request->id)->where('user_id', $request->user_id)->first();
+        $toko_pusat_user = User::with('toko_pusat_user')->where('user_id', $request->user_id)->first();
+        $detail = TokoPusat::where('id', $toko_pusat_user->toko_pusat_user->pusat_id)->first();
         if ($request->hasFile('user_image')) {
             $request->validate([
                 'user_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',

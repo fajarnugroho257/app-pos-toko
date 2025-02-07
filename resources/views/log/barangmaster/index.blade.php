@@ -20,6 +20,15 @@
 
         <!-- Main content -->
         <section class="content">
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             @session('success')
                 <div class="alert alert-success">
                     {{ session('success') }}
@@ -35,19 +44,17 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('tambahMasterBarang') }}" class="btn btn-block btn-success"><i
-                                class="fa fa-plus"></i>
-                            Tambah</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('cariMasterBarang') }}" method="POST">
+                    <h4 class="mb-4 text-center">Daftar Log Barang Pusat</h4>
+                    <form action="{{ route('cariLogBarangCabang') }}" method="POST">
                         @method('POST')
                         @csrf
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
-                                <input type="text" name="barang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode" value="{{ $barang_nama }}">
+                                <input type="text" name="barang_cabang_nama" class="form-control" autofocus
+                                    value="{{ $barang_cabang_nama ?? '' }}" placeholder="Nama Barang / Barcode">
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
@@ -61,6 +68,7 @@
                             </div>
                         </div>
                     </form>
+                    {{-- <p>Harga Jual Dicabang adalah harga jual </p> --}}
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
@@ -70,9 +78,7 @@
                                     <th>Barcode Barang</th>
                                     <th>Stok Minimal</th>
                                     <th>Stok Tersedia</th>
-                                    <th>Harga Beli</th>
-                                    <th>Harga Jual</th>
-                                    <th style="width: 20%">Aksi</th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,19 +89,10 @@
                                         <td class="text-center">{{ $barang->barang_barcode }}</td>
                                         <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
                                         <td class="text-center">{{ $barang->barang_master_stok }}</td>
-                                        <td class="text-right">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}
-                                        <td class="text-right">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="Edit"
-                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="Kirim Barang Ke Cabang"
-                                                    class="btn btn-sm btn-secondary"><i class="fa fa-truck"></i></a>
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="History Barang Pusat"
+                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}"
                                                 class="btn btn-sm btn-info"><i class="fa fa-history"></i></a>
-                                            <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}" title="Hapus"
-                                                onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -106,7 +103,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-right">
-                        {{ $rs_barang->links() }}
+                        {{-- {{ $rs_brg_cabang->links() }} --}}
                     </ul>
                 </div>
                 <!-- /.card-footer-->

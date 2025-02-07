@@ -15,7 +15,7 @@ class TokocabangController extends Controller
      */
     public function index()
     {
-        $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         // dd($toko);
         $data['title'] = 'Data Toko Cabang';
         $data['rs_cabang'] = TokoCabang::with('toko_pusat')->where('pusat_id', $pusat->id)->paginate(10);
@@ -41,7 +41,7 @@ class TokocabangController extends Controller
             'cabang_nama' => 'required',
             'cabang_alamat' => 'required',
         ]);
-        $pusat_id = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat_id = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         TokoCabang::create([
             'pusat_id' => $pusat_id->id,
             'cabang_nama' => $request->cabang_nama,

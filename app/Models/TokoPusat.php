@@ -39,4 +39,8 @@ class TokoPusat extends Model
     {
         return $this->hasMany(Cart::class, 'pusat_id', 'id');
     }
+    public function toko_pusat_user()
+    {
+        return $this->hasOne(TokoPusatUser::class, 'pusat_id', 'id');
+    }
 }

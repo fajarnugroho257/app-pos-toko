@@ -19,7 +19,7 @@ class LogBarangController extends Controller
     public function index()
     {
         $data['title'] = 'Log Data Barang Cabang';
-        $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->get();
         // dd($data);
         return view('log.barang.index', $data);

@@ -64,18 +64,7 @@
                                         name="barang_nama" class="form-control" placeholder="Nama Barang">
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Barcode Barang</label>
-                                    <input type="text" value="{{ old('barang_barcode', $detail->barang_barcode) }}"
-                                        name="barang_barcode" class="form-control" placeholder="Barcode Barang">
-                                    <input type="hidden" value="{{ $detail->barang_barcode }}"
-                                    name="old_barang_barcode" class="form-control" placeholder="Barcode Barang">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label><span class="text-primary">Harga Beli</span></label>
                                     <input type="number"
@@ -83,7 +72,7 @@
                                         name="barang_harga_beli" class="form-control" placeholder="Harga Barang">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <label><span class="text-success">Harga Jual</span></label>
                                     <input type="number"
@@ -91,12 +80,58 @@
                                         name="barang_harga_jual" class="form-control" placeholder="Harga Barang">
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
-                                    <label><span class="text-success">Stok Minimal</span></label>
+                                    <label><span class="text-danger">Stok Minimal</span></label>
                                     <input type="number"
                                         value="{{ old('barang_stok_minimal', $detail->barang_stok_minimal) }}"
                                         name="barang_stok_minimal" class="form-control" placeholder="Stok Minimal">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="align-items: center">
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Stok Barang Pusat Saat Ini</label>
+                                    <input readonly type="number" id="barang_master_stok"
+                                        value="{{ old('barang_master_stok', $detail->barang_master_stok) }}" name="barang_master_stok"
+                                        class="form-control" placeholder="Stok Barang Pusat">
+                                    <small class="text-primary">Diisi secara otomatis</small>
+                                </div>
+                            </div>
+                            <div>
+                                <p style="font-size: 40px" class="text-danger">+</p>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Perubahan Stok</label>
+                                    <input type="number" id="barang_stok_perubahan"
+                                        value="{{ old('barang_stok_perubahan') }}" name="barang_stok_perubahan"
+                                        class="form-control" placeholder="Penambahan Stok Barang">
+                                    <small class="text-danger">*isikan 0, jika tidak berubah</small>
+                                </div>
+                            </div>
+                            <div>
+                                <p style="font-size: 40px" class="text-danger">=</p>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label>Hasil Stok Tersedia</label>
+                                    <input readonly type="number" id="barang_master_stok_hasil"
+                                        value="{{ old('barang_master_stok_hasil') }}" name="barang_master_stok_hasil"
+                                        class="form-control" placeholder="Hasil Stok Tersedia">
+                                    <small class="text-primary">Diisi secara otomatis</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Barcode Barang</label>
+                                    <input type="text" value="{{ old('barang_barcode', $detail->barang_barcode) }}"
+                                        name="barang_barcode" class="form-control" placeholder="Barcode Barang">
+                                    <input type="hidden" value="{{ $detail->barang_barcode }}"
+                                    name="old_barang_barcode" class="form-control" placeholder="Barcode Barang">
                                 </div>
                             </div>
                         </div>
@@ -113,4 +148,29 @@
         </section>
         <!-- /.content -->
     </div>
+@endsection
+@section('javascript')
+    <script>
+        $(document).ready(function() {
+            // Ketika nilai di input barang_stok_perubahan berubah
+            $('#barang_stok_perubahan').on('input', function() {
+                // Ambil nilai dari barang_stok
+                var stokSaatIni = parseFloat($('#barang_master_stok').val()) || 0;
+
+                // Ambil nilai dari barang_stok_perubahan
+                var penambahanStok = parseFloat($(this).val()) || 0;
+                // Cek apakah penambahanStok kurang dari 0
+                // if (penambahanStok < 0) {
+                //     penambahanStok = 0;
+                //     $(this).val(penambahanStok); // Reset nilai input ke 0
+                // }
+
+                // Hitung hasil stok tersedia
+                var hasilStokTersedia = stokSaatIni + penambahanStok;
+
+                // Tampilkan hasil di barang_master_stok_hasil
+                $('#barang_master_stok_hasil').val(hasilStokTersedia);
+            });
+        });
+    </script>
 @endsection

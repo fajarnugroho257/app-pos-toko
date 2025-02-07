@@ -29,7 +29,7 @@
                             <div class="card-body box-profile">
                                 <div class="text-center">
                                     <img class="profile-user-img img-fluid img-circle"
-                                        src="{{ asset('image/profil/' . $detail->toko_pusat->user_image) }}"
+                                        src="{{ asset('image/profil/' . $detail->user_image) }}"
                                         alt="User profile picture">
                                 </div>
                                 <h3 class="profile-username text-center">{{ Auth::user()->name }}</h3>
@@ -46,8 +46,8 @@
                                 <h3 class="card-title">{{ $title }}</h3>
                             </div>
                             <form action="{{ route('processUpdateProfil') }}" method="POST" enctype="multipart/form-data">
-                                <input type="hidden" value="{{ $detail->user_id }}" name="user_id">
-                                <input type="hidden" value="{{ $detail->toko_pusat->id }}" name="id">
+                                <input type="hidden" value="{{ $user_id }}" name="user_id">
+                                <input type="hidden" value="{{ $detail->id }}" name="id">
                                 @method('POST')
                                 @csrf
                                 <div class="card-body">
@@ -68,19 +68,19 @@
                                     <div class="form-group">
                                         <label>Nama Toko Pusat</label>
                                         <input type="text"
-                                            value="{{ old('pusat_nama', $detail->toko_pusat->pusat_nama) }}"
+                                            value="{{ old('pusat_nama', $detail->pusat_nama) }}"
                                             name="pusat_nama" class="form-control" placeholder="Nama Toko Pusat">
                                     </div>
                                     <div class="form-group">
                                         <label>Pemilik</label>
                                         <input type="text"
-                                            value="{{ old('pusat_pemilik', $detail->toko_pusat->pusat_pemilik) }}"
+                                            value="{{ old('pusat_pemilik', $detail->pusat_pemilik) }}"
                                             name="pusat_pemilik" class="form-control" placeholder="Pemilik">
                                     </div>
                                     <div class="form-group">
                                         <label>Alamat</label>
                                         <input type="text"
-                                            value="{{ old('pusat_alamat', $detail->toko_pusat->pusat_alamat) }}"
+                                            value="{{ old('pusat_alamat', $detail->pusat_alamat) }}"
                                             name="pusat_alamat" class="form-control" placeholder="Nama Toko Pusat">
                                     </div>
                                     <div class="form-group">

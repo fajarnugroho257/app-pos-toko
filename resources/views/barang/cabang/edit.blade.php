@@ -161,10 +161,10 @@
                 var penambahanStok = parseFloat($(this).val()) || 0;
 
                 // Cek apakah penambahanStok kurang dari 0
-                if (penambahanStok < 0) {
-                    penambahanStok = 0;
-                    $(this).val(penambahanStok); // Reset nilai input ke 0
-                }
+                // if (penambahanStok < 0) {
+                //     penambahanStok = 0;
+                //     $(this).val(penambahanStok); // Reset nilai input ke 0
+                // }
 
                 // Hitung hasil stok tersedia
                 var hasilStokTersedia = stokSaatIni + penambahanStok;

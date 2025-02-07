@@ -35,8 +35,10 @@ class AppServiceProvider extends ServiceProvider
                     $user_image = 'image/profil/default.jpg';
                 } else if ($user->role_id == 'R0004') {
                     // toko pusat
-                    $tokoPusat = TokoPusat::where('user_id', $user->user_id)->first();
+                    $tokoPusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', $user->user_id)->first();
                     $user_image = 'image/profil/' . $tokoPusat->user_image ?? '';
+                } else if ($user->role_id == 'R0006') {
+                    $user_image = 'image/profil/default.jpg';
                 }
                 $data['user_image'] = $user_image;
                 // dd($data);

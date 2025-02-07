@@ -6,6 +6,7 @@ use App\Http\Controllers\barang\MasterbarangController;
 use App\Http\Controllers\DumpTransaksiController;
 use App\Http\Controllers\laporan\LabarugiController;
 use App\Http\Controllers\log\LogBarangController;
+use App\Http\Controllers\log\LogBarangMasterController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\toko\TokocabangController;
 use App\Http\Controllers\toko\TokopusatController;
@@ -180,6 +181,13 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['hasRole.page:dashboard'])->group(function () {
         Route::get('/data-user-profil', [ProfilController::class, 'index'])->name('profil');
         Route::post('/process-update-data-user-profil', [ProfilController::class, 'update'])->name('processUpdateProfil');
+    });
+    // Log Barang Master
+    Route::middleware(['hasRole.page:logBarangMaster'])->group(function () {
+        Route::get('/data-log-barang-master', [LogBarangMasterController::class, 'index'])->name('logBarangMaster');
+        Route::get('/show-data-log-barang-master/{slug}', [LogBarangMasterController::class, 'show'])->name('showLogBarangMaster');
+        Route::get('/show-detail-data-log-barang-master/{barang_cabang_id}/{cabang_id}/{pusat_id}', [LogBarangMasterController::class, 'show_detail_log'])->name('showDetailLogBarangMaster');
+        Route::post('/process-cari-log-barang-cabang-master', [LogBarangMasterController::class, 'search'])->name('cariLogBarangMaster');
     });
     /* END YOUR ROUTE APLICATION */
 });

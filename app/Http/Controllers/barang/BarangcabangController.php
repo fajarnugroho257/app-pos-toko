@@ -20,7 +20,7 @@ class BarangcabangController extends Controller
     public function index()
     {
         $data['title'] = 'Data Barang Cabang';
-        $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->paginate(10);
         // dd($data);
         return view('barang.cabang.index', $data);
@@ -174,21 +174,20 @@ class BarangcabangController extends Controller
         $detail->barang_st = $request->barang_st;
         if ($detail->save()) {
             // insert to barang log
-            $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+            $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
             // if more than one
-            if ($request->barang_stok_penambahan > 0) {
-                BarangLog::create([
-                    'user_id' => Auth::user()->user_id,
-                    'pusat_id' => $pusat->id,
-                    'cabang_id' => $detail->cabang_id,
-                    'barang_cabang_id' => $request->id,
-                    'barang_awal' => $jlh_barang_sblm_tambah,
-                    'barang_perubahan' => $request->barang_stok_penambahan,
-                    'barang_akhir' => $request->barang_stok_hasil,
-                    'barang_st' => 'perubahan',
-                ]);
-            }
-
+            // if ($request->barang_stok_penambahan > 0) {
+            BarangLog::create([
+                'user_id' => Auth::user()->user_id,
+                'pusat_id' => $pusat->id,
+                'cabang_id' => $detail->cabang_id,
+                'barang_cabang_id' => $request->id,
+                'barang_awal' => $jlh_barang_sblm_tambah,
+                'barang_perubahan' => $request->barang_stok_penambahan,
+                'barang_akhir' => $request->barang_stok_hasil,
+                'barang_st' => 'perubahan',
+            ]);
+            // }
             return redirect()->route('updatebarangCabang', ['id' => $detail->id])->with('success', 'Data berhasil disimpan');
         }
     }

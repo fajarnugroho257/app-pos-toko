@@ -18,10 +18,10 @@ class AkunkasirController extends Controller
     public function index()
     {
         // dd(Auth::user());
-        $pusat = User::with('toko_pusat')->where('user_id', Auth::user()->user_id)->first();
-        // dd($pusat->toko_pusat->id);
+        $pusat = User::with('toko_pusat_user')->where('user_id', Auth::user()->user_id)->first();
+        // dd($pusat->toko_pusat_user->pusat_id);
         $data['title'] = 'Data Akun Kasir';
-        $data['rs_user'] = User::with('users_data.toko_cabang')->whereRelation('users_data.toko_cabang', 'pusat_id', $pusat->toko_pusat->id)->where('role_id', 'R0005')->paginate(5);
+        $data['rs_user'] = User::with('users_data.toko_cabang')->whereRelation('users_data.toko_cabang', 'pusat_id', $pusat->toko_pusat_user->pusat_id)->where('role_id', 'R0005')->paginate(5);
         // dd($data);
         return view('akun.kasir.index', $data);
     }
@@ -32,7 +32,7 @@ class AkunkasirController extends Controller
     public function create()
     {
         $data['title'] = 'Tambah Akun Kasir';
-        $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->get();
         return view('akun.kasir.add', $data);
     }
@@ -118,7 +118,7 @@ class AkunkasirController extends Controller
         $data['title'] = 'Ubah Akun Kasir';
         $detail = User::with('users_data')->where('user_id', $id)->first();
         $data['detail'] = $detail;
-        $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->get();
         // dd($detail);
         return view('akun.kasir.edit', $data);

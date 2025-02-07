@@ -82,4 +82,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo(Transaksi::class, 'user_id', 'user_id');
     }
+    public function toko_pusat_user()
+    {
+        return $this->hasOne(TokoPusatUser::class, 'user_id', 'user_id');
+    }
 }

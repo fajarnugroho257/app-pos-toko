@@ -24,7 +24,7 @@ class TransaksiController extends Controller
     public function index()
     {
         $data['title'] = 'Transaksi';
-        $pusat = TokoPusat::where('user_id', Auth::user()->user_id)->first();
+        $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->paginate(10);
         // dd($data);
         return view('transaksi.penjualan.index', $data);
