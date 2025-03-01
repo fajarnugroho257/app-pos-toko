@@ -10,7 +10,7 @@ class TokoPusat extends Model
 {
     use HasFactory, Sluggable;
     protected $table = 'toko_pusat';
-    protected $fillable = ['user_id', 'pusat_nama', 'slug', 'pusat_pemilik', 'pusat_alamat'];
+    protected $fillable = ['pusat_nama', 'slug', 'pusat_pemilik', 'pusat_alamat'];
     public function sluggable(): array
     {
         return [

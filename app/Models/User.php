@@ -86,4 +86,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(TokoPusatUser::class, 'user_id', 'user_id');
     }
+    public function barang_master_log()
+    {
+        return $this->hasMany(BarangMasterLog::class, 'user_id', 'user_id');
+    }
 }

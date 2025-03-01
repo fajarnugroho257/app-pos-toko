@@ -37,7 +37,7 @@ class BarangController extends Controller
         $queryValue = request('query');
         $cabang_id = request('cabang_id');
         $data = DB::select("SELECT a.id,
-                CONCAT(b.barang_barcode, ' | ', b.barang_nama, ' | ', a.cabang_barang_harga) AS name
+                CONCAT(b.barang_barcode, ' | ', b.barang_nama, ' | ', b.barang_harga_jual) AS name
                 FROM barang_cabang a
                 INNER JOIN barang_master b ON a.barang_id = b.id
                 WHERE a.cabang_id = ?

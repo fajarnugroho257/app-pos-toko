@@ -44,70 +44,59 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('barangCabang') }}" class="btn btn-block btn-success"><i
-                                class="fa fa-arrow-left"></i>
+                        <a href="{{ route('showBarangCabang', ['slug' => $cabang->slug]) }}"
+                            class="btn btn-block btn-success"><i class="fa fa-arrow-left"></i>
                             Kembali</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <h4 class="mb-4 text-center">Daftar Barang Untuk Cabang <b
+                    <h4 class="mb-4 text-center">Detail Log Barang <span
+                            class="text-primary"><b>{{ $barang->barang_master->barang_nama }}</b></span> <br />Cabang <b
                             class="text-danger">{{ $cabang->cabang_nama }}</b></h4>
-                    <form action="{{ route('cariBarangCabang') }}" method="POST">
-                        <input type="hidden" name="id" value="{{ $cabang->id }}">
-                        @method('POST')
-                        @csrf
-                        <div class="row mb-3">
-                            <div class="col-md-4 ml-0">
-                                <input type="text" name="barang_cabang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode" value="{{ $barang_cabang_nama }}">
-                            </div>
-                            <div class="d-flex item-center">
-                                <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
-                                        class="fa fa-search"></i>
-                                    Cari</button>
-                                <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
-                                        class="fa fa-times"></i>
-                                    Reset</button>
-                            </div>
-                        </div>
-                    </form>
-                    <a href="javascript:;" id="getProduk" class="btn btn-primary mb-3"><i class="fa fa-download"></i> Produk
-                        baru</a>
+                    {{-- <p>Harga Jual Dicabang adalah harga jual </p> --}}
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <thead>
                                 <tr class="text-center">
                                     <th style="width: 10px">No</th>
                                     <th>Nama Barang</th>
-                                    {{-- <th>Harga Jual Dicabang</th> --}}
-                                    <th>Stok Minimal</th>
-                                    <th>Stok Cabang</th>
                                     <th>Status</th>
-                                    <th style="width: 10%">Aksi</th>
+                                    <th>Stok Awal</th>
+                                    <th>Perubahan</th>
+                                    <th>Stok Akhir</th>
+                                    <th>Date Time</th>
+                                    <th>Nama Petugas</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($rs_barang as $key => $barang)
-                                    <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
-                                        <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
-                                        <td>{{ $barang->barang_master->barang_nama }}</td>
-                                        {{-- <td class="text-center">Rp.{{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td> --}}
-                                        <td class="text-center">{{ $barang->barang_master->barang_stok_minimal }}</td>
-                                        <td class="text-center">{{ $barang->barang_stok }}</td>
+                                @foreach ($rs_barang_log as $key => $barang_log)
+                                    <tr>
+                                        <td class="text-center">{{ $rs_barang_log->firstItem() + $key }}</td>
+                                        <td>{{ $barang_log->barang_cabang->barang_master->barang_nama }}</td>
                                         <td class="text-center">
-                                            @if ($barang->barang_st == 'yes')
-                                                <span class="btn-sm btn-success">Digunakan</span>
+                                            @if ($barang_log->barang_st == 'transaksi')
+                                                <span class="btn btn-danger">Terjual</span>
                                             @else
-                                                <span class="btn-sm btn-danger">Tidak Digunakan</span>
+                                                <span class="btn btn-success">Stok Masuk</span>
                                             @endif
                                         </td>
+                                        <td class="text-center">{{ $barang_log->barang_awal }}</td>
                                         <td class="text-center">
-                                            <a href="{{ route('updatebarangCabang', [$barang->id]) }}" title="Ubah barang"
-                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                            <a href="{{ route('showDetailCabangLog', ['barang_cabang_id' => $barang->id, 'cabang_id' => $barang->toko_cabang->id, 'pusat_id' => $barang->toko_cabang->toko_pusat->id]) }}" title="History Barang Pusat" class="btn btn-sm btn-info"><i class="fa fa-history"></i></a>
+                                            @if ($barang_log->barang_st == 'transaksi')
+                                                {{ $barang_log->barang_transaksi }} <i class="text-danger fa fa-arrow-up"></i>
+                                            @else
+                                                {{ $barang_log->barang_perubahan }}
+                                                <i class="text-success fa fa-arrow-down"></i>
+                                            @endif
                                         </td>
+                                        <td class="text-center">{{ $barang_log->barang_akhir }}</td>
+                                        <td class="text-center">
+                                            {{ \Carbon\Carbon::parse($barang_log->created_at)->translatedFormat('d F Y H:i') }}
+                                        </td>
+                                        <td class="text-center">{{ $barang_log->users->name }}</td>
                                     </tr>
                                 @endforeach
+
                             </tbody>
                         </table>
                     </div>
@@ -115,7 +104,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-right">
-                        {{ $rs_barang->links() }}
+                        {{ $rs_barang_log->links() }}
                     </ul>
                 </div>
                 <!-- /.card-footer-->
@@ -134,7 +123,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('processAddBarangCabang') }}" method="POST" onsubmit="return confirm('Apakah anda yakin memilih data tersebut ..?')">
+                <form action="{{ route('processAddBarangCabang') }}" method="POST">
                     <input type="hidden" name="cabang_id" value="{{ $cabang->id }}">
                     @method('POST')
                     @csrf
@@ -144,12 +133,8 @@
                                 <tr>
                                     <th class="text-center">No</th>
                                     <th class="text-center">Nama Barang</th>
-                                    <th class="text-center">Stok</th>
-                                    <th class="text-center">Satuan Harga Beli</th>
-                                    <th class="text-center">Satuan Harga Jual</th>
-                                    <th class="text-center">Grosir Min Pembelian</th>
-                                    <th class="text-center">Grosir Harga Jual</th>
-                                    <th class="text-center">Pilih</th>
+                                    <th class="text-center">Harga Beli</th>
+                                    <th class="text-center">Harga Jual</th>
                                 </tr>
                             </thead>
                             <tbody id="res-produk"></tbody>

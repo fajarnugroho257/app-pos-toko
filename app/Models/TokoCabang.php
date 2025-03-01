@@ -33,4 +33,8 @@ class TokoCabang extends Model
     {
         return $this->hasMany(UserData::class, 'cabang_id', 'id');
     }
+    public function master_barang_log()
+    {
+        return $this->hasMany(BarangMasterLog::class, 'cabang_id', 'id');
+    }
 }

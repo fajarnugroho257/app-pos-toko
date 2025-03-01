@@ -35,43 +35,45 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('tambahTokoCabang') }}" class="btn btn-block btn-success"><i
+                        <a href="{{ route('tambahUserPusat') }}" class="btn btn-block btn-success"><i
                                 class="fa fa-plus"></i>
                             Tambah</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr class="text-center">
-                                <th style="width: 10px">No</th>
-                                <th>Toko Cabang</th>
-                                <th>Alamat</th>
-                                <th style="width: 10%">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($rs_cabang as $key => $cabang)
-                                <tr>
-                                    <td class="text-center">{{ $rs_cabang->firstItem() + $key }}</td>
-                                    <td>{{ $cabang->cabang_nama }}</td>
-                                    <td class="text-center">{{ $cabang->cabang_alamat }}</td>
-                                    <td class="text-center">
-                                        <a href="{{ route('updateTokoCabang', [$cabang->slug]) }}"
-                                            class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                        {{-- <a href="{{ route('processDeletetokoCabang', [$cabang->slug]) }}"
-                                            onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                            class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> --}}
-                                    </td>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr class="text-center">
+                                    <th style="width: 10px">No</th>
+                                    <th>Pusat</th>
+                                    <th>Nama</th>
+                                    <th style="width: 10%">Aksi</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($rs_user as $key => $user)
+                                    <tr>
+                                        <td class="text-center">{{ $rs_user->firstItem() + $key }}</td>
+                                        <td class="text-center">{{ $user->toko_pusat->pusat_nama }}</td>
+                                        <td class="text-center">{{ $user->user->name }}</td>
+                                        <td class="text-center">
+                                            <a href="{{ route('UpdateAkunKasir', [$user->id]) }}"
+                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
+                                            {{-- <a href="{{ route('deleteAkunKasir', [$user->id]) }}"
+                                                onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
+                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> --}}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer clearfix">
                     <ul class="pagination pagination-sm m-0 float-right">
-                        {{ $rs_cabang->links() }}
+                        {{ $rs_user->links() }}
                     </ul>
                 </div>
                 <!-- /.card-footer-->

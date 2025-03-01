@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\TokoPusat;
 use App\Models\User;
+use App\Models\UserData;
 use Auth;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
@@ -30,15 +31,27 @@ class AppServiceProvider extends ServiceProvider
             if (Auth::check()) {
                 $user = User::where('user_id', Auth::user()->user_id)->first();
                 // check
+                // $user_image = 'image/profil/default.jpg';
+                // if ($user->role_id == 'R0001') {
+                //     $user_image = 'image/profil/default.jpg';
+                // } else if ($user->role_id == 'R0004') {
+                //     // toko pusat
+                //     $tokoPusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', $user->user_id)->first();
+                //     $user_image = 'image/profil/' . $tokoPusat->user_image ?? '';
+                // } else if ($user->role_id == 'R0006') {
+                //     $user_image = 'image/profil/default.jpg';
+                // }
                 $user_image = 'image/profil/default.jpg';
                 if ($user->role_id == 'R0001') {
                     $user_image = 'image/profil/default.jpg';
-                } else if ($user->role_id == 'R0004') {
-                    // toko pusat
-                    $tokoPusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', $user->user_id)->first();
-                    $user_image = 'image/profil/' . $tokoPusat->user_image ?? '';
-                } else if ($user->role_id == 'R0006') {
-                    $user_image = 'image/profil/default.jpg';
+                } else {
+                    // users data
+                    $users_data = UserData::where('user_id', $user->user_id)->first();
+                    if (!empty($users_data)) {
+                        $user_image = 'image/profil/' . $users_data->user_image ?? '';
+                    } else {
+                        $user_image = 'image/profil/default.jpg';
+                    }
                 }
                 $data['user_image'] = $user_image;
                 // dd($data);

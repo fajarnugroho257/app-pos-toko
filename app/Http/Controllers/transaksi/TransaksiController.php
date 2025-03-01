@@ -109,6 +109,7 @@ class TransaksiController extends Controller
         $grandTotal = 0;
         if (!empty($cartData)) {
             foreach ($cartData as $key => $value) {
+                $cart_diskon = $value['cart_diskon'] == 'yes' ? 'Grosir' : '';
                 $grandTotal += $value['cart_subtotal'];
                 //
                 $html .= '<tr>';
@@ -118,8 +119,9 @@ class TransaksiController extends Controller
                 $html .= '  <td>';
                 $html .= $value['cart_nama'];
                 $html .= '  </td>';
-                $html .= '  <td class="text-right">';
-                $html .= '      Rp. ' . number_format($value['cart_harga_jual'], 0, ',', '.');
+                $html .= '  <td class="d-flex justify-content-between ">';
+                $html .= '      <div class="text-danger"><b>' . $cart_diskon . '</b></div>';
+                $html .= '      <div>Rp. ' . number_format($value['cart_harga_jual'], 0, ',', '.') . '</div>';
                 $html .= '  </td>';
                 $html .= '  <td class="text-center">';
                 $html .= $value['cart_qty'];
@@ -276,7 +278,7 @@ class TransaksiController extends Controller
         }
 
         // cart data
-        $cartData = CartData::select('cart_harga_jual', 'cart_nama', 'cart_qty', 'cart_subtotal')
+        $cartData = CartData::select('cart_harga_jual', 'cart_nama', 'cart_qty', 'cart_subtotal', 'cart_diskon')
             ->where('cart_id', $transaksiCart->cart_id)
             ->orderBy('cart_urut', 'DESC')->get();
 

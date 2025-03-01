@@ -5,6 +5,7 @@ namespace App\Http\Controllers\barang;
 use App\Http\Controllers\Controller;
 use App\Models\BarangCabang;
 use App\Models\BarangLog;
+use App\Models\BarangMasterLog;
 use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
@@ -94,6 +95,7 @@ class BarangcabangController extends Controller
         $barang_tersedia = BarangCabang::where('cabang_id', $cabang->id)->pluck('barang_id')->toArray();
         // dd($barang_tersedia);
         $data = MasterBarang::where('pusat_id', $cabang->pusat_id)
+            ->where('barang_master_stok', '>', 0)
             ->whereNotIn('id', values: $barang_tersedia)
             ->get();
         // dd($data);
@@ -108,11 +110,20 @@ class BarangcabangController extends Controller
                 $html .= '  <td>';
                 $html .= $value['barang_nama'];
                 $html .= '  </td>';
-                $html .= '  <td>';
+                $html .= '  <td class="text-center">';
+                $html .= $value['barang_master_stok'];
+                $html .= '  </td>';
+                $html .= '  <td class="text-right">';
                 $html .= '      Rp. ' . number_format($value['barang_harga_beli'], 0, ',', '.');
                 $html .= '  </td>';
-                $html .= '  <td>';
+                $html .= '  <td class="text-right">';
                 $html .= '      Rp. ' . number_format($value['barang_harga_jual'], 0, ',', '.');
+                $html .= '  </td>';
+                $html .= '  <td class="text-center">';
+                $html .= $value['barang_grosir_pembelian'];
+                $html .= '  </td>';
+                $html .= '  <td class="text-right">';
+                $html .= '      Rp. ' . number_format($value['barang_grosir_harga_jual'], 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '  <td class="text-center">';
                 $html .= '      <input type="checkbox" name="barang_id[]" value="' . $value['id'] . '">';
@@ -144,6 +155,7 @@ class BarangcabangController extends Controller
     {
         $data['title'] = 'Ubah Data Barang Cabang';
         $detail = BarangCabang::with('barang_master', 'toko_cabang')->find($id);
+        // dd($detail);
         if (empty($detail)) {
             return redirect()->route('barangCabang')->with('error', 'Data tidak ditemukan');
         }
@@ -159,7 +171,7 @@ class BarangcabangController extends Controller
         $request->validate([
             'id' => 'required',
             'barang_stok' => 'required|numeric',
-            'cabang_barang_harga' => 'required|numeric',
+            // 'cabang_barang_harga' => 'required|numeric',
             'barang_st' => 'required',
             'barang_stok_penambahan' => 'required|numeric',
             'barang_stok_hasil' => 'required|numeric',
@@ -170,11 +182,32 @@ class BarangcabangController extends Controller
         }
         $jlh_barang_sblm_tambah = $detail->barang_stok;
         $detail->barang_stok = $request->barang_stok_hasil;
-        $detail->cabang_barang_harga = $request->cabang_barang_harga;
+        // $detail->cabang_barang_harga = $request->cabang_barang_harga;
+        $detail->cabang_barang_harga = null;
         $detail->barang_st = $request->barang_st;
         if ($detail->save()) {
+            // update stok master / pusat
+            $m_barang = MasterBarang::find($detail->barang_id);
+            $m_sblm_perubahan = $m_barang->barang_master_stok;
+            $m_barang->barang_master_stok = $m_sblm_perubahan - $request->barang_stok_penambahan;
+            if ($request->barang_stok_penambahan !== 0) {
+                $m_barang->save();
+            }
             // insert to barang log
             $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
+            // insert log barang master
+            $m_stok_awal = $request->barang_master_stok;
+            $m_akhir_stok = $m_stok_awal - $request->barang_stok_penambahan;
+            BarangMasterLog::create([
+                'user_id' => Auth::user()->user_id,
+                'pusat_id' => $pusat->id,
+                'cabang_id' => $request->cabang_id,
+                'barang_master_id' => $request->barang_master_id,
+                'barang_master_awal' => $request->barang_master_stok,
+                'barang_master_perubahan' => '-' . $request->barang_stok_penambahan,
+                'barang_master_akhir' => $m_akhir_stok,
+                'barang_st' => 'pengiriman',
+            ]);
             // if more than one
             // if ($request->barang_stok_penambahan > 0) {
             BarangLog::create([
@@ -191,6 +224,32 @@ class BarangcabangController extends Controller
             return redirect()->route('updatebarangCabang', ['id' => $detail->id])->with('success', 'Data berhasil disimpan');
         }
     }
+
+    public function show_detail_log(string $barang_cabang_id, string $cabang_id, string $pusat_id)
+    {
+        $data['title'] = 'Detail Log Barang Cabang';
+        $cabang = TokoCabang::find($cabang_id);
+        if (empty($cabang)) {
+            return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
+        }
+        $barang = BarangCabang::with('barang_master')->find($barang_cabang_id);
+        if (empty($barang)) {
+            return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
+        }
+        $data['cabang'] = $cabang;
+        $data['barang'] = $barang;
+        // log barang
+        $barangLog = BarangLog::with(['barang_cabang.barang_master', 'users'])
+            ->where('barang_cabang_id', $barang_cabang_id)
+            ->where('cabang_id', $cabang_id)
+            ->where('pusat_id', $pusat_id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(50);
+        $data['rs_barang_log'] = $barangLog;
+        // dd($data);
+        return view('barang.cabang.log_barang', $data);
+    }
+
     public function search(Request $request)
     {
         $cabang = TokoCabang::find($request->id);

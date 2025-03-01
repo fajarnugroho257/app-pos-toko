@@ -34,7 +34,8 @@
                         </div>
                         <div class="col-lg-2">
                             <select name="cabang_id" id="" class="form-control">
-                                <option value="all">Semua Cabang</option>
+                                <option value="all" @selected($cabang_id == 'all')>Semua Cabang</option>
+                                <option value="gudang" @selected($cabang_id == 'gudang')>Gudang Pusat</option>
                                 @foreach ($rs_cabang as $cabang)
                                     <option @selected($cabang_id == $cabang->id) value="{{ $cabang->id }}">
                                         {{ $cabang->cabang_nama }}</option>
@@ -102,7 +103,11 @@
                         <!-- small box -->
                         <div class="small-box bg-danger">
                             <div class="inner">
-                                <h3>{{ $kurangStok }}</h3>
+                                @if ($cabang_id != 'gudang')
+                                    <h3>{{ $kurangStok }} </h3>
+                                @else
+                                    <h3>{{ $kurangStokGudang }} </h3>
+                                @endif
                                 <p>Stok Barang Minim</p>
                             </div>
                             <div class="icon">
@@ -126,11 +131,18 @@
                                 <a class="nav-item nav-link" id="product-comments-tab" data-toggle="tab"
                                     href="#product-comments" role="tab" aria-controls="product-comments"
                                     aria-selected="false">Transaksi</a>
-                                <a class="nav-item nav-link" id="most-buy-tab" data-toggle="tab" href="#most-buy"
-                                    role="tab" aria-controls="most-buy" aria-selected="false">Barang Paling Laku</a>
-                                <a class="nav-item nav-link" id="product-rating-tab" data-toggle="tab"
-                                    href="#product-rating" role="tab" aria-controls="product-rating"
-                                    aria-selected="false">Stok Minim</a>
+                                @if ($cabang_id != 'gudang')
+                                    <a class="nav-item nav-link" id="most-buy-tab" data-toggle="tab" href="#most-buy"
+                                        role="tab" aria-controls="most-buy" aria-selected="false">Barang Paling
+                                        Laku</a>
+                                    <a class="nav-item nav-link" id="product-rating-tab" data-toggle="tab"
+                                        href="#product-rating" role="tab" aria-controls="product-rating"
+                                        aria-selected="false">Stok Minim</a>
+                                @else
+                                    <a class="nav-item nav-link" id="stok-minim-gudang-tab" data-toggle="tab"
+                                        href="#stok-minim-gudang" role="tab" aria-controls="stok-minim-gudang"
+                                        aria-selected="false">Stok Minim Gudang</a>
+                                @endif
                             </div>
                         </nav>
                         <div class="tab-content p-3" id="nav-tabContent">
@@ -155,6 +167,7 @@
                                         <thead>
                                             <tr class="text-center">
                                                 <th style="width: 10px">No</th>
+                                                <th>Cabang</th>
                                                 <th>Nama Barang</th>
                                                 <th>Jumlah</th>
                                             </tr>
@@ -166,6 +179,7 @@
                                             @foreach ($rs_terbanyak as $key => $terbanyak)
                                                 <tr>
                                                     <td class="text-center">{{ $no++ }}</td>
+                                                    <td>{{ $terbanyak->barang_cabang->toko_cabang->cabang_nama }}</td>
                                                     <td>{{ $terbanyak->barang_cabang->barang_master->barang_nama }}</td>
                                                     <td class="text-center">{{ $terbanyak->cart_qty }}</td>
                                                 </tr>
@@ -184,8 +198,9 @@
                                         <thead>
                                             <tr class="text-center">
                                                 <th style="width: 10px">No</th>
+                                                <th>Cabang</th>
                                                 <th>Nama Barang</th>
-                                                <th>Harga Jual Dicabang</th>
+                                                {{-- <th>Harga Jual</th> --}}
                                                 <th>Stok Minimal</th>
                                                 <th>Stok</th>
                                                 <th>Status</th>
@@ -198,12 +213,11 @@
                                             @foreach ($rs_stok as $key => $barang)
                                                 <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
                                                     <td class="text-center">{{ $no++ }}</td>
+                                                    <td>{{ $barang->toko_cabang->cabang_nama }}</td>
                                                     <td>{{ $barang->barang_master->barang_nama }}</td>
-                                                    <td class="text-center">Rp.
-                                                        {{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td>
+                                                    {{-- <td class="text-center">Rp. {{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td> --}}
                                                     <td class="text-center">
-                                                        {{ $barang->barang_master->barang_stok_minimal }}
-                                                    </td>
+                                                        {{ $barang->barang_master->barang_stok_minimal }}</td>
                                                     <td class="text-center">{{ $barang->barang_stok }}</td>
                                                     <td class="text-center">
                                                         @if ($barang->barang_st == 'yes')
@@ -212,6 +226,37 @@
                                                             <span class="btn-sm btn-danger">Tidak Digunakan</span>
                                                         @endif
                                                     </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="stok-minim-gudang" role="tabpanel"
+                                aria-labelledby="product-rating-tab">
+                                <div class="text-center mb-4">
+                                    <h5>Stok Minimum</h5>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                            <tr class="text-center">
+                                                <th style="width: 10px">No</th>
+                                                <th>Nama Barang</th>
+                                                <th>Stok Minimal</th>
+                                                <th>Stok</th>
+                                            </tr>
+                                        </thead>
+                                        @php
+                                            $no = 1;
+                                        @endphp
+                                        <tbody>
+                                            @foreach ($rs_stok_gudang as $key => $stok_gudang)
+                                                <tr @if ($stok_gudang->barang_master_stok < $stok_gudang->barang_stok_minimal) class="table-danger" @endif>
+                                                    <td class="text-center">{{ $no++ }}</td>
+                                                    <td>{{ $stok_gudang->barang_nama }}</td>
+                                                    <td>{{ $stok_gudang->barang_stok_minimal }}</td>
+                                                    <td>{{ $stok_gudang->barang_master_stok }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

@@ -68,34 +68,41 @@
                                     <th style="width: 10px">No</th>
                                     <th>Nama Barang</th>
                                     <th>Barcode Barang</th>
+                                    <th class="table-warning">Satuan Harga Beli</th>
                                     <th>Stok Minimal</th>
                                     <th>Stok Tersedia</th>
-                                    <th>Harga Beli</th>
-                                    <th>Harga Jual</th>
-                                    <th style="width: 20%">Aksi</th>
+                                    <th class="table-success">Satuan Harga Jual</th>
+                                    <th>Minimal Pembelian Grosir</th>
+                                    <th class="table-info">Grosir Harga Jual</th>
+                                    <th style="width: 12%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($rs_barang as $key => $barang)
-                                    <tr>
+                                @php
+                                $stStok = '';
+                                    if ($barang->barang_master_stok < $barang->barang_stok_minimal) {
+                                        $stStok = 'table-danger';
+                                    }
+                                @endphp
+                                    <tr class="{{$stStok}}">
                                         <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
                                         <td>{{ $barang->barang_nama }}</td>
                                         <td class="text-center">{{ $barang->barang_barcode }}</td>
+                                        <td class="text-right table-warning">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
                                         <td class="text-center">{{ $barang->barang_master_stok }}</td>
-                                        <td class="text-right">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}
-                                        <td class="text-right">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}
-                                        </td>
+                                        <td class="text-right table-success">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}</td>
+                                        <td class="text-right">{{$barang->barang_grosir_pembelian}}</td>
+                                        <td class="text-right table-info">Rp.{{ number_format($barang->barang_grosir_harga_jual, 0, ',', '.') }}</td>
                                         <td class="text-center">
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="Edit"
+                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="Edit / Menambah Stok"
                                                 class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="Kirim Barang Ke Cabang"
-                                                    class="btn btn-sm btn-secondary"><i class="fa fa-truck"></i></a>
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="History Barang Pusat"
+                                            <a href="{{ route('historyMasterBarang', [$barang->id]) }}" title="History Barang Pusat"
                                                 class="btn btn-sm btn-info"><i class="fa fa-history"></i></a>
-                                            <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}" title="Hapus"
+                                            {{-- <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}" title="Hapus"
                                                 onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
+                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> --}}
                                         </td>
                                     </tr>
                                 @endforeach

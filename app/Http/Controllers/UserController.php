@@ -13,7 +13,7 @@ class UserController extends Controller
     public function index()
     {
         $data['title'] = 'Data Pengguna Aplikasi';
-        $data['rs_user'] = User::paginate(5);
+        $data['rs_user'] = User::paginate(20);
         return view('user.index', $data);
     }
 

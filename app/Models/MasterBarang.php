@@ -10,7 +10,24 @@ class MasterBarang extends Model
 {
     use HasFactory, Sluggable;
     protected $table = 'barang_master';
-    protected $fillable = ['pusat_id', 'barang_barcode', 'slug', 'barang_nama', 'barang_stok_minimal', 'barang_harga_beli', 'barang_harga_jual'];
+    protected $fillable = [
+        'pusat_id',
+        'barang_barcode',
+        'slug',
+        'barang_nama',
+        'barang_stok_minimal',
+        'barang_harga_beli',
+        'barang_harga_jual',
+        'barang_master_stok',
+        'barang_master_stok_hasil',
+        'barang_stok_perubahan',
+        'barang_grosir_harga_jual',
+        'barang_grosir_keuntungan',
+        'barang_grosir_persentase',
+        'barang_grosir_pembelian',
+        'barang_keuntungan',
+        'barang_persentase'
+    ];
     public function sluggable(): array
     {
         return [
@@ -28,5 +45,9 @@ class MasterBarang extends Model
     public function barang_cabang()
     {
         return $this->hasMany(BarangCabang::class, 'barang_id', 'id');
+    }
+    public function barang_master_log()
+    {
+        return $this->hasMany(BarangMasterLog::class, 'barang_master_id', 'id');
     }
 }

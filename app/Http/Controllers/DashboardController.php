@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\BarangCabang;
+use App\Models\BarangMasterLog;
 use App\Models\Cart;
 use App\Models\CartData;
+use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\Transaksi;
 use App\Models\User;
@@ -36,16 +38,18 @@ class DashboardController extends Controller
             $data['endDateDash'] = empty($endDateDash) ? date('Y-m-d') : $endDateDash;
             $data['cabang_id'] = empty($cabang_id) ? 'all' : $cabang_id;
             //
-            $res_cabang = $data['cabang_id'] == 'all' ? '%' : $data['cabang_id'];
+            $res_cabang = $data['cabang_id'] == 'all' ? '%' : ($data['cabang_id'] == 'gudang' ? '%' : $data['cabang_id']);
+            // echo $res_cabang;
             //
             $dataUser = User::with('toko_pusat_user')->where('user_id', $user_id)->first();
+            // dd($dataUser);
             $pusat_id = $dataUser->toko_pusat_user->pusat_id;
             // daftar cabang
             $rs_cabang = TokoCabang::where('pusat_id', $pusat_id)->get();
             // dd($rs_cabang);
             $data['rs_cabang'] = $rs_cabang;
             // kurang stok
-            $kurangStok = BarangCabang::with('barang_master')
+            $kurangStok = BarangCabang::with(['barang_master', 'toko_cabang'])
                 ->whereRelation('barang_master', 'pusat_id', $pusat_id)
                 ->where(
                     DB::raw('CONVERT(barang_stok, SIGNED)'),
@@ -68,6 +72,11 @@ class DashboardController extends Controller
             $data['kurangStok'] = $kurangStok->count();
             $data['rs_stok'] = $kurangStok->get();
             $data['jlhCabang'] = $jlhCabang;
+            // stok minim digudang
+            $kurangStokGudang = MasterBarang::where('pusat_id', $pusat_id)
+                ->where(DB::raw('CONVERT(barang_master_stok, SIGNED)'), '<=', DB::raw('CONVERT(barang_stok_minimal, SIGNED)'));
+            $data['rs_stok_gudang'] = $kurangStokGudang->get();
+            $data['kurangStokGudang'] = $kurangStokGudang->count();
             // grafik
             $period = CarbonPeriod::create($data['startDateDash'], $data['endDateDash']);
             foreach ($period as $key => $date) {
@@ -79,7 +88,7 @@ class DashboardController extends Controller
             $data['tranMonth'] = $tranMonth;
             $rs_terbanyak = CartData::
                 select(DB::raw('SUM(cart_qty) as cart_qty'), 'barang_cabang_id')
-                ->with(['barang_cabang.barang_master'])
+                ->with(['barang_cabang.barang_master', 'barang_cabang.toko_cabang'])
                 ->whereRelation('cart', 'pusat_id', $pusat_id)
                 ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang)
                 ->whereRelation('transaksi', DB::raw('DATE(trans_date)'), '>=', $data['startDateDash'])

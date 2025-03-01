@@ -66,26 +66,82 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
+                                    <label><span class="text-danger">Stok Minimal</span></label>
+                                    <input type="text"
+                                        value="{{ old('barang_stok_minimal', $detail->barang_stok_minimal) }}"
+                                        name="barang_stok_minimal" class="form-control" placeholder="Stok Minimal" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group">
                                     <label><span class="text-primary">Harga Beli</span></label>
-                                    <input type="number"
+                                    <input type="text"
                                         value="{{ old('barang_harga_beli', $detail->barang_harga_beli) }}"
-                                        name="barang_harga_beli" class="form-control" placeholder="Harga Barang">
+                                        name="barang_harga_beli" id="barang_harga_beli" class="form-control" placeholder="Harga Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="background-color: rgba(126, 124, 124, 0.427)">
+                            <div class="col-md-2" style="display: flex; align-items: center;">
+                                <h4>Harga Satuan</h4>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><span class="text-dark">%</span></label>
+                                    <input type="text" required
+                                        value="{{ old('barang_persentase', $detail->barang_persentase) }}"
+                                        name="barang_persentase" id="barang_persentase" class="form-control" placeholder="Persentase Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><span class="text-primary">Keuntungan</span></label>
+                                    <input type="number" readonly required
+                                        value="{{ old('barang_keuntungan', $detail->barang_keuntungan) }}"
+                                        name="barang_keuntungan" id="barang_keuntungan" class="form-control" placeholder="Keuntungan Barang">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label><span class="text-success">Harga Jual</span></label>
-                                    <input type="number"
-                                        value="{{ old('barang_harga_jual', $detail->barang_harga_jual) }}"
-                                        name="barang_harga_jual" class="form-control" placeholder="Harga Barang">
+                                    <input type="text" value="{{ old('barang_harga_jual', $detail->barang_harga_jual) }}" required name="barang_harga_jual" id="barang_harga_jual" class="form-control" placeholder="Harga Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" style="background-color: rgba(227, 214, 214, 0.427)">
+                            <div class="col-md-2" style="display: flex; align-items: center;">
+                                <h4>Harga Grosir</h4>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><span class="text-warning">Minimal Pembelian</span></label>
+                                    <input type="text" required
+                                        value="{{ old('barang_grosir_pembelian', $detail->barang_grosir_pembelian) }}"
+                                        name="barang_grosir_pembelian" id="barang_grosir_pembelian" class="form-control" placeholder="Minimal Pembelian" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label><span class="text-danger">Stok Minimal</span></label>
-                                    <input type="number"
-                                        value="{{ old('barang_stok_minimal', $detail->barang_stok_minimal) }}"
-                                        name="barang_stok_minimal" class="form-control" placeholder="Stok Minimal">
+                                    <label><span class="text-dark">%</span></label>
+                                    <input type="text" required
+                                        value="{{ old('barang_grosir_persentase', $detail->barang_grosir_persentase) }}"
+                                        name="barang_grosir_persentase" id="barang_grosir_persentase" class="form-control" placeholder="Persentase Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><span class="text-primary">Keuntungan</span></label>
+                                    <input type="number" readonly required
+                                        value="{{ old('barang_grosir_keuntungan', $detail->barang_grosir_keuntungan) }}"
+                                        name="barang_grosir_keuntungan" id="barang_grosir_keuntungan" class="form-control" placeholder="Keuntungan Barang">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label><span class="text-success">Harga Jual</span></label>
+                                    <input type="text" value="{{ old('barang_grosir_harga_jual', $detail->barang_grosir_harga_jual) }}" name="barang_grosir_harga_jual" id="barang_grosir_harga_jual" class="form-control" placeholder="Harga Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                 </div>
                             </div>
                         </div>
@@ -96,7 +152,7 @@
                                     <input readonly type="number" id="barang_master_stok"
                                         value="{{ old('barang_master_stok', $detail->barang_master_stok) }}" name="barang_master_stok"
                                         class="form-control" placeholder="Stok Barang Pusat">
-                                    <small class="text-primary">Diisi secara otomatis</small>
+                                    <small class="text-primary">Terisi secara otomatis</small>
                                 </div>
                             </div>
                             <div>
@@ -105,9 +161,9 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label>Perubahan Stok</label>
-                                    <input type="number" id="barang_stok_perubahan"
+                                    <input type="text" id="barang_stok_perubahan"
                                         value="{{ old('barang_stok_perubahan') }}" name="barang_stok_perubahan"
-                                        class="form-control" placeholder="Penambahan Stok Barang">
+                                        class="form-control" placeholder="Penambahan Stok Barang" oninput="this.value = this.value.replace(/[^0-9-]/g, '').replace(/(?!^)-/g, '')">
                                     <small class="text-danger">*isikan 0, jika tidak berubah</small>
                                 </div>
                             </div>
@@ -120,7 +176,7 @@
                                     <input readonly type="number" id="barang_master_stok_hasil"
                                         value="{{ old('barang_master_stok_hasil') }}" name="barang_master_stok_hasil"
                                         class="form-control" placeholder="Hasil Stok Tersedia">
-                                    <small class="text-primary">Diisi secara otomatis</small>
+                                    <small class="text-primary">Terisi secara otomatis</small>
                                 </div>
                             </div>
                         </div>
@@ -129,7 +185,7 @@
                                 <div class="form-group">
                                     <label>Barcode Barang</label>
                                     <input type="text" value="{{ old('barang_barcode', $detail->barang_barcode) }}"
-                                        name="barang_barcode" class="form-control" placeholder="Barcode Barang">
+                                        name="barang_barcode" class="form-control" placeholder="Barcode Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     <input type="hidden" value="{{ $detail->barang_barcode }}"
                                     name="old_barang_barcode" class="form-control" placeholder="Barcode Barang">
                                 </div>
@@ -170,6 +226,78 @@
 
                 // Tampilkan hasil di barang_master_stok_hasil
                 $('#barang_master_stok_hasil').val(hasilStokTersedia);
+            });
+            // HARGA SATUAN
+            $('#barang_persentase').on('input', function() {
+                // harga Beli
+                const harga_beli = parseFloat($('#barang_harga_beli').val()) || 0;
+                const persentase = parseFloat($(this).val()) || 0;
+                const keuntungan = persentase / 100 * harga_beli;
+                // keuntungan
+                $('#barang_keuntungan').val(Math.round(keuntungan));
+                // harga jual
+                const harga_jual = harga_beli + keuntungan;
+                $('#barang_harga_jual').val(harga_jual);
+            });
+            $('#barang_harga_beli').on('input', function() {
+                console.log('atas');
+                // harga Beli
+                const harga_beli = parseFloat($(this).val()) || 0;
+                //
+                const persentase = parseFloat($('#barang_persentase').val()) || 0;
+                const keuntungan = persentase / 100 * harga_beli;
+                // keuntungan
+                $('#barang_keuntungan').val(Math.round(keuntungan));
+                // harga jual
+                const harga_jual = harga_beli + keuntungan;
+                $('#barang_harga_jual').val(harga_jual);
+            });
+            $('#barang_harga_jual').on('input', function() {
+                // harga jual
+                const harga_jual = parseFloat($(this).val()) || 0;
+                const harga_beli = parseFloat($('#barang_harga_beli').val()) || 0;
+                //keuntungan
+                const keuntungan = harga_jual - harga_beli;
+                $('#barang_keuntungan').val(keuntungan);
+                // persen
+                const persentase = keuntungan / harga_beli * 100;
+                $('#barang_persentase').val(Math.round(persentase));
+            });
+            // HARGA GROSIR
+            $('#barang_grosir_persentase').on('input', function() {
+                // harga Beli
+                const harga_beli = parseFloat($('#barang_harga_beli').val()) || 0;
+                const persentase = parseFloat($(this).val()) || 0;
+                const keuntungan = persentase / 100 * harga_beli;
+                // keuntungan
+                $('#barang_grosir_keuntungan').val(Math.round(keuntungan));
+                // harga jual
+                const harga_jual = harga_beli + keuntungan;
+                $('#barang_grosir_harga_jual').val(harga_jual);
+            });
+            $('#barang_harga_beli').on('input', function() {
+                console.log('bawah');
+                // harga Beli
+                const harga_beli = parseFloat($(this).val()) || 0;
+                //
+                const persentase = parseFloat($('#barang_grosir_persentase').val()) || 0;
+                const keuntungan = persentase / 100 * harga_beli;
+                // keuntungan
+                $('#barang_grosir_keuntungan').val(Math.round(keuntungan));
+                // harga jual
+                const harga_jual = harga_beli + keuntungan;
+                $('#barang_grosir_harga_jual').val(harga_jual);
+            });
+            $('#barang_grosir_harga_jual').on('input', function() {
+                // harga jual
+                const harga_jual = parseFloat($(this).val()) || 0;
+                const harga_beli = parseFloat($('#barang_harga_beli').val()) || 0;
+                //keuntungan
+                const keuntungan = harga_jual - harga_beli;
+                $('#barang_grosir_keuntungan').val(keuntungan);
+                // persen
+                const persentase = keuntungan / harga_beli * 100;
+                $('#barang_grosir_persentase').val(Math.round(persentase));
             });
         });
     </script>

@@ -8,6 +8,7 @@ use App\Http\Controllers\laporan\LabarugiController;
 use App\Http\Controllers\log\LogBarangController;
 use App\Http\Controllers\log\LogBarangMasterController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\menu\UsertokopusatController;
 use App\Http\Controllers\toko\TokocabangController;
 use App\Http\Controllers\toko\TokopusatController;
 use App\Http\Controllers\transaksi\TransaksiController;
@@ -113,6 +114,10 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/process-add-toko-pusat', [TokopusatController::class, 'store'])->name('aksiTambahTokoPusat');
         Route::get('/update-toko-pusat/{slug}', [TokopusatController::class, 'edit'])->name('UpdateTokoPusat');
         Route::post('/process-update-toko-pusat', [TokopusatController::class, 'update'])->name('processUpdateTokoPusat');
+        Route::get('/process-delete-toko-pusat/{slug}', [TokopusatController::class, 'destroy'])->name('processDeleteToko');
+        Route::get('/user-toko-pusat/{slug}', [TokopusatController::class, 'user_pusat'])->name('userTokoPusat');
+        Route::get('/add-user-toko-pusat/{user_id}/{pusat_id}', [TokopusatController::class, 'add_user_pusat'])->name('processAddUserToko');
+        Route::get('/delete-user-toko-pusat/{id}/{pusat_id}', [TokopusatController::class, 'delete_user_pusat'])->name('processDeleteUserToko');
     });
     // TOKO CABANG
     Route::middleware(['hasRole.page:tokoCabang'])->group(function () {
@@ -132,12 +137,16 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/process-update-master-barang', [MasterbarangController::class, 'update'])->name('processUpdateMasterBarang');
         Route::get('/process-delete-master-barang/{id}', [MasterbarangController::class, 'destroy'])->name('processDeleteMasterBarang');
         Route::post('/process-cari-master-barang', [MasterbarangController::class, 'search'])->name('cariMasterBarang');
+        //
+        Route::get('/history-master-barang/{slug}', [MasterbarangController::class, 'history'])->name('historyMasterBarang');
+
 
     });
     // BARANG CABANG
     Route::middleware(['hasRole.page:barangCabang'])->group(function () {
         Route::get('/data-barang-cabang', [BarangcabangController::class, 'index'])->name('barangCabang');
         Route::get('/show-barang-cabang/{slug}', [BarangcabangController::class, 'detail'])->name('showBarangCabang');
+        Route::get('/show-detail-barang-cabang/{barang_cabang_id}/{cabang_id}/{pusat_id}', [BarangcabangController::class, 'show_detail_log'])->name('showDetailCabangLog');
         Route::post('/get-not-exist-barang-cabang', [BarangcabangController::class, 'get_barang_not_exits'])->name('getDataProduk');
         Route::post('/process-add-barang-cabang', [BarangcabangController::class, 'store'])->name('processAddBarangCabang');
         Route::get('/update-barang-cabang/{id}', [BarangcabangController::class, 'edit'])->name('updatebarangCabang');
@@ -180,7 +189,8 @@ Route::middleware(['auth'])->group(function () {
     // Profil
     Route::middleware(['hasRole.page:dashboard'])->group(function () {
         Route::get('/data-user-profil', [ProfilController::class, 'index'])->name('profil');
-        Route::post('/process-update-data-user-profil', [ProfilController::class, 'update'])->name('processUpdateProfil');
+        Route::post('/process-update-data-toko', [ProfilController::class, 'update_toko'])->name('processUpdateToko');
+        Route::post('/process-update-data-user-profil', [ProfilController::class, 'update_profil'])->name('processUpdateProfil');
     });
     // Log Barang Master
     Route::middleware(['hasRole.page:logBarangMaster'])->group(function () {
@@ -189,6 +199,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/show-detail-data-log-barang-master/{barang_cabang_id}/{cabang_id}/{pusat_id}', [LogBarangMasterController::class, 'show_detail_log'])->name('showDetailLogBarangMaster');
         Route::post('/process-cari-log-barang-cabang-master', [LogBarangMasterController::class, 'search'])->name('cariLogBarangMaster');
     });
+    // User Pusat
+    Route::middleware(['hasRole.page:userPusat'])->group(function () {
+        Route::get('/user-pusat', [UsertokopusatController::class, 'index'])->name('userPusat');
+        Route::get('/add-user-pusat', [UsertokopusatController::class, 'create'])->name('tambahUserPusat');
+
+    });
+
     /* END YOUR ROUTE APLICATION */
 });
 

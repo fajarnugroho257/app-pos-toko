@@ -21,7 +21,7 @@ class MasterbarangController extends Controller
         $data['barang_nama'] = $barang_nama;
         $barang_nama = empty($barang_nama) ? '%' : '%' . $barang_nama . '%';
         $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
-        $data['title'] = 'Master Data Barang';
+        $data['title'] = 'Master Data Barang Gudang / Pusat';
         $data['rs_barang'] = MasterBarang::where('pusat_id', $pusat->id)
             ->where(DB::raw('CONCAT(barang_nama, barang_barcode)'), 'LIKE', $barang_nama)
             ->orderBy('barang_nama', 'ASC')
@@ -35,7 +35,7 @@ class MasterbarangController extends Controller
      */
     public function create()
     {
-        $data['title'] = 'Tambah Master Data Barang';
+        $data['title'] = 'Tambah Master Data Barang Gudang / Pusat';
         return view('barang.master.add', $data);
     }
 
@@ -45,11 +45,17 @@ class MasterbarangController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'barang_nama' => 'required',
             'barang_barcode' => 'required|string|min:13',
+            'barang_nama' => 'required',
+            'barang_stok_minimal' => 'required',
             'barang_harga_beli' => 'required',
             'barang_harga_jual' => 'required',
-            'barang_stok_minimal' => 'required'
+            'barang_grosir_harga_jual' => 'required|numeric',
+            'barang_grosir_keuntungan' => 'required|numeric',
+            'barang_grosir_persentase' => 'required|numeric',
+            'barang_grosir_pembelian' => 'required|numeric',
+            'barang_persentase' => 'required|numeric',
+            'barang_keuntungan' => 'required|numeric',
         ]);
         $pusat_id = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         // check data by barcode & pusat ID
@@ -64,17 +70,15 @@ class MasterbarangController extends Controller
             'barang_stok_minimal' => $request->barang_stok_minimal,
             'barang_harga_beli' => $request->barang_harga_beli,
             'barang_harga_jual' => $request->barang_harga_jual,
+            'barang_grosir_harga_jual' => $request->barang_grosir_harga_jual,
+            'barang_grosir_keuntungan' => $request->barang_grosir_keuntungan,
+            'barang_grosir_persentase' => $request->barang_grosir_persentase,
+            'barang_grosir_pembelian' => $request->barang_grosir_pembelian,
+            'barang_persentase' => $request->barang_persentase,
+            'barang_keuntungan' => $request->barang_keuntungan,
         ]);
         //redirect
         return redirect()->route('masterBarang')->with('success', 'Data berhasil disimpan');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -86,7 +90,7 @@ class MasterbarangController extends Controller
         if (empty($detail)) {
             return redirect()->route('masterBarang')->with('error', 'Data tidak ditemukan');
         }
-        $data['title'] = 'Ubah Data Master Barang';
+        $data['title'] = 'Ubah Data Barang Gudang / Pusat';
         $data['detail'] = $detail;
         return view('barang.master.edit', $data);
     }
@@ -106,7 +110,14 @@ class MasterbarangController extends Controller
             'old_barang_barcode' => 'required',
             'barang_nama' => 'required',
             'barang_harga_beli' => 'required',
+            'barang_harga_jual' => 'required|numeric',
             'barang_stok_minimal' => 'required',
+            'barang_persentase' => 'required|numeric',
+            'barang_keuntungan' => 'required|numeric',
+            'barang_grosir_pembelian' => 'required|numeric',
+            'barang_grosir_persentase' => 'required|numeric',
+            'barang_grosir_keuntungan' => 'required|numeric',
+            'barang_grosir_harga_jual' => 'required|numeric',
             'barang_master_stok' => 'required|numeric',
             'barang_stok_perubahan' => 'required|numeric',
             'barang_master_stok_hasil' => 'required|numeric',
@@ -128,20 +139,48 @@ class MasterbarangController extends Controller
         $detail->barang_harga_beli = $request->barang_harga_beli;
         $detail->barang_harga_jual = $request->barang_harga_jual;
         $detail->barang_stok_minimal = $request->barang_stok_minimal;
+        $detail->barang_persentase = $request->barang_persentase;
+        $detail->barang_keuntungan = $request->barang_keuntungan;
+        $detail->barang_grosir_pembelian = $request->barang_grosir_pembelian;
+        $detail->barang_grosir_persentase = $request->barang_grosir_persentase;
+        $detail->barang_grosir_keuntungan = $request->barang_grosir_keuntungan;
+        $detail->barang_grosir_harga_jual = $request->barang_grosir_harga_jual;
+        $detail->barang_stok_perubahan = $request->barang_stok_perubahan;
         $detail->barang_master_stok = $request->barang_master_stok_hasil;
         //redirect
         if ($detail->save()) {
-            BarangMasterLog::create([
-                'user_id' => Auth::user()->user_id,
-                'pusat_id' => $pusat_id->id,
-                'barang_master_id' => $request->id,
-                'barang_master_awal' => $jlh_barang_sblm_tambah,
-                'barang_master_perubahan' => $request->barang_stok_perubahan,
-                'barang_master_akhir' => $request->barang_master_stok_hasil,
-                'barang_st' => 'penambahan',
-            ])->toRawSql();
+            // jika sama dengan 0
+            if ($request->barang_stok_perubahan != '0') {
+                BarangMasterLog::create([
+                    'user_id' => Auth::user()->user_id,
+                    'pusat_id' => $pusat_id->id,
+                    'barang_master_id' => $request->id,
+                    'barang_master_awal' => $jlh_barang_sblm_tambah,
+                    'barang_master_perubahan' => $request->barang_stok_perubahan,
+                    'barang_master_akhir' => $request->barang_master_stok_hasil,
+                    'barang_st' => 'penambahan',
+                ]);
+            }
             return redirect()->route('updateMasterBarang', ['slug' => $detail->slug])->with('success', 'Data berhasil disimpan');
         }
+    }
+
+    public function history(string $id)
+    {
+        $detail = MasterBarang::find($id);
+        if (empty($detail)) {
+            return redirect()->route('masterBarang')->with('error', 'Data tidak ditemukan');
+        }
+        // get log data master barang
+        $rs_log = BarangMasterLog::with(['barang_master', 'user', 'toko_cabang'])
+            ->where('barang_master_id', $detail->id)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(50);
+        $data['title'] = 'Log Data Barang Gudang / Pusat';
+        $data['detail'] = $detail;
+        $data['rs_log'] = $rs_log;
+        // dd($rs_log);
+        return view('barang.master.log', $data);
     }
 
     /**

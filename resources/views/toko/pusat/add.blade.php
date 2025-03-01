@@ -51,20 +51,7 @@
                             </div>
                         @endsession
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>User Pimilik</label>
-                                    <select class="form-control select2" name="user_id" style="width: 100%;">
-                                        <option value=""></option>
-                                        @foreach ($rs_user as $user)
-                                            <option value="{{ $user->user_id }}"
-                                                {{ old('user_id') == $user->user_id ? 'selected' : '' }}>
-                                                {{ $user->username }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
                                     <label>Nama Toko Pusat</label>
                                     <input type="text" value="{{ old('pusat_nama') }}" name="pusat_nama"

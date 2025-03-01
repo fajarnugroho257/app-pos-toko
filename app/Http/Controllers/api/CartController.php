@@ -49,6 +49,7 @@ class CartController extends Controller
             'keranjang.*.no_urut' => 'required|integer',
             'keranjang.*.barang_cabang_id' => 'required|integer',
             'keranjang.*.barang_nama' => 'required|string',
+            'keranjang.*.barang_st_diskon' => 'required',
             'keranjang.*.barang_barcode' => 'required|string|size:13', // contoh panjang barcode
             'keranjang.*.barang_harga_beli' => 'required|numeric|min:1',
             'keranjang.*.barang_harga_jual' => 'required|numeric|min:1',
@@ -103,6 +104,7 @@ class CartController extends Controller
                     ], 422);
                 }
                 // insert to cart data
+                $cart_diskon = $value['barang_st_diskon'] ? 'yes' : 'no';
                 CartData::create([
                     'cart_id' => $cart_id,
                     'barang_cabang_id' => $value['barang_cabang_id'],
@@ -110,6 +112,7 @@ class CartController extends Controller
                     'cart_harga_beli' => $value['barang_harga_beli'],
                     'cart_harga_jual' => $value['barang_harga_jual'],
                     'cart_nama' => $value['barang_nama'],
+                    'cart_diskon' => $cart_diskon,
                     'cart_qty' => $value['cart_qty'],
                     'cart_subtotal' => $value['cart_subtotal'],
                     'cart_urut' => $value['no_urut'],
@@ -149,9 +152,15 @@ class CartController extends Controller
 
         $draft = DB::select("SELECT a.cart_id, a.cart_st, b.cart_barcode AS 'barang_barcode',
                                     b.barang_cabang_id, b.cart_nama AS 'barang_nama', b.cart_harga_jual AS 'barang_harga_jual',
-                                    a.pusat_id, b.cart_qty, b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli'
+                                    a.pusat_id, b.cart_qty, b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
+                                    d.barang_harga_jual AS 'awal_barang_harga_jual',
+                                    IF(b.cart_qty >= d.barang_grosir_pembelian, TRUE, FALSE) AS 'barang_st_diskon',
+                                    d.barang_grosir_pembelian AS 'barang_grosir_pembelian',
+                                    d.barang_grosir_harga_jual AS 'barang_grosir_harga_jual'
                                     FROM cart a
                                     INNER JOIN cart_data b ON a.cart_id = b.cart_id
+                                    INNER JOIN barang_cabang c ON b.barang_cabang_id = c.id
+                                    INNER JOIN barang_master d ON c.barang_id = d.id
                                     WHERE a.cart_st = 'draft'
                                     AND a.pusat_id = ?
                                     AND a.cabang_id = ?", [$dataUser->users_data->toko_cabang->toko_pusat->id, $dataUser->users_data->cabang_id]);

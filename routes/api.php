@@ -43,4 +43,5 @@ Route::middleware(['jwt.verify'])->group(function () {
 Route::get('/api-cek-token', [App\Http\Controllers\api\LoginController::class, 'check_token']);
 
 // Route::get('/non-get-cart-draft', [CartController::class, 'show']);
-
+// test non jwt
+Route::get('/test-api-barcode-data-barang-cabang', [BarangController::class, 'detail']);
