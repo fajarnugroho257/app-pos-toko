@@ -90,7 +90,8 @@
                                 @foreach ($rs_barang as $key => $barang)
                                     <tr @if ($barang->barang_stok < $barang->barang_master->barang_stok_minimal) class="table-danger" @endif>
                                         <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
-                                        <td>{{ $barang->barang_master->barang_nama }}</td>
+                                        <td>{{ $barang->barang_master->barang_barcode }} ||
+                                            {{ $barang->barang_master->barang_nama }}</td>
                                         {{-- <td class="text-center">Rp.{{ number_format($barang->cabang_barang_harga, 0, ',', '.') }}</td> --}}
                                         <td class="text-center">{{ $barang->barang_master->barang_stok_minimal }}</td>
                                         <td class="text-center">{{ $barang->barang_stok }}</td>
@@ -104,7 +105,9 @@
                                         <td class="text-center">
                                             <a href="{{ route('updatebarangCabang', [$barang->id]) }}" title="Ubah barang"
                                                 class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                            <a href="{{ route('showDetailCabangLog', ['barang_cabang_id' => $barang->id, 'cabang_id' => $barang->toko_cabang->id, 'pusat_id' => $barang->toko_cabang->toko_pusat->id]) }}" title="History Barang Pusat" class="btn btn-sm btn-info"><i class="fa fa-history"></i></a>
+                                            <a href="{{ route('showDetailCabangLog', ['barang_cabang_id' => $barang->id, 'cabang_id' => $barang->toko_cabang->id, 'pusat_id' => $barang->toko_cabang->toko_pusat->id]) }}"
+                                                title="History Barang Pusat" class="btn btn-sm btn-info"><i
+                                                    class="fa fa-history"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -134,7 +137,8 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('processAddBarangCabang') }}" method="POST" onsubmit="return confirm('Apakah anda yakin memilih data tersebut ..?')">
+                <form action="{{ route('processAddBarangCabang') }}" method="POST"
+                    onsubmit="return confirm('Apakah anda yakin memilih data tersebut ..?')">
                     <input type="hidden" name="cabang_id" value="{{ $cabang->id }}">
                     @method('POST')
                     @csrf

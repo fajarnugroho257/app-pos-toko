@@ -40,6 +40,30 @@
                     </div>
                 </div>
                 <div class="card-body">
+                    <form action="{{ route('cariUser') }}" method="POST">
+                        @method('POST')
+                        @csrf
+                        <div class="row mb-3">
+                            <div class="col-md-4 ml-0">
+                                <select class="form-control select2" name="role_id" style="width: 100%;">
+                                    <option value=""></option>
+                                    @foreach ($rs_role as $role)
+                                        <option value="{{ $role->role_id }}" @selected($role_id == $role->role_id)>
+                                            {{ $role->role_name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex item-center">
+                                <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
+                                        class="fa fa-search"></i>
+                                    Cari</button>
+                                <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
+                                        class="fa fa-times"></i>
+                                    Reset</button>
+                            </div>
+                        </div>
+                    </form>
                     <table class="table table-bordered">
                         <thead>
                             <tr class="text-center">

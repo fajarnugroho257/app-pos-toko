@@ -13,8 +13,25 @@ class UserController extends Controller
     public function index()
     {
         $data['title'] = 'Data Pengguna Aplikasi';
-        $data['rs_user'] = User::paginate(20);
+        $role_id = session()->get('role_id');
+        $role_id = empty($role_id) ? '%' : $role_id;
+        $data['role_id'] = $role_id;
+        $data['rs_user'] = User::where('role_id', 'LIKE', $role_id)->paginate(20);
+        $data['rs_role'] = Role::all();
         return view('user.index', $data);
+    }
+
+    public function search(Request $request)
+    {
+        $cabang = User::where('role_id', $request->role_id);
+        if ($request->aksi == 'reset') {
+            session()->forget('role_id');
+        } else {
+            session([
+                'role_id' => $request->role_id,
+            ]);
+        }
+        return redirect()->route('dataUser');
     }
 
     /**

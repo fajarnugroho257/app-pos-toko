@@ -91,6 +91,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/update-data-user/{user_id}', [UserController::class, 'edit'])->name('UpdateUser');
         Route::post('/process-update-data-user/{user_id}', [UserController::class, 'update'])->name('aksiUpdateUser');
         Route::get('/process-delete-data-user/{user_id}', [UserController::class, 'destroy'])->name('deleteUser');
+        Route::post('/process-search-data-user', [UserController::class, 'search'])->name('cariUser');
+
     });
 
     /* YOUR ROUTE APLICATION */
@@ -203,6 +205,11 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['hasRole.page:userPusat'])->group(function () {
         Route::get('/user-pusat', [UsertokopusatController::class, 'index'])->name('userPusat');
         Route::get('/add-user-pusat', [UsertokopusatController::class, 'create'])->name('tambahUserPusat');
+
+    });
+    //
+    Route::middleware(['hasRole.page:stokBarang'])->group(function () {
+        Route::get('/stok-barang', [UsertokopusatController::class, 'index'])->name('stokBarang');
 
     });
 
