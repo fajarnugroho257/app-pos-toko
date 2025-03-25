@@ -34,7 +34,8 @@
                 <form action="{{ route('processUpdateBarangCabang') }}" method="POST">
                     <input type="hidden" value="{{ $detail->id }}" name="id">
                     <input type="hidden" name="cabang_id" value="{{ $detail->toko_cabang->id }}">
-                    <input type="hidden" name="barang_master_stok" value="{{ $detail->barang_master->barang_master_stok }}">
+                    <input type="hidden" name="barang_master_stok"
+                        value="{{ $detail->barang_master->barang_master_stok }}">
                     <input type="hidden" name="barang_master_id" value="{{ $detail->barang_master->id }}">
                     @method('POST')
                     @csrf
@@ -55,7 +56,7 @@
                         @endsession
                         <div class="row">
                             <div class="col-md-12">
-                                <h5><b>Harga Barang <span class="text-danger">Pusat</span></b></h5>
+                                <h5><b>Detail Barang <span class="text-danger">Pusat</span></b></h5>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -71,19 +72,29 @@
                                     <tbody>
                                         <tr class="text-center">
                                             <td><b class="text-danger">{{ $detail->barang_master->barang_nama }}</b></td>
-                                            <td><b class="text-success">{{ $detail->barang_master->barang_master_stok }}</b></td>
+                                            <td><b
+                                                    class="text-success">{{ $detail->barang_master->barang_master_stok }}</b>
+                                            </td>
                                             {{-- <td>{{ $detail->barang_master->barang_stok_minimal }}</td> --}}
-                                            <td class="table-success">Rp. {{ number_format($detail->barang_master->barang_harga_beli, 0, ',', '.') }}</td>
-                                            <td class="table-info">Rp. {{ number_format($detail->barang_master->barang_harga_jual, 0, ',', '.') }}</td>
-                                            <td class="table-danger">{{ $detail->barang_master->barang_grosir_pembelian }}</td>
-                                            <td class="table-danger">Rp. {{ number_format($detail->barang_master->barang_grosir_harga_jual, 0, ',', '.') }}</td>
+                                            <td class="table-success">Rp.
+                                                {{ number_format($detail->barang_master->barang_harga_beli, 0, ',', '.') }}
+                                            </td>
+                                            <td class="table-info">Rp.
+                                                {{ number_format($detail->barang_master->barang_harga_jual, 0, ',', '.') }}
+                                            </td>
+                                            <td class="table-danger">{{ $detail->barang_master->barang_grosir_pembelian }}
+                                            </td>
+                                            <td class="table-danger">Rp.
+                                                {{ number_format($detail->barang_master->barang_grosir_harga_jual, 0, ',', '.') }}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                         <hr />
-                        <h5 class="mt-4 mb-4"><b>Harga Barang Cabang <span class="text-danger">{{ $detail->toko_cabang->cabang_nama }}</span></b></h5>
+                        <h5 class="mt-4 mb-4"><b>Detail Barang Cabang <span
+                                    class="text-danger">{{ $detail->toko_cabang->cabang_nama }}</span></b></h5>
                         <span class="btn-sm btn-success">Tambah Stok Barang</span>
                         <div class="row" style="align-items: center">
                             <div class="col-md-2">
@@ -103,7 +114,8 @@
                                     <label>Penambahan Stok</label>
                                     <input type="text" id="barang_stok_penambahan"
                                         value="{{ old('barang_stok_penambahan') }}" name="barang_stok_penambahan"
-                                        class="form-control" placeholder="Penambahan Stok Barang" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                        class="form-control" placeholder="Penambahan Stok Barang"
+                                        oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                                     <small class="text-danger">*isikan 0, jika tidak berubah</small>
                                 </div>
                             </div>

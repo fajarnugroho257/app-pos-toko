@@ -10,6 +10,7 @@ use App\Models\CartData;
 use App\Models\Transaksi;
 use App\Models\User;
 use Auth;
+use DB;
 use Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -182,17 +183,53 @@ class TransaksiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show()
     {
-        //
+        $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
+
+        $rs_transaksi = Transaksi::with(['cart.cart_data', 'users'])
+            ->whereRelation('cart', 'cabang_id', $dataUser->users_data->cabang_id)
+            ->whereRelation('cart', 'pusat_id', $dataUser->users_data->toko_cabang->toko_pusat->id)
+            ->orderBy('trans_date', 'DESC')
+            ->limit(50)
+            // ->whereBetween(DB::raw('DATE(trans_date)'), [$data['date_start'], $data['date_end']])
+            ->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data',
+            'data' => $rs_transaksi,
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function show_nota(Request $request)
     {
-        //
+        // validasi
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        $transaksiCart = Transaksi::where('cart_id', $request->cart_id)->first();
+        if (empty($transaksiCart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+            ], 422);
+        }
+        // cart data
+        $cartData = CartData::where('cart_id', $transaksiCart->cart_id)->orderBy('cart_urut', 'DESC')->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Okee..!',
+            'data' => $cartData,
+            'transaksiCart' => $transaksiCart,
+        ], 200);
     }
 
     /**

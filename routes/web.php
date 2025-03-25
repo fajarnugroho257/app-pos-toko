@@ -5,6 +5,7 @@ use App\Http\Controllers\barang\BarangcabangController;
 use App\Http\Controllers\barang\MasterbarangController;
 use App\Http\Controllers\DumpTransaksiController;
 use App\Http\Controllers\laporan\LabarugiController;
+use App\Http\Controllers\laporan\StokbarangController;
 use App\Http\Controllers\log\LogBarangController;
 use App\Http\Controllers\log\LogBarangMasterController;
 use App\Http\Controllers\LoginController;
@@ -209,7 +210,8 @@ Route::middleware(['auth'])->group(function () {
     });
     //
     Route::middleware(['hasRole.page:stokBarang'])->group(function () {
-        Route::get('/stok-barang', [UsertokopusatController::class, 'index'])->name('stokBarang');
+        Route::get('/stok-barang', [StokbarangController::class, 'index'])->name('stokBarang');
+        Route::post('/process-cari-laba', [StokbarangController::class, 'search'])->name('cariStokBarang');
 
     });
 

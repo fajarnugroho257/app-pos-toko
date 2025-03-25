@@ -27,6 +27,8 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/api-data-barang-cabang', [BarangController::class, 'show']);
     Route::get('/api-barcode-data-barang-cabang', [BarangController::class, 'detail']);
     Route::post('/detail-api-barcode-data-barang-cabang', [BarangController::class, 'detail_data']);
+    Route::get('/list-transaksi-data-barang-cabang', [TransaksiController::class, 'show']);
+    Route::post('/detail-nota', [TransaksiController::class, 'show_nota']);
     Route::get('/logout', [App\Http\Controllers\api\LoginController::class, 'logout']);
 
 });

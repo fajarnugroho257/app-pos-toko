@@ -244,7 +244,7 @@ class BarangcabangController extends Controller
             ->where('cabang_id', $cabang_id)
             ->where('pusat_id', $pusat_id)
             ->orderBy('created_at', 'DESC')
-            ->paginate(50);
+            ->paginate(100);
         $data['rs_barang_log'] = $barangLog;
         // dd($data);
         return view('barang.cabang.log_barang', $data);

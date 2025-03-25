@@ -22,7 +22,8 @@
         <!-- /.login-logo -->
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="{{ asset('index2.html') }}" class="h1"><b>{{ env('APP_NAME') }}</b></a>
+                {{-- <a href="{{ asset('index2.html') }}" class="h1"><b>{{ env('APP_NAME') }}</b></a> --}}
+                <a href="#" class="h1"><b>POS</b></a>
             </div>
             <div class="card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
@@ -39,7 +40,8 @@
                     @csrf
                     @method('post')
                     <div class="input-group mb-3">
-                        <input type="text" name="username" {{ old('username') }} class="form-control" placeholder="Username">
+                        <input type="text" name="username" {{ old('username') }} class="form-control"
+                            placeholder="Username">
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-user"></span>

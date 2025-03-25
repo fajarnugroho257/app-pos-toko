@@ -103,10 +103,10 @@
                                             @endif
                                         </td>
                                         <td class="text-center">
-                                            <a href="{{ route('updatebarangCabang', [$barang->id]) }}" title="Ubah barang"
+                                            <a href="{{ route('updatebarangCabang', [$barang->id]) }}" title="Tambah Stok"
                                                 class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
                                             <a href="{{ route('showDetailCabangLog', ['barang_cabang_id' => $barang->id, 'cabang_id' => $barang->toko_cabang->id, 'pusat_id' => $barang->toko_cabang->toko_pusat->id]) }}"
-                                                title="History Barang Pusat" class="btn btn-sm btn-info"><i
+                                                title="History Barang Cabang" class="btn btn-sm btn-info"><i
                                                     class="fa fa-history"></i></a>
                                         </td>
                                     </tr>
