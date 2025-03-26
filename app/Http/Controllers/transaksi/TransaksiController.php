@@ -158,7 +158,8 @@ class TransaksiController extends Controller
             $html .= '  <td colspan="4">';
             $html .= '  </td>';
             $html .= '  <td class="text-right">';
-            $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-success"><i class="fa fa-print"></i> Print</a>';
+            $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-success"><i class="fab fa-usb"></i></a>';
+            $html .= '      <a href="#" onclick="printBluethoot(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-primary"><i class="fab fa-bluetooth"></i></a>';
             $html .= '  </td>';
             $html .= '<tr>';
             $html .= '</tr>';

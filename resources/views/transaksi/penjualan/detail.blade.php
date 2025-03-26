@@ -201,8 +201,8 @@
         // Setting hashing SHA-256
         qz.api.setSha256Type(data =>
             crypto.subtle.digest("SHA-256", new TextEncoder().encode(data))
-                .then(hash => Array.from(new Uint8Array(hash))
-                    .map(byte => byte.toString(16).padStart(2, "0")).join(""))
+            .then(hash => Array.from(new Uint8Array(hash))
+                .map(byte => byte.toString(16).padStart(2, "0")).join(""))
         );
 
         // Hubungkan ke QZ Tray
@@ -218,7 +218,7 @@
                 const printer = await qz.printers.find("POS-58");
                 console.log("Printer ditemukan:", printer);
 
-                // Ambil data cetak dari Laravel (pastikan endpoint sesuai)
+
                 const response = await fetch(`{{ route('getPrintData', '') }}/${cartId}`);
                 const printData = await response.json();
 
@@ -248,10 +248,11 @@
                 });
 
                 content += "=============================" + "\n";
-                content += "| Total".padEnd(13, ' ') +`${formatRupiah(trans_total)}`.padStart(15, ' ') + " |\n";
+                content += "| Total".padEnd(13, ' ') + `${formatRupiah(trans_total)}`.padStart(15, ' ') + " |\n";
                 content += "-----------------------------" + "\n";
-                content += "| Bayar".padEnd(13, ' ') +`${formatRupiah(trans_bayar)}`.padStart(15, ' ') + " |\n";
-                content += "| Kembalian".padEnd(13, ' ') +`${formatRupiah(trans_kembalian)}`.padStart(15, ' ') + " |\n";
+                content += "| Bayar".padEnd(13, ' ') + `${formatRupiah(trans_bayar)}`.padStart(15, ' ') + " |\n";
+                content += "| Kembalian".padEnd(13, ' ') + `${formatRupiah(trans_kembalian)}`.padStart(15, ' ') +
+                    " |\n";
                 content += "=============================" + "\n";
                 content += padCenter('Terimakasih', 30, ' ') + "\n";
                 console.log(content);
@@ -295,6 +296,102 @@
         window.onbeforeunload = function() {
             if (qz.websocket.isActive()) {
                 qz.websocket.disconnect();
+            }
+        };
+    </script>
+    <script>
+        async function printBluethoot(element) {
+            const cartId = $(element).data('cart_id');
+            const response = await fetch(`{{ route('getPrintData', '') }}/${cartId}`);
+            const printData = await response.json();
+            const datas = printData.items;
+            // Format tabel dengan padding
+            const pusat_nama = printData.pusat_nama;
+            const cabang_nama = printData.cabang_nama;
+            const trans_total = printData.trans_total;
+            const trans_bayar = printData.trans_bayar;
+            const trans_kembalian = printData.trans_kembalian;
+            try {
+                //
+                const now = new Date();
+                //
+                let content = padCenter(pusat_nama, 30, " ") + "\n";
+                content += padCenter(cabang_nama, 30, " ") + "\n";
+                content += padCenter(`${now.toLocaleString()}`, 30, " ") + "\n";
+                content += "=============================" + "\n";
+                content += "| Item     |Qty| Price       |" + "\n";
+                content += "=============================" + "\n";
+
+                datas.forEach((item) => {
+                    let nama = item.cart_nama;
+                    let cart_diskon = item.cart_diskon === "yes" ? " (Grosir)" : "";
+                    let qty = String(item.cart_qty).padStart(1, " ");
+                    let harga = `${formatRupiah(item.cart_harga_jual)}`.padEnd(8, " ");
+                    let subTotal = `${formatRupiah(item.cart_subtotal)}`.padStart(11, " ");
+                    content += `| ${nama}${cart_diskon}\n| ${harga} | ${qty} | ${subTotal} |\n`;
+                });
+
+                content += "=============================" + "\n";
+                content +=
+                    "| Total".padEnd(13, " ") +
+                    `${formatRupiah(trans_total)}`.padStart(15, " ") +
+                    " |\n";
+                content += "-----------------------------" + "\n";
+                content +=
+                    "| Bayar".padEnd(13, " ") +
+                    `${formatRupiah(trans_bayar)}`.padStart(15, " ") +
+                    " |\n";
+                content +=
+                    "| Kembalian".padEnd(13, " ") +
+                    `${formatRupiah(trans_kembalian)}`.padStart(15, " ") +
+                    " |\n";
+                content += "=============================" + "\n";
+                content += padCenter("Terimakasih", 30, " ") + "\n\n";
+                console.log(content);
+                const printData = new TextEncoder().encode(content);
+
+                // Hubungkan ke perangkat Bluetooth
+                const device = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true,
+                    optionalServices: ["000018f0-0000-1000-8000-00805f9b34fb"],
+                });
+
+                console.log("Perangkat ditemukan:", device.name);
+
+                const server = await device.gatt.connect();
+                const service = await server.getPrimaryService(
+                    "000018f0-0000-1000-8000-00805f9b34fb"
+                );
+                const characteristic = await service.getCharacteristic(
+                    "00002af1-0000-1000-8000-00805f9b34fb"
+                );
+
+                // Kirim data ke printer
+                // await characteristic.writeValue(printData);
+                // mambagi dua
+                function chunkArrayBuffer(buffer, chunkSize) {
+                    let chunks = [];
+                    for (let i = 0; i < buffer.byteLength; i += chunkSize) {
+                        chunks.push(buffer.slice(i, i + chunkSize));
+                    }
+                    return chunks;
+                }
+
+                async function sendDataInChunks(characteristic, data) {
+                    const chunkSize = 256; // Kurangi ukuran chunk
+                    const chunks = chunkArrayBuffer(data, chunkSize);
+
+                    for (const chunk of chunks) {
+                        await characteristic.writeValue(chunk);
+                        await new Promise((resolve) => setTimeout(resolve, 100)); // Tambah jeda waktu
+                    }
+                }
+                // end membagi dua
+                await sendDataInChunks(characteristic, printData);
+
+                console.log("Nota berhasil dicetak.");
+            } catch (error) {
+                console.error("Gagal mencetak nota:", error);
             }
         };
     </script>
