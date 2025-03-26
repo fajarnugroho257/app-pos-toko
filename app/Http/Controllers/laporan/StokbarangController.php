@@ -31,15 +31,19 @@ class StokbarangController extends Controller
         // dd($dataUser);
         $pusat_id = $dataUser->toko_pusat_user->pusat_id;
         if ($data['cabang_id'] == 'gudang') {
-            $rs_terbanyak = DB::table('cart as a')
-                ->selectRaw('d.id, d.barang_nama, SUM(b.cart_qty) AS cart_qty')
-                ->join('cart_data as b', 'a.cart_id', '=', 'b.cart_id')
-                ->join('barang_cabang as c', 'b.barang_cabang_id', '=', 'c.id')
-                ->join('barang_master as d', 'c.barang_id', '=', 'd.id')
-                ->where('a.cart_st', 'yes')
-                ->where('a.pusat_id', $pusat_id)
-                ->groupBy('d.id', 'd.barang_nama')
-                ->get();
+            $rs_terbanyak = DB::select("SELECT m_barang.id, m_barang.barang_nama, IFNULL(m_penjualan.penjualan, 0) AS 'penjualan' FROM (
+                                SELECT a.id, a.barang_nama FROM barang_master a WHERE a.pusat_id = ?
+                            ) m_barang LEFT JOIN (
+                                SELECT e.id, SUM(c.cart_qty) AS 'penjualan'
+                                FROM cart b
+                                INNER JOIN cart_data c ON b.cart_id = c.cart_id
+                                INNER JOIN barang_cabang d ON c.barang_cabang_id = d.id
+                                INNER JOIN barang_master e ON d.barang_id = e.id
+                                WHERE b.cart_st = 'yes'
+                                AND b.pusat_id = ?
+                                GROUP BY e.id
+                            ) m_penjualan ON m_barang.id = m_penjualan.id
+                            ORDER BY IFNULL(m_penjualan.penjualan, 0) DESC", [$pusat_id, $pusat_id]);
         } else {
             $rs_terbanyak = DB::select("SELECT m_barang.id, m_barang.barang_nama, m_barang.cabang_id, m_barang.cabang_nama, IFNULL(m_jual.jual, 0) AS 'cart_qty' FROM (
                     SELECT e.id, e.barang_id, e.barang_stok, e.cabang_id, f.barang_nama, g.cabang_nama

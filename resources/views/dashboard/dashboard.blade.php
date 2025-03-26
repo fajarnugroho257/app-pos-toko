@@ -174,16 +174,24 @@
                                         </thead>
                                         @php
                                             $no = 1;
+                                            $jlh = 0;
                                         @endphp
                                         <tbody>
                                             @foreach ($rs_terbanyak as $key => $terbanyak)
                                                 <tr>
                                                     <td class="text-center">{{ $no++ }}</td>
-                                                    <td>{{ $terbanyak->barang_cabang->toko_cabang->cabang_nama }}</td>
-                                                    <td>{{ $terbanyak->barang_cabang->barang_master->barang_nama }}</td>
-                                                    <td class="text-center">{{ $terbanyak->cart_qty }}</td>
+                                                    <td>{{ $terbanyak->cabang_nama }}</td>
+                                                    <td>{{ $terbanyak->barang_nama }}</td>
+                                                    <td class="text-center text-bold">{{ $terbanyak->cart_qty }}</td>
                                                 </tr>
+                                                @php
+                                                    $jlh += $terbanyak->cart_qty;
+                                                @endphp
                                             @endforeach
+                                            <tr>
+                                                <td colspan="3" class="text-right">Total</td>
+                                                <td class="text-center text-bold">{{ $jlh }}</td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>

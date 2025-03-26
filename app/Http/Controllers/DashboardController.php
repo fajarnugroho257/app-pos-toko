@@ -86,16 +86,44 @@ class DashboardController extends Controller
             }
             // dd($tranMonth);
             $data['tranMonth'] = $tranMonth;
-            $rs_terbanyak = CartData::
-                select(DB::raw('SUM(cart_qty) as cart_qty'), 'barang_cabang_id')
-                ->with(['barang_cabang.barang_master', 'barang_cabang.toko_cabang'])
-                ->whereRelation('cart', 'pusat_id', $pusat_id)
-                ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang)
-                ->whereRelation('transaksi', DB::raw('DATE(trans_date)'), '>=', $data['startDateDash'])
-                ->whereRelation('transaksi', DB::raw('DATE(trans_date)'), '<=', $data['endDateDash'])
-                ->groupBy('barang_cabang_id')
-                ->orderBy(DB::raw('SUM(cart_qty)'), 'DESC')
-                ->get();
+            if ($cabang_id == 'all' || empty($cabang_id)) {
+                $rs_terbanyak = DB::select("SELECT m_barang.id, m_barang.barang_nama, 'All' AS 'cabang_nama', IFNULL(m_penjualan.penjualan, 0) AS 'cart_qty' FROM (
+                        SELECT a.id, a.barang_nama FROM barang_master a WHERE a.pusat_id = ?
+                    ) m_barang LEFT JOIN (
+                        SELECT e.id, SUM(c.cart_qty) AS 'penjualan'
+                        FROM cart b
+                        INNER JOIN cart_data c ON b.cart_id = c.cart_id
+                        INNER JOIN barang_cabang d ON c.barang_cabang_id = d.id
+                        INNER JOIN barang_master e ON d.barang_id = e.id
+                        INNER JOIN transaksi_cart f ON c.cart_id = f.cart_id
+                        WHERE b.cart_st = 'yes'
+                        AND b.pusat_id = ?
+                        AND DATE(f.trans_date) >= ?
+                        AND DATE(f.trans_date) <= ?
+                        GROUP BY e.id
+                    ) m_penjualan ON m_barang.id = m_penjualan.id
+                    ORDER BY IFNULL(m_penjualan.penjualan, 0) DESC", [$pusat_id, $pusat_id, $data['startDateDash'], $data['endDateDash']]);
+            } else {
+                $rs_terbanyak = DB::select("SELECT m_barang.id, m_barang.barang_nama, m_barang.cabang_id, m_barang.cabang_nama, IFNULL(m_jual.jual, 0) AS 'cart_qty' FROM (
+                    SELECT e.id, e.barang_id, e.barang_stok, e.cabang_id, f.barang_nama, g.cabang_nama
+                    FROM barang_cabang e
+                    INNER JOIN barang_master f ON e.barang_id = f.id
+                    INNER JOIN toko_cabang g ON e.cabang_id = g.id
+                    WHERE e.cabang_id = ?
+                ) AS m_barang LEFT JOIN (
+                    SELECT c.id, a.cabang_id, d.barang_nama, SUM(b.cart_qty) AS 'jual' FROM cart a
+                    INNER JOIN cart_data b ON a.cart_id = b.cart_id
+                    INNER JOIN barang_cabang c ON b.barang_cabang_id = c.id
+                    INNER JOIN barang_master d ON c.barang_id = d.id
+                    INNER JOIN transaksi_cart e ON b.cart_id = e.cart_id
+                    WHERE a.cart_st = 'yes'
+                    AND a.pusat_id = ? AND a.cabang_id = ?
+                    AND DATE(e.trans_date) >= ?
+                    AND DATE(e.trans_date) <= ?
+                    GROUP BY c.id
+                ) AS m_jual ON m_barang.id = m_jual.id
+                ORDER BY IFNULL(m_jual.jual, 0) DESC", [$res_cabang, $pusat_id, $res_cabang, $data['startDateDash'], $data['endDateDash']]);
+            }
             $data['rs_terbanyak'] = $rs_terbanyak;
             // dd($rs_terbanyak);
             // return

@@ -91,10 +91,10 @@
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
                                         <td>{{ $terbanyak->barang_nama }}</td>
-                                        <td class="text-center text-bold">{{ $terbanyak->cart_qty }}</td>
+                                        <td class="text-center text-bold">{{ $terbanyak->penjualan }}</td>
                                     </tr>
                                     @php
-                                        $grandTotal += $terbanyak->cart_qty;
+                                        $grandTotal += $terbanyak->penjualan;
                                     @endphp
                                 @endforeach
                             @else
