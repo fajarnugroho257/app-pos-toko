@@ -211,7 +211,7 @@ Route::middleware(['auth'])->group(function () {
     //
     Route::middleware(['hasRole.page:stokBarang'])->group(function () {
         Route::get('/stok-barang', [StokbarangController::class, 'index'])->name('stokBarang');
-        Route::post('/process-cari-laba', [StokbarangController::class, 'search'])->name('cariStokBarang');
+        Route::post('/process-stok-barang', [StokbarangController::class, 'search'])->name('cariStokBarang');
 
     });
 
