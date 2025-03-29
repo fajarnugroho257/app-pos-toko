@@ -154,7 +154,7 @@ class CartController extends Controller
                                     b.barang_cabang_id, b.cart_nama AS 'barang_nama', b.cart_harga_jual AS 'barang_harga_jual',
                                     a.pusat_id, b.cart_qty, b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
                                     d.barang_harga_jual AS 'awal_barang_harga_jual',
-                                    IF(b.cart_qty >= d.barang_grosir_pembelian, TRUE, FALSE) AS 'barang_st_diskon',
+                                    IF(b.cart_qty >= d.barang_grosir_pembelian, 1, 0) AS 'barang_st_diskon',
                                     d.barang_grosir_pembelian AS 'barang_grosir_pembelian',
                                     d.barang_grosir_harga_jual AS 'barang_grosir_harga_jual'
                                     FROM cart a
