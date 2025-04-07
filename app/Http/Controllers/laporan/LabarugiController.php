@@ -9,6 +9,7 @@ use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use App\Models\Transaksi;
 use Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use DB;
 use Illuminate\Http\Request;
 use Validator;
@@ -150,4 +151,36 @@ class LabarugiController extends Controller
             'html' => $html,
         ], 200);
     }
+
+    public function download(string $slug)
+    {
+        // cari
+        $date_start = session()->get('date_start');
+        $date_end = session()->get('date_end');
+        //
+        $res_date_start = empty($date_start) ? date('Y-m-01') : $date_start;
+        $res_date_end = empty($date_end) ? date('Y-m-t') : $date_end;
+        //
+        $cabang = TokoCabang::where('slug', $slug)->first();
+        if (empty($cabang)) {
+            return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
+        }
+        $data['cabang'] = $cabang;
+        $data['title'] = 'Laporan Laba Rugi';
+        // data transaksi
+        $transaksi = Transaksi::whereRelation('cart', 'cabang_id', $cabang->id)
+            ->orderBy(DB::raw('trans_date'), 'DESC')
+            ->with(['cart', 'cart_data'])
+            ->whereBetween(DB::raw('DATE(trans_date)'), [$res_date_start, $res_date_end])
+            ->get();
+        $data = $transaksi;
+
+        // detail cabang
+        $cabang = TokoCabang::find($cabang->id);
+        $cabang_nama = empty($cabang) ? 'SEMUA-CABANG' : str_replace(' ', '-', $cabang->cabang_nama);
+        $cabang_nama_view = empty($cabang) ? 'SEMUA CABANG' : $cabang->cabang_nama;
+        $pdf = Pdf::loadView('laporan.laba.cetak', compact('data', 'cabang_nama_view', 'res_date_start', 'res_date_end'))->setPaper('A4', 'landscape');
+        return $pdf->download('LAPORAN-LABA-RUGI-' . strtoupper($cabang_nama) . '-' . $res_date_start . '-' . $res_date_end . '.pdf');
+    }
+
 }

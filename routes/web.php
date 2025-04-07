@@ -188,6 +188,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/show-data-laba-rugi/{slug}', [LabarugiController::class, 'show'])->name('showLabaRugi');
         Route::post('/process-cari-laba', [LabarugiController::class, 'search'])->name('cariLaba');
         Route::post('/detail-laba-rugi', [LabarugiController::class, 'detail_laba'])->name('detailLabaRugi');
+        Route::get('/process-cetak-pdf-laba-rugi/{slug}', [LabarugiController::class, 'download'])->name('downloadLabaRugi');
     });
     // Profil
     Route::middleware(['hasRole.page:dashboard'])->group(function () {
@@ -212,6 +213,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['hasRole.page:stokBarang'])->group(function () {
         Route::get('/stok-barang', [StokbarangController::class, 'index'])->name('stokBarang');
         Route::post('/process-stok-barang', [StokbarangController::class, 'search'])->name('cariStokBarang');
+        Route::get('/process-cetak-pdf-stok-barang', [StokbarangController::class, 'download'])->name('downloadStokBarang');
 
     });
 

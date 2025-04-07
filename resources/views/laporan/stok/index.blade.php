@@ -35,9 +35,9 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        {{-- <a href="{{ route('tambahTokoCabang') }}" class="btn btn-block btn-success"><i
+                        <a href="{{ route('downloadStokBarang') }}" class="btn btn-block btn-primary"><i
                                 class="fa fa-file-pdf"></i>
-                            Download</a> --}}
+                            Download</a>
                     </div>
                 </div>
                 <div class="card-body">

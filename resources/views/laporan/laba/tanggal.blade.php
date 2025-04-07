@@ -52,13 +52,22 @@
                                 <div class="m-0"><b>S/D</b></div>
                                 <input type="date" name="date_end" class="form-control" value="{{ $date_end }}">
                             </div>
-                            <div class="d-flex item-center">
-                                <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
-                                        class="fa fa-search"></i>
-                                    Cari</button>
-                                <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
-                                        class="fa fa-times"></i>
-                                    Reset</button>
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between">
+                                    <div class="d-flex item-center">
+                                        <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
+                                                class="fa fa-search"></i>
+                                            Cari</button>
+                                        <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
+                                                class="fa fa-times"></i>
+                                            Reset</button>
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('downloadLabaRugi', ['slug' => $cabang->slug]) }}"
+                                            class="btn btn-block btn-primary"><i class="fa fa-file-pdf"></i>
+                                            Download</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -121,8 +130,7 @@
                                             {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}</td>
                                         <td class="text-center">
                                             <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
-                                                data-cart_id="{{ $laba->cart_id }}"><i
-                                                    class="fa fa-sticky-note"></i></a>
+                                                data-cart_id="{{ $laba->cart_id }}"><i class="fa fa-sticky-note"></i></a>
                                         </td>
                                         @php
                                             $grandTtlCartBeli += $ttlCartBeli;
