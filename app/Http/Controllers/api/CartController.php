@@ -104,7 +104,7 @@ class CartController extends Controller
                     ], 422);
                 }
                 // insert to cart data
-                $cart_diskon = $value['barang_st_diskon'] ? 'yes' : 'no';
+                $cart_diskon = $value['barang_st_diskon'];
                 CartData::create([
                     'cart_id' => $cart_id,
                     'barang_cabang_id' => $value['barang_cabang_id'],
