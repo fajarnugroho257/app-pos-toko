@@ -7,10 +7,10 @@ use App\Models\BarangCabang;
 use App\Models\Cart;
 use App\Models\CartData;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use DB;
 use Illuminate\Http\Request;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class CartController extends Controller
 {
@@ -152,9 +152,9 @@ class CartController extends Controller
 
         $draft = DB::select("SELECT a.cart_id, a.cart_st, b.cart_barcode AS 'barang_barcode',
                                     b.barang_cabang_id, b.cart_nama AS 'barang_nama', b.cart_harga_jual AS 'barang_harga_jual',
-                                    a.pusat_id, b.cart_qty, b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
+                                    a.pusat_id, CONVERT(b.cart_qty, SIGNED) AS 'cart_qty', b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
                                     d.barang_harga_jual AS 'awal_barang_harga_jual',
-                                    IF(b.cart_qty >= d.barang_grosir_pembelian, 'yes', 'no') AS 'barang_st_diskon',
+                                    IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), 'yes', 'no') AS 'barang_st_diskon',
                                     d.barang_grosir_pembelian AS 'barang_grosir_pembelian',
                                     d.barang_grosir_harga_jual AS 'barang_grosir_harga_jual'
                                     FROM cart a
