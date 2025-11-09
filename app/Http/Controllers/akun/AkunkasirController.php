@@ -7,8 +7,8 @@ use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use App\Models\User;
 use App\Models\UserData;
-use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AkunkasirController extends Controller
 {

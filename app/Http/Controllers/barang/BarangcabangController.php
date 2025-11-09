@@ -9,8 +9,8 @@ use App\Models\BarangMasterLog;
 use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
-use Auth;
-use DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class BarangcabangController extends Controller
@@ -219,6 +219,8 @@ class BarangcabangController extends Controller
                 'barang_perubahan' => $request->barang_stok_penambahan,
                 'barang_akhir' => $request->barang_stok_hasil,
                 'barang_st' => 'perubahan',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
             ]);
             // }
             return redirect()->route('updatebarangCabang', ['id' => $detail->id])->with('success', 'Data berhasil disimpan');

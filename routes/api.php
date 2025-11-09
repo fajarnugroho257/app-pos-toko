@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\BarangController;
 use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\LoginController;
+use App\Http\Controllers\api\TokenController;
 use App\Http\Controllers\api\TransaksiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -47,3 +48,10 @@ Route::get('/api-cek-token', [App\Http\Controllers\api\LoginController::class, '
 // Route::get('/non-get-cart-draft', [CartController::class, 'show']);
 // test non jwt
 Route::get('/test-api-barcode-data-barang-cabang', [BarangController::class, 'detail']);
+
+// route untuk get data barang dan user berdasarkan token cabang
+Route::post('/get-data-barang-by-token', [TokenController::class, 'show']);
+// 
+Route::post('/post-data-transaksi', [TokenController::class, 'store']);
+
+

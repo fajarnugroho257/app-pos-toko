@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class BarangLog extends Model
 {
     use HasFactory;
+    public $timestamps = false;
     protected $table = 'barang_cabang_log';
     protected $fillable = [
         'user_id',
@@ -20,6 +21,8 @@ class BarangLog extends Model
         'barang_transaksi_id',
         'barang_akhir',
         'barang_st',
+        'created_at',
+        'updated_at'
     ];
     public function toko_pusat()
     {

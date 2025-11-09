@@ -3,6 +3,7 @@
 use App\Http\Controllers\akun\AkunkasirController;
 use App\Http\Controllers\barang\BarangcabangController;
 use App\Http\Controllers\barang\MasterbarangController;
+use App\Http\Controllers\client\ClientController;
 use App\Http\Controllers\DumpTransaksiController;
 use App\Http\Controllers\laporan\LabarugiController;
 use App\Http\Controllers\laporan\StokbarangController;
@@ -217,6 +218,13 @@ Route::middleware(['auth'])->group(function () {
 
     });
 
+    // CLIENT TOKEN
+    Route::middleware(['hasRole.page:clientToken'])->group(function () {
+        Route::get('/client-token', [ClientController::class, 'index'])->name('clientToken');
+        Route::get('/add-client-token', [ClientController::class, 'create'])->name('addClientToken');
+        Route::post('/process-add-client-token', [ClientController::class, 'store'])->name('aksiAddClientToken');
+        Route::get('/get-user-by-cabang', [ClientController::class, 'show']);
+    });
     /* END YOUR ROUTE APLICATION */
 });
 

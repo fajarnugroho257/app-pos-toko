@@ -90,4 +90,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(BarangMasterLog::class, 'user_id', 'user_id');
     }
+    public function client()
+    {
+        return $this->hasMany(Client::class, 'user_id', 'user_id');
+    }
 }

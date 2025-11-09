@@ -9,7 +9,7 @@ use App\Models\Cart;
 use App\Models\CartData;
 use App\Models\Transaksi;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use DB;
 use Http;
 use Illuminate\Http\Request;
@@ -105,6 +105,8 @@ class TransaksiController extends Controller
                         'barang_transaksi_id' => $stTransaksi->id,
                         'barang_akhir' => $sisa,
                         'barang_st' => 'transaksi',
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'updated_at' => date('Y-m-d H:i:s'),
                     ]);
                 }
             }
