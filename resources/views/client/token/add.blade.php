@@ -103,7 +103,7 @@
 
             if (cabangId) {
                 $.ajax({
-                    url: '/get-user-by-cabang',
+                    url: "{{ url('/get-user-by-cabang') }}",
                     type: 'GET',
                     data: { id: cabangId },
                     success: function(response) {
