@@ -85,11 +85,12 @@ class TokenController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-        // cart ID
-        $cart_id = now()->format('YmdHis') . mt_rand(1000, 9999);
+        
         // 
         $postTransaksi = $request->postTransaksi;
         foreach ($postTransaksi as $key1 => $value) {
+            // cart ID
+            $cart_id = now()->format('YmdHis') . mt_rand(1000, 9999);
             // pusat ID 
             $pusat = TokoCabang::find($request->cabang_id);
             //insert to cart
@@ -100,7 +101,7 @@ class TokenController extends Controller
                 'cart_st' => 'yes',
             ]);
 
-            $cartDatas = $value['cartData'];
+            $cartDatas = array_reverse($value['cartData']);
 
             // loop keranjang
             foreach ($cartDatas as $key2 => $cartData) {
