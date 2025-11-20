@@ -234,7 +234,7 @@
             $("#ttlChecked").text(totalChecked);
         });
         $(document).on('change', '#checkAll', function () {
-            $(".checkItem").prop('checked', $(this).prop('checked'));
+            $('#tableProduk tbody tr:visible .checkItem').prop('checked', $(this).prop('checked'));
             updateCounter();
         });
         // Function hitung checkbox tercentang
