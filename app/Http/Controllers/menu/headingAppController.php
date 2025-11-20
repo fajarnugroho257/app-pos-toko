@@ -14,7 +14,7 @@ class headingAppController extends Controller
     public function index()
     {
         $data['title'] = 'Data Heading Aplikasi';
-        $data['rs_head'] = Heading::orderBy('app_heading_urut', 'ASC')->paginate(5);
+        $data['rs_head'] = Heading::orderByRaw('CAST(app_heading_urut AS UNSIGNED) ASC')->paginate(15);
         return view('heading.index', $data);
     }
 

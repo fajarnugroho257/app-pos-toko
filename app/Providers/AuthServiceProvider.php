@@ -44,7 +44,7 @@ class AuthServiceProvider extends ServiceProvider
         // $heading = Role_menu::with('menu')->where('role_id', '=', Auth::user()->role_id)->get();
         $heading = Heading::with('menu', 'menu.role_menu')
             ->whereRelation('menu.role_menu', 'role_id', '=', Auth::user()->role_id)
-            ->orderBy('app_heading_urut', 'ASC')
+            ->orderByRaw('CAST(app_heading_urut AS UNSIGNED) ASC')
             ->get();
         foreach ($heading as $key => $value) {
             // echo $value->app_heading_id;

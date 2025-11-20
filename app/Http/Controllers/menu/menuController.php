@@ -15,7 +15,7 @@ class menuController extends Controller
     public function index()
     {
         $data['title'] = 'Data Menu Aplikasi';
-        $data['rs_menu'] = Menu::paginate(10);
+        $data['rs_menu'] = Menu::paginate(20);
         return view('menu.index', $data);
     }
 
