@@ -129,7 +129,7 @@
         <!-- /.content -->
     </div>
     <div class="modal fade" id="modal-produk">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h4 class="modal-title">Data Produk terbaru</h4>
@@ -143,21 +143,37 @@
                     @method('POST')
                     @csrf
                     <div class="modal-body">
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th class="text-center">No</th>
-                                    <th class="text-center">Nama Barang</th>
-                                    <th class="text-center">Stok</th>
-                                    <th class="text-center">Satuan Harga Beli</th>
-                                    <th class="text-center">Satuan Harga Jual</th>
-                                    <th class="text-center">Grosir Min Pembelian</th>
-                                    <th class="text-center">Grosir Harga Jual</th>
-                                    <th class="text-center">Pilih</th>
-                                </tr>
-                            </thead>
-                            <tbody id="res-produk"></tbody>
-                        </table>
+                        <div class="row">
+                            <div class="col-4">
+                                <input type="text" id="search" placeholder="Cari Nama Barang..." class="form-control mb-2">
+                            </div>
+                            <div class="col-1">
+                                <div class="btn btn-danger" id="resetBtn"><i class="fa fa-times" style="color: #FFF"></i></div>
+                            </div>
+                            <div class="col-6">
+                                <div class="d-flex" style="gap: 20px;">
+                                    <p>Total data : <b id="jumlah"></b></p>
+                                    <p class="text-primary"><b>Tercentang : <span id="ttlChecked">0</span></b></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="tableProduk">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">No</th>
+                                        <th class="text-center">Nama Barang</th>
+                                        <th class="text-center">Stok</th>
+                                        <th class="text-center">Satuan Harga Beli</th>
+                                        <th class="text-center">Satuan Harga Jual</th>
+                                        <th class="text-center">Grosir Min Pembelian</th>
+                                        <th class="text-center">Grosir Harga Jual</th>
+                                        <th class="text-center">Pilih Semua <br><input type="checkbox" id="checkAll"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="res-produk"></tbody>
+                            </table>
+                        </div>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -173,6 +189,7 @@
         $(document).ready(function() {
             $('#getProduk').on('click', function() {
                 const slug = $(this).data('slug');
+                $('#res-produk').html('<tr><td class="text-center" colspan="8">Silahkan tunggu...</td>');
                 $.ajax({
                     url: "{{ route('getDataProduk') }}",
                     type: 'POST',
@@ -183,8 +200,9 @@
                     success: function(response) {
                         if (response.success) {
                             // Tindakan jika permintaan berhasil
-                            $('#modal-produk').modal('show');
+                            // $('#modal-produk').modal('show');
                             $('#res-produk').html(response.html);
+                            $('#jumlah').html(response.jumlah);
 
                         } else {
                             alert(response.message);
@@ -196,7 +214,32 @@
                         console.log(error);
                     }
                 });
+                $('#modal-produk').modal('show');
+            });
+            // search
+            $("#search").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $("#tableProduk tbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+            });
+            // Tombol Reset
+            $("#resetBtn").on("click", function () {
+                $("#search").val(""); // kosongkan input
+                $("#tableProduk tbody tr").show(); // tampilkan semua baris
             });
         });
+        $(document).on("change", 'input[name="barang_id[]"]', function() {
+            var totalChecked = $('input[name="barang_id[]"]:checked').length;
+            $("#ttlChecked").text(totalChecked);
+        });
+        $(document).on('change', '#checkAll', function () {
+            $(".checkItem").prop('checked', $(this).prop('checked'));
+            updateCounter();
+        });
+        // Function hitung checkbox tercentang
+        function updateCounter() {
+            $("#ttlChecked").text($('.checkItem:checked').length);
+        }
     </script>
 @endsection

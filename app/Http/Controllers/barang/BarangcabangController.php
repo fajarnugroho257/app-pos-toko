@@ -126,7 +126,7 @@ class BarangcabangController extends Controller
                 $html .= '      Rp. ' . number_format($value['barang_grosir_harga_jual'], 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '  <td class="text-center">';
-                $html .= '      <input type="checkbox" name="barang_id[]" value="' . $value['id'] . '">';
+                $html .= '      <input type="checkbox" class="checkItem" name="barang_id[]" value="' . $value['id'] . '">';
                 $html .= '  </td>';
                 $html .= '</tr>';
                 // $html .=
@@ -144,6 +144,7 @@ class BarangcabangController extends Controller
             'message' => 'Okee..!',
             'data' => $data,
             'html' => $html,
+            'jumlah' => ($no - 1),
         ], 200);
         // dd($request->all());
     }
