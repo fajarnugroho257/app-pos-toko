@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\menu;
 
 use App\Http\Controllers\Controller;
+use App\Models\TokoPusat;
+use App\Models\TokoPusatUser;
 use App\Models\User;
 use App\Models\UserPusat;
 use Illuminate\Http\Request;
@@ -24,8 +26,11 @@ class UsertokopusatController extends Controller
      */
     public function create()
     {
-        $data['rs_user'] = User::all();
-        dd($data);
+        $data['title'] = 'Tambah Akun Toko Pusat';
+        $data['rs_users'] = User::whereNotIn('user_id', TokoPusatUser::pluck('user_id'))->get();
+        $data['rs_toko_pusat'] = TokoPusat::all();
+        // dd($data);
+        return view('akunPusat.add', $data);
     }
 
     /**
@@ -33,7 +38,12 @@ class UsertokopusatController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'user_id' => 'required',
+            'pusat_id' => 'required',
+        ]);
+        TokoPusatUser::create($validated);
+        return redirect()->route('tambahUserPusat')->with('success', 'Data Berhasil disimpan');
     }
 
     /**
@@ -65,6 +75,11 @@ class UsertokopusatController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $detail = TokoPusatUser::find($id);
+        if (empty($detail)) {
+            return redirect()->route('userPusat')->with('error', 'Data tidak ditemukan');
+        }
+        $detail->delete();
+        return redirect()->route('userPusat')->with('success', 'Data berhasil dihapus');
     }
 }

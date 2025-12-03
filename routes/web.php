@@ -217,6 +217,9 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['hasRole.page:userPusat'])->group(function () {
         Route::get('/user-pusat', [UsertokopusatController::class, 'index'])->name('userPusat');
         Route::get('/add-user-pusat', [UsertokopusatController::class, 'create'])->name('tambahUserPusat');
+        Route::post('/process-add-user-pusat', [UsertokopusatController::class, 'store'])->name('processTambahUserPusat');
+        Route::get('/process-delete-user-pusat/{id}', [UsertokopusatController::class, 'destroy'])->name('processDeleteAkun');
+        
 
     });
     //

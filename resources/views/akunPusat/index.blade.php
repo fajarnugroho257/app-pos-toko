@@ -58,11 +58,7 @@
                                         <td class="text-center">{{ $user->toko_pusat->pusat_nama }}</td>
                                         <td class="text-center">{{ $user->user->name }}</td>
                                         <td class="text-center">
-                                            <a href="{{ route('UpdateAkunKasir', [$user->id]) }}"
-                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                            {{-- <a href="{{ route('deleteAkunKasir', [$user->id]) }}"
-                                                onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> --}}
+                                            <a href="{{ route('processDeleteAkun', [$user->id]) }}" onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')" class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach
