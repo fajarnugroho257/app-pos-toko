@@ -23,6 +23,15 @@ use App\Http\Controllers\menu\headingAppController;
 use App\Http\Controllers\menu\menuController;
 use App\Http\Controllers\menu\rolePenggunaController;
 use App\Http\Controllers\menu\roleMenuController;
+use App\Http\Controllers\website\AboutMeController;
+use App\Http\Controllers\website\BannerController;
+use App\Http\Controllers\website\FaqController;
+use App\Http\Controllers\website\ListBarangController;
+use App\Http\Controllers\website\PreferenceController;
+use App\Http\Controllers\website\PromoController;
+use App\Http\Controllers\website\TestimoniController;
+use App\Http\Controllers\website\WhyChooseMeController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -225,6 +234,85 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/process-add-client-token', [ClientController::class, 'store'])->name('aksiAddClientToken');
         Route::get('/get-user-by-cabang', [ClientController::class, 'show']);
     });
+
+    // **** WEBSITE **** //
+
+    // BANNER
+    Route::middleware(['hasRole.page:banner'])->group(function () {
+        Route::get('/banner', [BannerController::class, 'index'])->name('banner');
+        Route::get('/add-banner', [BannerController::class, 'create'])->name('addBanner');
+        Route::post('/process-add-banner', [BannerController::class, 'store'])->name('processAddBanner');
+        Route::get('/update-banner/{id}', [BannerController::class, 'edit'])->name('editBanner');
+        Route::post('/process-update-banner/{id}', [BannerController::class, 'update'])->name('processEditBanner');
+        Route::get('/process-delete-banner/{id}', [BannerController::class, 'destroy'])->name('processDeleteBanner');
+    });
+
+    // List Barang
+    Route::middleware(['hasRole.page:listBarang'])->group(function () {
+        Route::get('/daftar-barang', [ListBarangController::class, 'index'])->name('listBarang');
+        Route::get('/update-daftar-barang/{slug}', [ListBarangController::class, 'edit'])->name('updateListBarang');
+        Route::post('/process-update-daftar-barang/{slug}', [ListBarangController::class, 'update'])->name('processUpdateListBarang');
+        Route::post('/process-cari-daftar-barang', [ListBarangController::class, 'search'])->name('cariListBarang');
+    });
+
+    // promo
+    Route::middleware(['hasRole.page:promo'])->group(function () {
+        Route::get('/promo', [PromoController::class, 'index'])->name('promo');
+        Route::get('/add-promo', [PromoController::class, 'create'])->name('addPromo');
+        Route::post('/process-add-promo', [PromoController::class, 'store'])->name('processAddPromo');
+        Route::get('/edit-promo/{id}', [PromoController::class, 'edit'])->name('editPromo');
+        Route::post('/process-edit-promo/{id}', [PromoController::class, 'update'])->name('processEditPromo');
+        Route::post('/process-cari-promo', [PromoController::class, 'search'])->name('cariPromo');
+        Route::get('/process-delete-promo/{id}', [PromoController::class, 'destroy'])->name('deletePromo');
+        // ajax
+        Route::post('/get_detail_promo', [PromoController::class, 'detail_barang_by_id'])->name('detailBarang');
+        
+    });
+
+    // tentang kami
+    Route::middleware(['hasRole.page:tentangKami'])->group(function () {
+        Route::get('/about-me', [AboutMeController::class, 'index'])->name('tentangKami');
+        Route::post('/process-edit-about-me/{id}', [AboutMeController::class, 'update'])->name('processEditTentangKami');
+        Route::get('/process-delete-image', [AboutMeController::class, 'destroy'])->name('hapusImage');
+    });
+
+    // Pref
+    Route::middleware(['hasRole.page:preference'])->group(function () {
+        Route::get('/preference', [PreferenceController::class, 'index'])->name('preference');
+        Route::get('/edit-preference', [PreferenceController::class, 'edit'])->name('editPreference');
+        Route::post('/process-edit-preference/{id}', [PreferenceController::class, 'update'])->name('processEditPreference');
+    });
+
+    // why choose me
+    Route::middleware(['hasRole.page:whyChooseMe'])->group(function () {
+        Route::get('/why-choose-me', [WhyChooseMeController::class, 'index'])->name('whyChooseMe');
+        Route::get('/add-why-choose-me', [WhyChooseMeController::class, 'create'])->name('addWhyChooseMe');
+        Route::post('/process-add-why-choose-me', [WhyChooseMeController::class, 'store'])->name('processAddWhyChooseMe');
+        Route::get('/edit-why-choose-me/{id}', [WhyChooseMeController::class, 'edit'])->name('editWhyChooseMe');
+        Route::post('/process-edit-why-choose-me/{id}', [WhyChooseMeController::class, 'update'])->name('processEditWhyChooseMe');
+        Route::get('/process-delete-why-choose-me/{id}', [WhyChooseMeController::class, 'destroy'])->name('processDeleteWhyChooseMe');
+    });
+
+    // testimoni
+    Route::middleware(['hasRole.page:testimoni'])->group(function () {
+        Route::get('/testimoni', [TestimoniController::class, 'index'])->name('testimoni');
+        Route::get('/add-testimoni', [TestimoniController::class, 'create'])->name('addTestimoni');
+        Route::post('/process-add-testimoni', [TestimoniController::class, 'store'])->name('processAddTestimoni');
+        Route::get('/edit-testimoni/{id}', [TestimoniController::class, 'edit'])->name('editTestimoni');
+        Route::post('/process-edit-testimoni/{id}', [TestimoniController::class, 'update'])->name('processEditTestimoni');
+        Route::get('/process-delete-testimoni/{id}', [TestimoniController::class, 'destroy'])->name('processDeleteTestimoni');
+    });
+
+    // faq
+    Route::middleware(['hasRole.page:faq'])->group(function () {
+        Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+        Route::get('/add-faq', [FaqController::class, 'create'])->name('addFaq');
+        Route::post('/process-add-faq', [FaqController::class, 'store'])->name('processAddFaq');
+        Route::get('/edit-faq/{id}', [FaqController::class, 'edit'])->name('editFaq');
+        Route::post('/process-edit-faq/{id}', [FaqController::class, 'update'])->name('processEditFaq');
+        Route::get('/process-delete-faq/{id}', [FaqController::class, 'destroy'])->name('processDeleteFaq');
+    });
+    
     /* END YOUR ROUTE APLICATION */
 });
 

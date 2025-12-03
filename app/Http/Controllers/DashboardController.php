@@ -9,10 +9,10 @@ use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\Transaksi;
 use App\Models\User;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller

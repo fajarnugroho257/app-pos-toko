@@ -35,28 +35,27 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('tambahMasterBarang') }}" class="btn btn-block btn-success"><i
-                                class="fa fa-plus"></i>
-                            Tambah</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <form action="{{ route('cariMasterBarang') }}" method="POST">
+                    <form action="{{ route('cariListBarang') }}" method="POST">
                         @method('POST')
                         @csrf
                         <div class="row mb-3">
                             <div class="col-md-4 ml-0">
-                                <input type="text" name="barang_nama" class="form-control" autofocus
-                                    placeholder="Nama Barang / Barcode" value="{{ $barang_nama }}">
+                                <input type="text" name="daftar_barang_nama" class="form-control" autofocus placeholder="Nama Barang / Barcode" value="{{ $daftar_barang_nama }}">
+                            </div>
+                            <div class="col-md-3 ml-0">
+                                <select name="detail_st" id="" class="form-control" placeholder="Status ditampilkan di website">
+                                    <option value="">Pilih Status </option>
+                                    <option value="yes" @selected($detail_st == 'yes')>YA</option>
+                                    <option value="no" @selected($detail_st == 'no')>TIDAK</option>
+                                </select>
                             </div>
                             <div class="col-md-4 ml-0">
                                 <div class="d-flex item-center">
-                                    <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i
-                                            class="fa fa-search"></i>
-                                        Cari</button>
-                                    <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i
-                                            class="fa fa-times"></i>
-                                        Reset</button>
+                                    <button type="submit" name="aksi" value="cari" class="btn btn-primary"><i class="fa fa-search"></i> Cari</button>
+                                    <button type="submit" name="aksi" value="reset" class="btn btn-dark ml-2"><i class="fa fa-times"></i> Reset</button>
                                 </div>
                             </div>
                         </div>
@@ -66,43 +65,41 @@
                             <thead>
                                 <tr class="text-center">
                                     <th style="width: 10px">No</th>
+                                    <th>Gambar</th>
                                     <th>Nama Barang</th>
-                                    <th>Barcode Barang</th>
+                                    <th>Status</th>
                                     <th class="table-warning">Satuan Harga Beli</th>
-                                    <th>Stok Minimal</th>
-                                    <th>Stok Tersedia</th>
                                     <th class="table-success">Satuan Harga Jual</th>
-                                    <th>Minimal Pembelian Grosir</th>
                                     <th class="table-info">Grosir Harga Jual</th>
                                     <th style="width: 8%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($rs_barang as $key => $barang)
-                                @php
-                                $stStok = '';
-                                    if ($barang->barang_master_stok < $barang->barang_stok_minimal) {
-                                        $stStok = 'table-danger';
-                                    }
-                                @endphp
-                                    <tr class="{{$stStok}}">
+                                    <tr>
                                         <td class="text-center">{{ $rs_barang->firstItem() + $key }}</td>
-                                        <td>{{ $barang->barang_nama }}</td>
-                                        <td class="text-center">{{ $barang->barang_barcode }}</td>
+                                        <td class="text-center">
+                                            @if ($barang->detail_image_name != null)
+                                                <img src="{{ asset('image/barang/' . $barang->detail_image_name) }}" height="150" width="150" class="img-fluid img-thumbnail" alt="">
+                                            @else
+                                                <img src="{{ asset('image/barang/default.jpg') }}" height="150" width="150" class="img-fluid img-thumbnail" alt="">
+                                            @endif
+                                        </td>
+                                        <td>{{ $barang->barang_nama }} <br><u>{{ $barang->barang_barcode }}</u></td>
+                                        <td class="text-center">
+                                            @if ($barang->detail_st == 'yes')
+                                                <span class="badge badge-success">Show</span>
+                                            @elseif($barang->detail_st == 'no')
+                                            <span class="badge badge-danger">Hide</span>
+                                            @else
+                                            <b>-</b>
+                                            @endif
+                                        </td>
                                         <td class="text-right table-warning">Rp.{{ number_format($barang->barang_harga_beli, 0, ',', '.') }}</td>
-                                        <td class="text-center">{{ $barang->barang_stok_minimal }}</td>
-                                        <td class="text-center">{{ $barang->barang_master_stok }}</td>
                                         <td class="text-right table-success">Rp.{{ number_format($barang->barang_harga_jual, 0, ',', '.') }}</td>
-                                        <td class="text-right">{{$barang->barang_grosir_pembelian}}</td>
                                         <td class="text-right table-info">Rp.{{ number_format($barang->barang_grosir_harga_jual, 0, ',', '.') }}</td>
                                         <td class="text-center">
-                                            <a href="{{ route('updateMasterBarang', [$barang->slug]) }}" title="Edit / Menambah Stok"
-                                                class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
-                                            <a href="{{ route('historyMasterBarang', [$barang->id]) }}" title="History Barang Pusat"
-                                                class="btn btn-sm btn-info"><i class="fa fa-history"></i></a>
-                                            {{-- <a href="{{ route('processDeleteMasterBarang', [$barang->slug]) }}" title="Hapus"
-                                                onclick="return confirm('Apakah anda yakin akan menghapus data ini ?')"
-                                                class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></a> --}}
+                                            <a href="{{ route('updateListBarang', [$barang->slug]) }}" title="Ubah Gambar" class="btn btn-sm btn-warning"><i class="fa fa-pen"></i></a>
                                         </td>
                                     </tr>
                                 @endforeach

@@ -5,6 +5,7 @@ use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\LoginController;
 use App\Http\Controllers\api\TokenController;
 use App\Http\Controllers\api\TransaksiController;
+use App\Http\Controllers\api\WebsiteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -53,5 +54,14 @@ Route::get('/test-api-barcode-data-barang-cabang', [BarangController::class, 'de
 Route::post('/get-data-barang-by-token', [TokenController::class, 'show']);
 // 
 Route::post('/post-data-transaksi', [TokenController::class, 'store']);
-
+// WEBSITE
+Route::post('/get-banner-by-id', [WebsiteController::class, 'index']);
+Route::post('/get-promo-by-id', [WebsiteController::class, 'promo']);
+Route::post('/get-all-barang', [WebsiteController::class, 'barang']);
+Route::post('/about-me', [WebsiteController::class, 'tentang_kami']);
+Route::post('/get-terbanyak', [WebsiteController::class, 'produk_terbanyak']);
+Route::post('/get-pref', [WebsiteController::class, 'preference']);
+Route::post('/get-why-choose-me', [WebsiteController::class, 'get_why_choose']);
+Route::post('/get-testimoni', [WebsiteController::class, 'get_testimoni']);
+Route::post('/get-faq', [WebsiteController::class, 'get_faq']);
 

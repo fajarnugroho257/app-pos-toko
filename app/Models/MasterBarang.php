@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\website\DetailBarang;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Cviebrock\EloquentSluggable\Sluggable;
@@ -49,5 +50,9 @@ class MasterBarang extends Model
     public function barang_master_log()
     {
         return $this->hasMany(BarangMasterLog::class, 'barang_master_id', 'id');
+    }
+    public function detail_barang()
+    {
+        return $this->hasOne(DetailBarang::class, 'barang_id', 'id');
     }
 }

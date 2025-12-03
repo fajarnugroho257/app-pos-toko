@@ -138,6 +138,23 @@ class StokbarangController extends Controller
         $pdf = Pdf::loadView('laporan.stok.cetak', compact('data', 'cabang_id', 'cabang_nama_view'))->setPaper('A4', 'portrait');
         $date = date('d-m-Y');
         return $pdf->download('LAPORAN-BARANG-PALING-LAKU-' . strtoupper($cabang_nama) . '-' . $date . '.pdf');
+        // 
+        // $mpdf = new \Mpdf\Mpdf([
+        //     'tempDir' => storage_path('temp'),
+        // ]);
+
+        // $html = view('laporan.stok.cetak', [
+        //     'data' => $data,
+        //     'cabang_id' => $cabang_id,
+        //     'cabang_nama_view' => $cabang_nama_view,
+        // ])->render();
+
+        // $mpdf->WriteHTML($html);
+
+        // return $mpdf->Output(
+        //     'LAPORAN-BARANG-PALING-LAKU-'.$cabang_nama.'-'.$date.'.pdf',
+        //     'D'
+        // );
     }
 
     /**
