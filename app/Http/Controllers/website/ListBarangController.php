@@ -112,13 +112,11 @@ class ListBarangController extends Controller
         $request->validate([
             'detail_st' => 'required',
         ]);
-        if (empty($detailGambar)) {
-            $request->validate([
-                'detail_image_name' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:512',
-            ]);
-        }
         //
         if (empty($detailGambar)) {
+            $request->validate([
+                'detail_image_name' => 'required|image|mimes:png|max:512',
+            ]);
             // insert
             $detail_image_name = '';
             if ($request->hasFile('detail_image_name')) {

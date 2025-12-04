@@ -50,7 +50,7 @@
                         <div class="row">
                             <div class="col-md-2">
                                 @if (!empty($detailGambar))
-                                    <img src="{{ asset('image/barang/' . $detailGambar->detail_image_name) }}" height="150" width="150" class="img-fluid img-thumbnail" alt="">
+                                    <img id="preview" src="{{ asset('image/barang/' . $detailGambar->detail_image_name) }}" height="150" width="150" class="img-fluid img-thumbnail" alt="">
                                 @else
                                     <img id="preview" src="{{ asset('image/barang/default.jpg') }}" height="150" width="150" class="img-fluid img-thumbnail" alt="">
                                 @endif
@@ -70,7 +70,7 @@
                                             <label class="custom-file-label" for="detail_image_name">Pilih file</label>
                                         </div>
                                     </div>
-                                    <small class="text-danger">*max 512kb, jpg|png|jpeg</small>
+                                    <small class="text-danger">*max 512kb, png</small>
                                 </div>
                                 <span id="file-name"></span>
                             </div>
