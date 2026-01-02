@@ -8,7 +8,7 @@ use App\Models\Cart;
 use App\Models\CartData;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -96,25 +96,33 @@ class CartController extends Controller
             // insert to cart data
             foreach ($request->keranjang as $key => $value) {
                 // find barang cabang
-                $barangCabang = BarangCabang::where('id', '=', $value['barang_cabang_id'])->where('cabang_id', $dataUser->users_data->cabang_id)->first();
+                $barangCabang = BarangCabang::with('barang_master')->where('id', '=', $value['barang_cabang_id'])->where('cabang_id', $dataUser->users_data->cabang_id)->first();
                 if (empty($barangCabang)) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Ada barang yang tidak ditemukan'
                     ], 422);
                 }
+                $barang_harga_jual = $barangCabang->barang_master->barang_harga_jual;
+                $barang_grosir_harga_jual = $barangCabang->barang_master->barang_grosir_harga_jual;
                 // insert to cart data
                 $cart_diskon = $value['barang_st_diskon'];
+                // 
+                $cart_harga_jual = $cart_diskon == 'no' ? $barang_harga_jual : $barang_grosir_harga_jual;
+                $cart_subtotal = $cart_harga_jual * $value['cart_qty'];
+                // 
                 CartData::create([
                     'cart_id' => $cart_id,
                     'barang_cabang_id' => $value['barang_cabang_id'],
                     'cart_barcode' => $value['barang_barcode'],
                     'cart_harga_beli' => $value['barang_harga_beli'],
-                    'cart_harga_jual' => $value['barang_harga_jual'],
+                    // 'cart_harga_jual' => $value['barang_harga_jual'],
+                    'cart_harga_jual' => $cart_harga_jual,
                     'cart_nama' => $value['barang_nama'],
                     'cart_diskon' => $cart_diskon,
                     'cart_qty' => $value['cart_qty'],
-                    'cart_subtotal' => $value['cart_subtotal'],
+                    // 'cart_subtotal' => $value['cart_subtotal'],
+                    'cart_subtotal' => $cart_subtotal,
                     'cart_urut' => $value['no_urut'],
                 ]);
             }
@@ -151,12 +159,14 @@ class CartController extends Controller
         }
 
         $draft = DB::select("SELECT a.cart_id, a.cart_st, b.cart_barcode AS 'barang_barcode',
-                                    b.barang_cabang_id, b.cart_nama AS 'barang_nama', b.cart_harga_jual AS 'barang_harga_jual',
-                                    a.pusat_id, CONVERT(b.cart_qty, SIGNED) AS 'cart_qty', b.cart_subtotal, b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
+                                    b.barang_cabang_id, b.cart_nama AS 'barang_nama',
+                                    IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), barang_grosir_harga_jual, barang_harga_jual) AS 'barang_harga_jual',
+                                    a.pusat_id, CONVERT(b.cart_qty, SIGNED) AS 'cart_qty', b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
                                     d.barang_harga_jual AS 'awal_barang_harga_jual',
                                     IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), 'yes', 'no') AS 'barang_st_diskon',
                                     d.barang_grosir_pembelian AS 'barang_grosir_pembelian',
-                                    d.barang_grosir_harga_jual AS 'barang_grosir_harga_jual'
+                                    d.barang_grosir_harga_jual AS 'barang_grosir_harga_jual',
+                                    IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), (b.cart_qty * barang_grosir_harga_jual), (b.cart_qty * barang_harga_jual)) AS 'cart_subtotal'
                                     FROM cart a
                                     INNER JOIN cart_data b ON a.cart_id = b.cart_id
                                     INNER JOIN barang_cabang c ON b.barang_cabang_id = c.id
@@ -168,6 +178,39 @@ class CartController extends Controller
             'success' => true,
             'message' => 'Berhasil mendapatkan cart draft',
             'data' => $draft,
+        ]);
+    }
+
+    public function sub_total(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'errors' => 'user belum melakukan login'
+            ], 422);
+        }
+        $grand_total = DB::table('cart_data')->where('cart_id', $request->cart_id)->sum('cart_subtotal');
+        // 
+        $draft = DB::select("SELECT a.cart_id, a.cart_st, b.cart_barcode AS 'barang_barcode',
+                                    b.barang_cabang_id, b.cart_nama AS 'barang_nama',
+                                    IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), barang_grosir_harga_jual, barang_harga_jual) AS 'barang_harga_jual',
+                                    a.pusat_id, CONVERT(b.cart_qty, SIGNED) AS 'cart_qty', b.cart_urut AS 'no_urut', b.cart_harga_beli AS 'barang_harga_beli',
+                                    d.barang_harga_jual AS 'awal_barang_harga_jual',
+                                    IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), 'yes', 'no') AS 'barang_st_diskon',
+                                    d.barang_grosir_pembelian AS 'barang_grosir_pembelian',
+                                    d.barang_grosir_harga_jual AS 'barang_grosir_harga_jual',
+                                    IF(CONVERT(b.cart_qty, SIGNED) >= CONVERT(d.barang_grosir_pembelian, SIGNED), (b.cart_qty * barang_grosir_harga_jual), (b.cart_qty * barang_harga_jual)) AS 'cart_subtotal'
+                                    FROM cart a
+                                    INNER JOIN cart_data b ON a.cart_id = b.cart_id
+                                    INNER JOIN barang_cabang c ON b.barang_cabang_id = c.id
+                                    INNER JOIN barang_master d ON c.barang_id = d.id
+                                    WHERE a.cart_st = 'draft'
+                                    AND a.cart_id = ? ", [$request->cart_id]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan draft subtotal',
+            'grand_total' => $grand_total,
+            'rs_draft' => $draft,
         ]);
     }
 

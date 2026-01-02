@@ -38,6 +38,7 @@ Route::middleware(['jwt.verify'])->group(function () {
 Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/api-store-cart-data', [CartController::class, 'store']);
     Route::get('/get-cart-draft', [CartController::class, 'show']);
+    Route::post('/get-cart-subtotal-draft', [CartController::class, 'sub_total']);
 });
 // transaksi
 Route::middleware(['jwt.verify'])->group(function () {
