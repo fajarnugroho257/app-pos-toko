@@ -60,7 +60,10 @@ class TokenController extends Controller
                 'kasir_data' => User::where('user_id', $clientToken->user_id)->get(['user_id', 'name'])->first(),
                 'data_barang' => BarangCabang::
                     with(['barang_master' => function($query){
-                        $query->select('id', 'barang_nama', 'barang_barcode', 'barang_harga_beli', 'barang_harga_jual', DB::raw('CAST(CEIL(barang_grosir_harga_jual) AS CHAR) AS barang_grosir_harga_jual'), 'barang_grosir_pembelian');
+                        $query->select('id', 'barang_nama', 'barang_barcode', 
+                        DB::raw('CAST(CEIL(barang_harga_beli) AS CHAR) AS barang_harga_beli'),
+                        DB::raw('CAST(CEIL(barang_harga_jual) AS CHAR) AS barang_harga_jual'),
+                        DB::raw('CAST(CEIL(barang_grosir_harga_jual) AS CHAR) AS barang_grosir_harga_jual'), 'barang_grosir_pembelian');
                     }])
                     ->where('cabang_id', $clientToken->cabang_id)
                     ->select('id', 'barang_stok', 'barang_id')
