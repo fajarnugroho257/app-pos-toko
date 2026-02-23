@@ -66,6 +66,7 @@
                                     <th>Stok Akhir</th>
                                     <th>Date Time</th>
                                     <th>Nama Petugas</th>
+                                    <th>Jenis Barang</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,14 +76,19 @@
                                         <td>{{ $barang_log->barang_cabang->barang_master->barang_nama }}</td>
                                         <td class="text-center">
                                             @if ($barang_log->barang_st == 'transaksi')
-                                                <span class="btn btn-danger">Terjual</span>
+                                                <span class="btn btn-xs btn-danger">Terjual</span>
+                                            @elseif($barang_log->barang_st == 'retur_hapus')
+                                                <span class="btn btn-xs btn-danger">Retur Hapus</span>
                                             @else
-                                                <span class="btn btn-success">Stok Masuk</span>
+                                                <span class="btn btn-xs btn-success">Stok Masuk</span>
                                             @endif
                                         </td>
                                         <td class="text-center">{{ $barang_log->barang_awal }}</td>
                                         <td class="text-center">
                                             @if ($barang_log->barang_st == 'transaksi')
+                                                {{ $barang_log->barang_transaksi }} <i class="text-danger fa fa-arrow-up"></i>
+                                            @elseif($barang_log->barang_st == 'retur_hapus')
+                                                {{ $barang_log->barang_perubahan }}
                                                 {{ $barang_log->barang_transaksi }} <i class="text-danger fa fa-arrow-up"></i>
                                             @else
                                                 {{ $barang_log->barang_perubahan }}
@@ -94,6 +100,13 @@
                                             {{ \Carbon\Carbon::parse($barang_log->created_at)->translatedFormat('d F Y H:i') }}
                                         </td>
                                         <td class="text-center">{{ $barang_log->users->name }}</td>
+                                        <td class="text-center">
+                                            @if ($barang_log->barang_st == 'perubahan')
+                                            <small class="btn btn-xs btn-info">{{ Str::upper("Stok Masuk Dari Pusat") }}</small>
+                                            @else
+                                            <small class="btn btn-xs btn-info">{{ Str::upper($barang_log->barang_st) }}</small>
+                                            @endif
+                                        </td>
                                     </tr>
                                 @endforeach
 

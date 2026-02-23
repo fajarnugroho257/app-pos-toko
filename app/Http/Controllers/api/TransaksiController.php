@@ -7,6 +7,7 @@ use App\Models\BarangCabang;
 use App\Models\BarangLog;
 use App\Models\Cart;
 use App\Models\CartData;
+use App\Models\ReturHistory;
 use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -188,8 +189,8 @@ class TransaksiController extends Controller
     public function show()
     {
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
-
         $rs_transaksi = Transaksi::with(['cart.cart_data', 'users'])
+            ->whereRelation('cart', 'cart_st', 'yes')
             ->whereRelation('cart', 'cabang_id', $dataUser->users_data->cabang_id)
             ->whereRelation('cart', 'pusat_id', $dataUser->users_data->toko_cabang->toko_pusat->id)
             ->orderBy('trans_date', 'DESC')
@@ -200,6 +201,72 @@ class TransaksiController extends Controller
             'success' => true,
             'message' => 'Berhasil mendapatkan data',
             'data' => $rs_transaksi,
+        ]);
+    }
+
+    public function booking()
+    {
+        $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
+        $rs_booking = Cart::with('cart_draft', 'cart_data')->where('cart_st', 'booking')->where('cabang_id', $dataUser->users_data->cabang_id)->orderBy('created_at', 'DESC')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data',
+            'data' => $rs_booking,
+        ]);
+    }
+
+    public function hutang()
+    {
+        $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
+        $rs_hutang = Cart::with('cart_draft')->where('cart_st', 'hutang')->where('cabang_id', $dataUser->users_data->cabang_id)->orderBy('created_at', 'DESC')->get();
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil mendapatkan data',
+            'data' => $rs_hutang,
+        ]);
+    }
+
+    public function change_status_by_cart_id(Request $request)
+    {
+        // validasi
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
+        $cabang_id = $dataUser->users_data->cabang_id;
+        // cek apakah ada yang draft ?
+        $ttlDarft = Cart::where(['cabang_id' => $cabang_id, 'user_id' => $dataUser->user_id])->where('cart_st', 'draft')->count();
+        if ($ttlDarft >= 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terdapat transaksi yang belum terselesaikan..!',
+                'data' => $ttlDarft,
+            ]);
+        }
+        // detail data
+        $detailCart = Cart::where('cart_id', $request->cart_id)->where('cart_st', 'booking')->first();
+        if (empty($detailCart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan..',
+                'data' => $detailCart,
+            ]);
+        }
+        // ubah cart menjadi draft dan masuk ke transaksi
+        $detailCart->cart_st = 'draft';
+        $detailCart->user_id = $dataUser->user_id;
+        $detailCart->save();
+        // 
+        return response()->json([
+            'success' => true,
+            'message' => 'Berhasil melakukan perubahan status',
+            'data' => $detailCart,
         ]);
     }
 
@@ -224,13 +291,26 @@ class TransaksiController extends Controller
             ], 422);
         }
         // cart data
-        $cartData = CartData::where('cart_id', $transaksiCart->cart_id)->orderBy('cart_urut', 'DESC')->get();
-
+        $cartData = CartData::with('barang_cabang.barang_master')->where('cart_id', $transaksiCart->cart_id)->orderBy('cart_urut', 'DESC')->get();
+        $rs_retur = ReturHistory::with('barang_cabang.barang_master')->where('cart_id', $transaksiCart->cart_id);
+        if ($rs_retur->count() == 0) {
+            $retur_data = [
+                'status' => false,
+            ];
+        } else {
+            $retur_data = [
+                'status' => true,
+                'rs_retur' => $rs_retur->get(),
+            ];
+        }
+        
+        // return
         return response()->json([
             'success' => true,
             'message' => 'Okee..!',
             'data' => $cartData,
             'transaksiCart' => $transaksiCart,
+            'retur_data' => $retur_data,
         ], 200);
     }
 
@@ -245,9 +325,70 @@ class TransaksiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        if (Auth::check()) {
+            $user_id = (Auth::user()->user_id);
+            $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', $user_id)->where('role_id', 'R0005')->first();
+        } else {
+            return response()->json([
+                'success' => false,
+                'errors' => 'user belum melakukan login'
+            ], 422);
+        }
+        // validasi
+        $validator = Validator::make($request->all(), [
+            'cart_id' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        // detail cart
+        $cart = Cart::where('cart_id', $request->cart_id)->first();
+        if (empty($cart)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan',
+            ]);
+        }
+        // list cart data
+        $rs_cart_data = CartData::where('cart_id', $request->cart_id)->get();
+        // loop
+        foreach ($rs_cart_data as $key => $cart_data) {
+            // insert log
+            $barangCabang = BarangCabang::find($cart_data->barang_cabang_id);
+            $akhirStokBarang = $barangCabang->barang_stok + $cart_data->cart_qty;
+            // ID transaksi
+            $transaksi = Transaksi::where('cart_id', $cart_data->cart_id)->first();
+            // insert log barang
+            BarangLog::create([
+                'user_id' => Auth::user()->user_id,
+                'pusat_id' => $dataUser->users_data->toko_cabang->toko_pusat->id,
+                'cabang_id' => $dataUser->users_data->cabang_id,
+                'barang_cabang_id' => $cart_data->barang_cabang_id,
+                'barang_awal' => $barangCabang->barang_stok,
+                'barang_perubahan' => $cart_data->cart_qty,
+                'barang_transaksi_id' => $transaksi->id,
+                'barang_akhir' => $akhirStokBarang,
+                'barang_st' => 'hapus',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]);
+            // setelah insert ke log baru update ke barang cabang
+            $barangCabang->barang_stok = $akhirStokBarang;
+            $barangCabang->update();
+        }
+        // update jadi delete
+        $cart->cart_st = "delete";
+        $cart->update();
+        // return
+        return response()->json([
+            'success' => true,
+            'message' => 'Data berhasil dihapus, Stok akan terupdate',
+        ]);
     }
 
     public function cetakNota()

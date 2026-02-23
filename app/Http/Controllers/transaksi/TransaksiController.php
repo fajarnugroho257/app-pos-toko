@@ -8,11 +8,11 @@ use App\Models\CartData;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use App\Models\Transaksi;
-use Auth;
-use DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Route;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
@@ -68,6 +68,9 @@ class TransaksiController extends Controller
         $data['title'] = 'Detail Transaksi';
         $rs_transaksi = Transaksi::with(['cart.cart_data', 'users'])
             ->whereRelation('cart', 'cabang_id', $cabang->id)
+            ->whereHas('cart', function ($q) {
+                    $q->whereIn('cart_st', ['yes', 'hutang']);
+                })
             ->whereRelation('cart', 'pusat_id', $cabang->toko_pusat->id)
             ->orderBy('trans_date', 'DESC')
             ->whereBetween(DB::raw('DATE(trans_date)'), [$data['date_start'], $data['date_end']])

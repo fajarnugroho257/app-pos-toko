@@ -3,6 +3,7 @@
 use App\Http\Controllers\api\BarangController;
 use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\LoginController;
+use App\Http\Controllers\api\ReturController;
 use App\Http\Controllers\api\TokenController;
 use App\Http\Controllers\api\TransaksiController;
 use App\Http\Controllers\api\WebsiteController;
@@ -30,6 +31,9 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/api-barcode-data-barang-cabang', [BarangController::class, 'detail']);
     Route::post('/detail-api-barcode-data-barang-cabang', [BarangController::class, 'detail_data']);
     Route::get('/list-transaksi-data-barang-cabang', [TransaksiController::class, 'show']);
+    Route::get('/list-transaksi-data-barang-cabang-booking', [TransaksiController::class, 'booking']);
+    Route::get('/list-transaksi-data-barang-cabang-hutang', [TransaksiController::class, 'hutang']);
+    Route::post('/change-status-by-cart-id', [TransaksiController::class, 'change_status_by_cart_id']);
     Route::post('/detail-nota', [TransaksiController::class, 'show_nota']);
     Route::get('/logout', [App\Http\Controllers\api\LoginController::class, 'logout']);
 
@@ -39,10 +43,21 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/api-store-cart-data', [CartController::class, 'store']);
     Route::get('/get-cart-draft', [CartController::class, 'show']);
     Route::post('/get-cart-subtotal-draft', [CartController::class, 'sub_total']);
+    Route::post('/create-draft-pembelian', [CartController::class, 'create_draft_pembelian']);
+    Route::post('/create-hutang-pembelian', [CartController::class, 'create_hutang_pembelian']);
+    Route::get('/list-cart-data', [CartController::class, 'list_cart_by_id']);
+    Route::post('/store-cicilan', [CartController::class, 'store_cicilan']);
+    Route::get('/ubah-lunas', [CartController::class, 'ubah_lunas']);
 });
 // transaksi
 Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/store-bayar', [TransaksiController::class, 'store']);
+    Route::post('/delete-transaksi', [TransaksiController::class, 'destroy']);
+});
+// retur
+Route::middleware(['jwt.verify'])->group(function () {
+    Route::post('/store-retur', [ReturController::class, 'store']);
+    Route::post('/delete-retur', [ReturController::class, 'destroy']);
 });
 // check token
 Route::get('/api-cek-token', [App\Http\Controllers\api\LoginController::class, 'check_token']);

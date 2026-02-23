@@ -144,6 +144,9 @@ class DashboardController extends Controller
     {
         $transaksi = Transaksi::with('cart')
             ->whereRelation('cart', 'pusat_id', $pusat_id)
+            ->whereHas('cart', function ($q) {
+                    $q->whereIn('cart_st', ['yes', 'hutang']);
+                })
             ->where(DB::raw('DATE(trans_date)'), $trans_date)
             ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang);
         return $transaksi;

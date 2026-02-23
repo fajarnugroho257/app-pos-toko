@@ -26,4 +26,9 @@ class BarangCabang extends Model
     {
         return $this->hasMany(CartData::class, 'barang_cabang_id', 'id');
     }
+    public function retur_history()
+    {
+        return $this->hasMany(ReturHistory::class, 'barang_cabang_id', 'id');
+    }
+
 }

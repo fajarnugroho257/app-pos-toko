@@ -9,13 +9,17 @@ class Cart extends Model
 {
     use HasFactory;
     protected $table = 'cart';
-    protected $fillable = ['cart_id', 'pusat_id', 'cabang_id', 'cart_st'];
+    protected $fillable = ['cart_id', 'pusat_id', 'cabang_id', 'user_id', 'cart_st'];
     protected $primaryKey = 'cart_id';
     // Tipe data primary key (string)
     protected $keyType = 'string';
     public function cart_data()
     {
         return $this->hasMany(CartData::class, 'cart_id', 'cart_id');
+    }
+    public function cart_draft()
+    {
+        return $this->hasOne(CartDraft::class, 'cart_id', 'cart_id');
     }
     public function transaksi_cart()
     {

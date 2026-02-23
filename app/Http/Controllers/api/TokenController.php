@@ -102,6 +102,7 @@ class TokenController extends Controller
                 'cart_id' => $cart_id,
                 'pusat_id' => $pusat->pusat_id,
                 'cabang_id' => $request->cabang_id,
+                'user_id' => $request->user_id,
                 'cart_st' => 'yes',
             ]);
 
