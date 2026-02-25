@@ -11,7 +11,7 @@ use App\Models\ReturHistory;
 use App\Models\Transaksi;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Http;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -186,7 +186,7 @@ class TransaksiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Request $request)
     {
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
         $rs_transaksi = Transaksi::with(['cart.cart_data', 'users'])
@@ -194,20 +194,24 @@ class TransaksiController extends Controller
             ->whereRelation('cart', 'cabang_id', $dataUser->users_data->cabang_id)
             ->whereRelation('cart', 'pusat_id', $dataUser->users_data->toko_cabang->toko_pusat->id)
             ->orderBy('trans_date', 'DESC')
-            ->limit(50)
-            // ->whereBetween(DB::raw('DATE(trans_date)'), [$data['date_start'], $data['date_end']])
+            ->whereBetween(DB::raw('DATE(trans_date)'), [$request['start'], $request['end']])
             ->get();
         return response()->json([
             'success' => true,
             'message' => 'Berhasil mendapatkan data',
             'data' => $rs_transaksi,
+            'request' => $request->all(),
         ]);
     }
 
-    public function booking()
+    public function booking(Request $request)
     {
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
-        $rs_booking = Cart::with('cart_draft', 'cart_data')->where('cart_st', 'booking')->where('cabang_id', $dataUser->users_data->cabang_id)->orderBy('created_at', 'DESC')->get();
+        $rs_booking = Cart::with('cart_draft', 'cart_data')
+                        ->whereBetween(DB::raw('DATE(created_at)'), [$request['start'], $request['end']])
+                        ->where('cart_st', 'booking')
+                        ->where('cabang_id', $dataUser->users_data->cabang_id)
+                        ->orderBy('created_at', 'DESC')->get();
         return response()->json([
             'success' => true,
             'message' => 'Berhasil mendapatkan data',
@@ -215,10 +219,18 @@ class TransaksiController extends Controller
         ]);
     }
 
-    public function hutang()
+    public function hutang(Request $request)
     {
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
-        $rs_hutang = Cart::with('cart_draft')->where('cart_st', 'hutang')->where('cabang_id', $dataUser->users_data->cabang_id)->orderBy('created_at', 'DESC')->get();
+        // $rs_hutang = Cart::with('cart_draft')->where('cart_st', 'hutang')->where('cabang_id', $dataUser->users_data->cabang_id)->orderBy('created_at', 'DESC')->get();
+        $rs_hutang = Transaksi::with(['cart.cart_data', 'cart.cart_draft', 'users'])
+            ->whereRelation('cart', 'cart_st', 'hutang')
+            ->whereRelation('cart', 'cabang_id', $dataUser->users_data->cabang_id)
+            ->whereRelation('cart', 'pusat_id', $dataUser->users_data->toko_cabang->toko_pusat->id)
+            ->orderBy('trans_date', 'DESC')
+            ->whereBetween(DB::raw('DATE(trans_date)'), [$request['start'], $request['end']])
+            ->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil mendapatkan data',

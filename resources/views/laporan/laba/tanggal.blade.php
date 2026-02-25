@@ -82,6 +82,7 @@
                                     <th>Harga Beli</th>
                                     <th>Harga Jual</th>
                                     <th>Laba</th>
+                                    <th>Hutang</th>
                                     <th style="width: 30px">Detail</th>
                                 </tr>
                             </thead>
@@ -95,6 +96,7 @@
                                     $grandTtlCartBeli = 0;
                                     $grandTtlCartJual = 0;
                                     $grandTtlLaba = 0;
+                                    $grandTtlLabaDihutang = 0;
                                 @endphp
                                 @foreach ($rs_laba as $key => $laba)
                                     @php
@@ -117,7 +119,10 @@
                                     @endforeach
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
-                                        <td class="text-center">{{ $laba->cart_id }}</td>
+                                        <td class="text-center">
+                                            {{ $laba->cart_id }} <br>
+                                            @if ($laba->cart->cart_st == 'hutang')<small class="badge bg-danger">Hutang</small>@endif
+                                        </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($laba->trans_date)->translatedFormat('d F Y H:i') }}
                                         </td>
@@ -127,7 +132,17 @@
                                         <td class="text-right text-info text-bold">
                                             {{ 'Rp. ' . number_format($ttlCartJual, 0, ',', '.') }}</td>
                                         <td class="text-right text-success text-bold">
-                                            {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}</td>
+                                            @if ($laba->cart->cart_st == 'hutang')
+                                                <small class="badge bg-danger">Rp.0</small>
+                                            @else
+                                                {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}
+                                            @endif()
+                                        </td>
+                                        <td class="text-right text-warning text-bold">
+                                            @if ($laba->cart->cart_st == 'hutang')
+                                                {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}
+                                            @endif()
+                                        </td>
                                         <td class="text-center">
                                             <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
                                                 data-cart_id="{{ $laba->cart_id }}"><i class="fa fa-sticky-note"></i></a>
@@ -135,7 +150,8 @@
                                         @php
                                             $grandTtlCartBeli += $ttlCartBeli;
                                             $grandTtlCartJual += $ttlCartJual;
-                                            $grandTtlLaba += $ttlLaba;
+                                            $grandTtlLaba += $laba->cart->cart_st == 'hutang' ? 0 : $ttlLaba;
+                                            $grandTtlLabaDihutang += $laba->cart->cart_st == 'hutang' ? $ttlLaba : 0;
                                         @endphp
                                     </tr>
                                 @endforeach
@@ -147,13 +163,48 @@
                                         {{ 'Rp. ' . number_format($grandTtlCartJual, 0, ',', '.') }}</td>
                                     <td class="text-right text-success text-bold">
                                         {{ 'Rp. ' . number_format($grandTtlLaba, 0, ',', '.') }}</td>
+                                    <td class="text-right text-warning text-bold">
+                                        {{ 'Rp. ' . number_format($grandTtlLabaDihutang, 0, ',', '.') }}</td>
+                                    <td></td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <!-- /.card-body -->
-                    <div class="card-footer clearfix">
-
+                    <div class="">
+                        <h4>Ringkasan Laporan Laba Rugi</h4>
+                        <div class="col-md-4">
+                            <div class="table-responsive">
+                                <table class="">
+                                    <tr>
+                                        <td width="30%">Harga Jual</td>
+                                        <td class="text-right text-info text-bold">{{ 'Rp. ' . number_format($grandTtlCartJual, 0, ',', '.') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Harga Beli</td>
+                                        <td class="text-right text-danger text-bold">{{ 'Rp. ' . number_format($grandTtlCartBeli, 0, ',', '.') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">-------------------------------------------------------------------------- <span class="text-danger">(-)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Laba</td>
+                                        <td class="text-right text-success text-bold">{{ 'Rp. ' . number_format(($grandTtlCartJual - $grandTtlCartBeli), 0, ',', '.') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Hutang</td>
+                                        <td class="text-right text-warning text-bold">{{ 'Rp. ' . number_format(($grandTtlLabaDihutang), 0, ',', '.') }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2">-------------------------------------------------------------------------- <span class="text-danger">(-)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Laba Bersih</td>
+                                        <td class="text-right text-success text-bold">{{ 'Rp. ' . number_format((($grandTtlCartJual - $grandTtlCartBeli) - $grandTtlLabaDihutang) , 0, ',', '.') }}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     <!-- /.card-footer-->
                 </div>

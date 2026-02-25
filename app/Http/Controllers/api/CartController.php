@@ -48,7 +48,7 @@ class CartController extends Controller
             ], 422);
         }
         // jika punya draft dan ingin mengkosongkan cart dengan status draft
-        $cartDart = Cart::where('cabang_id', $dataUser->users_data->cabang_id)->where('cart_st', 'draft');
+        $cartDart = Cart::where(['cabang_id' => $dataUser->users_data->cabang_id, 'user_id' => $dataUser->user_id, 'cart_st' => 'draft']);
         // jika tidak
         if (empty($request->keranjang) && $cartDart->count() >= 1) {
             // maka hapus cart draftnya
@@ -90,6 +90,7 @@ class CartController extends Controller
         $draftCart = Cart::where('cart_st', 'draft')
             ->where('pusat_id', $dataUser->users_data->toko_cabang->toko_pusat->id)
             ->where('cabang_id', $dataUser->users_data->cabang_id)
+            ->where('user_id', $dataUser->user_id)
             ->orderBy('created_at', 'DESC')->first();
         
         // check if exist
@@ -475,20 +476,34 @@ class CartController extends Controller
                 ]);
             }
         }
-        // insert saja
-        CartDraft::create([
-            'cart_id' => $request->cart_id,
-            'draft_uang_muka' => $request->draft_uang_muka,
-            'draft_uang_sisa' => $request->draft_uang_sisa,
-            'draft_uang_tagihan' => $request->ttlBayar,
-            'draft_pelanggan' => $request->trans_pelanggan,
-            'draft_note' => $request->draft_note,
-            'draft_st' => $request->draft_st,
-        ]);
+        // insert saja jika null
+        $detailCartDraft = CartDraft::where('cart_id', $request->cart_id)->first();
+        if (!empty($detailCartDraft)) {
+            $detailCartDraft->draft_uang_muka = $request->draft_uang_muka;
+            $detailCartDraft->draft_uang_sisa = $request->draft_uang_sisa;
+            $detailCartDraft->draft_uang_tagihan = $request->ttlBayar;
+            $detailCartDraft->draft_pelanggan = $request->trans_pelanggan;
+            $detailCartDraft->draft_note = $request->draft_note;
+            $detailCartDraft->draft_st = $request->draft_st;
+            // save
+            $detailCartDraft->save();
+            $message = 'Berhasil update ke daftar hutang Transaksi';
+        } else {
+            CartDraft::create([
+                'cart_id' => $request->cart_id,
+                'draft_uang_muka' => $request->draft_uang_muka,
+                'draft_uang_sisa' => $request->draft_uang_sisa,
+                'draft_uang_tagihan' => $request->ttlBayar,
+                'draft_pelanggan' => $request->trans_pelanggan,
+                'draft_note' => $request->draft_note,
+                'draft_st' => $request->draft_st,
+            ]);
+            $message = 'Berhasil simpan ke daftar hutang Transaksi';
+        }
         // return
         return response()->json([
             'success' => true,
-            'message' => 'Berhasil menambah ke daftar hutang',
+            'message' => $message,
             'cart_id' => $stTransaksi->id,
         ]);
     }

@@ -87,7 +87,11 @@
                                 @foreach ($rs_transaksi as $key => $transaksi)
                                     <tr>
                                         <td class="text-center">{{ $no++ }}</td>
-                                        <td class="text-center">{{ $transaksi->cart_id }}</td>
+                                        <td class="text-center">
+                                            {{ $transaksi->cart_id }}
+                                            <br>
+                                            @if ($transaksi->cart->cart_st == 'hutang')<small class="badge bg-danger">Hutang</small>@endif
+                                        </td>
                                         <td class="text-center">
                                             {{ \Carbon\Carbon::parse($transaksi->trans_date)->translatedFormat('d F Y H:i') }}
                                         </td>
@@ -95,7 +99,14 @@
                                         <td class="text-right text-danger text-bold">
                                             {{ 'Rp. ' . number_format($transaksi->trans_total, 0, ',', '.') }}</td>
                                         <td class="text-right text-info text-bold">
-                                            {{ 'Rp. ' . number_format($transaksi->trans_bayar, 0, ',', '.') }}</td>
+                                            @if ($transaksi->cart->cart_st == 'hutang')
+                                            <span class="text-danger">{{ 'Rp. ' . number_format($transaksi->cart->cart_draft->draft_uang_muka) ?? "" }}</span>
+                                            <br>
+                                            <small class="text-danger">Uang Muka</small>
+                                            @else
+                                            {{ 'Rp. ' . number_format($transaksi->trans_bayar, 0, ',', '.') }}
+                                            @endif
+                                        </td>
                                         <td class="text-right text-success text-bold">
                                             {{ 'Rp. ' . number_format($transaksi->trans_kembalian, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $transaksi->users->name }}</td>

@@ -66,7 +66,7 @@ class TransaksiController extends Controller
         $data['cabang'] = $cabang;
         //
         $data['title'] = 'Detail Transaksi';
-        $rs_transaksi = Transaksi::with(['cart.cart_data', 'users'])
+        $rs_transaksi = Transaksi::with(['cart.cart_data', 'cart.cart_draft',  'users'])
             ->whereRelation('cart', 'cabang_id', $cabang->id)
             ->whereHas('cart', function ($q) {
                     $q->whereIn('cart_st', ['yes', 'hutang']);
