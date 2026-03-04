@@ -97,27 +97,38 @@
                                         </td>
                                         <td>{{ $transaksi->trans_pelanggan }}</td>
                                         <td class="text-right text-danger text-bold">
-                                            {{ 'Rp. ' . number_format($transaksi->trans_total, 0, ',', '.') }}</td>
-                                        <td class="text-right text-info text-bold">
                                             @if ($transaksi->cart->cart_st == 'hutang')
-                                            <span class="text-danger">{{ 'Rp. ' . number_format($transaksi->cart->cart_draft->draft_uang_muka) ?? "" }}</span>
+                                            <span class="text-dark">{{ 'Rp. ' . number_format($transaksi->cart->cart_draft->draft_uang_muka) ?? "" }}</span>
                                             <br>
-                                            <small class="text-danger">Uang Muka</small>
+                                            <small class="text-dark">Uang Muka</small>
                                             @else
-                                            {{ 'Rp. ' . number_format($transaksi->trans_bayar, 0, ',', '.') }}
+                                            {{ 'Rp. ' . number_format($transaksi->trans_total, 0, ',', '.') }}</td>
                                             @endif
+                                        <td class="text-right text-info text-bold">
+                                            {{ 'Rp. ' . number_format($transaksi->trans_bayar, 0, ',', '.') }}
                                         </td>
                                         <td class="text-right text-success text-bold">
                                             {{ 'Rp. ' . number_format($transaksi->trans_kembalian, 0, ',', '.') }}</td>
                                         <td class="text-center">{{ $transaksi->users->name }}</td>
                                         <td class="text-center">
-                                            <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
+                                            @php
+                                            if($transaksi->cart->cart_st == 'hutang'){
+                                                $color = 'btn-danger';
+                                            } else {
+                                                $color = 'btn-info';
+                                            }
+                                            @endphp
+                                            <a href="javascript:;" title="Lihat Nota" class="btn btn-sm {{ $color }} show-nota"
                                                 data-cart_id="{{ $transaksi->cart_id }}"><i
                                                     class="fa fa-sticky-note"></i></a>
                                         </td>
                                     </tr>
                                     @php
-                                        $ttlTransTotal += $transaksi->trans_total;
+                                        if ($transaksi->cart->cart_st == 'hutang') {
+                                            $ttlTransTotal += $transaksi->cart->cart_draft->draft_uang_muka;
+                                        } else {
+                                            $ttlTransTotal += $transaksi->trans_total;
+                                        }
                                     @endphp
                                 @endforeach
                                 <tr>

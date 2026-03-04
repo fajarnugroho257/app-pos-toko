@@ -35,14 +35,14 @@
                 <div class="card-header ">
                     <h3 class="card-title">{{ $title }}</h3>
                     <div class="card-tools">
-                        <a href="{{ route('labaRugi') }}" class="btn btn-block btn-success"><i class="fa fa-arrow-left"></i>
+                        <a href="{{ route('laporanHutang') }}" class="btn btn-block btn-success"><i class="fa fa-arrow-left"></i>
                             Kembali</a>
                     </div>
                 </div>
                 <div class="card-body">
-                    <h4 class="text-center mb-4"><b>Laba / Rugi <br /><span
+                    <h4 class="text-center mb-4"><b>Laporan Hutang <br /><span
                                 class="text-danger">{{ $cabang->cabang_nama }}</span></b></h4>
-                    <form action="{{ route('cariLaba') }}" method="POST" class="mb-4">
+                    <form action="{{ route('cariHutang') }}" method="POST" class="mb-4">
                         @method('POST')
                         @csrf
                         <input type="hidden" name="id" value="{{ $cabang->id }}">
@@ -62,11 +62,11 @@
                                                 class="fa fa-times"></i>
                                             Reset</button>
                                     </div>
-                                    <div>
+                                    {{-- <div>
                                         <a href="{{ route('downloadLabaRugi', ['slug' => $cabang->slug]) }}"
                                             class="btn btn-block btn-primary"><i class="fa fa-file-pdf"></i>
                                             Download</a>
-                                    </div>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -79,100 +79,38 @@
                                     <th>ID Keranjang</th>
                                     <th>Date Time</th>
                                     <th>Pelanggan</th>
-                                    <th>Harga Jual</th>
-                                    <th>Harga Beli</th>
-                                    <th>Laba</th>
-                                    <th>Hutang</th>
+                                    <th>Total Pembelian</th>
+                                    <th>Uang Muka</th>
+                                    <th>Kekurangan</th>
+                                    <th>Catatan</th>
                                     <th style="width: 30px">Detail</th>
                                 </tr>
                             </thead>
+                            @php
+                                $no = 1;
+                            @endphp
                             <tbody>
-                                @php
-                                    $no = 1;
-                                    $ttlBeli = 0;
-                                    $ttlJual = 0;
-                                    $ttlQrt = 0;
-                                    $grandTtl = 0;
-                                    $grandTtlCartBeli = 0;
-                                    $grandTtlCartJual = 0;
-                                    $grandTtlLaba = 0;
-                                    $grandTtlLabaDihutang = 0;
-                                @endphp
                                 @foreach ($rs_laba as $key => $laba)
-                                    @php
-                                        $ttlBeli += $laba->cart_harga_beli * $laba->cart_qty;
-                                        $ttlJual += $laba->cart_harga_jual * $laba->cart_qty;
-                                        $ttlQrt += $laba->cart_qty;
-                                        $grandTtl += $laba->cart_subtotal;
-                                        $jlhCartData = count($laba->cart_data);
-                                        //
-                                        $ttlCartBeli = 0;
-                                        $ttlCartJual = 0;
-                                    @endphp
-                                    @foreach ($laba->cart_data as $item)
-                                        @php
-                                            $ttlCartBeli += $item->cart_harga_beli * $item->cart_qty;
-                                            $ttlCartJual += $item->cart_harga_jual * $item->cart_qty;
-                                            // laba
-                                            $ttlLaba = $ttlCartJual - $ttlCartBeli;
-                                        @endphp
-                                    @endforeach
-                                    <tr>
-                                        <td class="text-center">{{ $no++ }}</td>
-                                        <td class="text-center">
-                                            {{ $laba->cart_id }} <br>
-                                            @if ($laba->cart->cart_st == 'hutang')<small class="badge bg-danger">Hutang</small>@endif
-                                        </td>
-                                        <td class="text-center">
-                                            {{ \Carbon\Carbon::parse($laba->trans_date)->translatedFormat('d F Y H:i') }}
-                                        </td>
-                                        <td>{{ $laba->trans_pelanggan }}</td>
-                                        <td class="text-right text-info text-bold">
-                                            {{ 'Rp. ' . number_format($ttlCartJual, 0, ',', '.') }}</td>
-                                        <td class="text-right text-danger text-bold">
-                                            {{ 'Rp. ' . number_format($ttlCartBeli, 0, ',', '.') }}</td>
-                                        <td class="text-right text-success text-bold">
-                                            @if ($laba->cart->cart_st == 'hutang')
-                                                <small class="badge bg-danger">Rp.0</small>
-                                            @else
-                                                {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}
-                                            @endif()
-                                        </td>
-                                        <td class="text-right text-warning text-bold">
-                                            @if ($laba->cart->cart_st == 'hutang')
-                                                {{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}
-                                            @endif()
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
-                                                data-cart_id="{{ $laba->cart_id }}"><i class="fa fa-sticky-note"></i></a>
-                                        </td>
-                                        @php
-                                            $grandTtlCartBeli += $ttlCartBeli;
-                                            $grandTtlCartJual += $ttlCartJual;
-                                            $grandTtlLaba += $laba->cart->cart_st == 'hutang' ? 0 : $ttlLaba;
-                                            $grandTtlLabaDihutang += $laba->cart->cart_st == 'hutang' ? $ttlLaba : 0;
-                                        @endphp
-                                    </tr>
-                                @endforeach
                                 <tr>
-                                    <td class="text-right" colspan="4"></td>
-                                    <td class="text-right text-info text-bold">
-                                        {{ 'Rp. ' . number_format($grandTtlCartJual, 0, ',', '.') }}</td>
-                                    <td class="text-right text-danger text-bold">
-                                        {{ 'Rp. ' . number_format($grandTtlCartBeli, 0, ',', '.') }}</td>
-                                    <td class="text-right text-success text-bold">
-                                        {{ 'Rp. ' . number_format($grandTtlLaba, 0, ',', '.') }}</td>
-                                    <td class="text-right text-warning text-bold">
-                                        {{ 'Rp. ' . number_format($grandTtlLabaDihutang, 0, ',', '.') }}</td>
+                                    <td>{{ $no++ }}</td>
+                                    <td>{{ $laba->cart_id }}</td>
+                                    <td class="text-center">
+                                        {{ \Carbon\Carbon::parse($laba->trans_date)->translatedFormat('d F Y H:i') }}
+                                    </td>
+                                    <td>{{ $laba->trans_pelanggan }}</td>
+                                    <td class="text-right text-success text-bold">{{ 'Rp. ' . number_format($laba->trans_total, 0, ',', '.') }}</td>
+                                    <td class="text-right text-info text-bold">{{ 'Rp. ' . number_format($laba->cart->cart_draft->draft_uang_muka, 0, ',', '.') }}</td>
+                                    <td class="text-right text-danger text-bold">{{ 'Rp. ' . number_format($laba->cart->cart_draft->draft_uang_sisa, 0, ',', '.') }}</td>
+                                    <td>{{ $laba->cart->cart_draft->draft_note}}</td>
                                     <td></td>
                                 </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
                     <!-- /.card-body -->
-                    <div class="">
-                        <h4>Ringkasan Laporan Laba Rugi</h4>
+                    {{-- <div class="">
+                        <h4>Ringkasan Laporan Hutang</h4>
                         <div class="col-md-4">
                             <div class="table-responsive">
                                 <table class="">
@@ -215,7 +153,7 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     <!-- /.card-footer-->
                 </div>
                 <!-- /.card -->

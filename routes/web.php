@@ -18,6 +18,7 @@ use App\Http\Controllers\user\ProfilController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\laporam\laporanHutangController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\menu\headingAppController;
 use App\Http\Controllers\menu\menuController;
@@ -199,6 +200,13 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/process-cari-laba', [LabarugiController::class, 'search'])->name('cariLaba');
         Route::post('/detail-laba-rugi', [LabarugiController::class, 'detail_laba'])->name('detailLabaRugi');
         Route::get('/process-cetak-pdf-laba-rugi/{slug}', [LabarugiController::class, 'download'])->name('downloadLabaRugi');
+    });
+    Route::middleware(['hasRole.page:laporanHutang'])->group(function () {
+        Route::get('/data-hutang', [laporanHutangController::class, 'index'])->name('laporanHutang');
+        Route::get('/show-data-hutang/{slug}', [laporanHutangController::class, 'show'])->name('showLaporanHutang');
+        Route::post('/process-cari-hutang', [laporanHutangController::class, 'search'])->name('cariHutang');
+        Route::post('/detail-hutang', [laporanHutangController::class, 'detail_laba'])->name('detailLaporanHutang');
+        Route::get('/process-cetak-pdf-hutang/{slug}', [laporanHutangController::class, 'download'])->name('downloadLaporanHutang');
     });
     // Profil
     Route::middleware(['hasRole.page:dashboard'])->group(function () {

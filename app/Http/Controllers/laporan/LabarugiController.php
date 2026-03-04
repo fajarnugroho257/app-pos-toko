@@ -61,7 +61,7 @@ class LabarugiController extends Controller
     {
         $cabang = TokoCabang::find($request->id);
         if (empty($cabang)) {
-            return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
+            return redirect()->route('labaRugi')->with('error', 'Data tidak ditemukan');
         }
         if ($request->aksi == 'reset') {
             session()->forget('date_start');

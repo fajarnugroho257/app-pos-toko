@@ -5,6 +5,7 @@ namespace App\Http\Controllers\transaksi;
 use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\CartData;
+use App\Models\CartDraft;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use App\Models\Transaksi;
@@ -97,7 +98,7 @@ class TransaksiController extends Controller
                 'errors' => $validator->errors()
             ], 422);
         }
-        $transaksiCart = Transaksi::where('cart_id', $request->cart_id)->first();
+        $transaksiCart = Transaksi::with('cart')->where('cart_id', $request->cart_id)->first();
         if (empty($transaksiCart)) {
             return response()->json([
                 'success' => false,
@@ -106,7 +107,7 @@ class TransaksiController extends Controller
         }
         // cart data
         $cartData = CartData::where('cart_id', $transaksiCart->cart_id)->orderBy('cart_urut', 'DESC')->get();
-        // dd($cartData);
+        // dd($transaksiCart->cart->cart_st);
         $html = '';
         $no = 1;
         $grandTotal = 0;
@@ -142,31 +143,51 @@ class TransaksiController extends Controller
             $html .= '      Rp. ' . number_format($grandTotal, 0, ',', '.');
             $html .= '  </td>';
             $html .= '</tr>';
-            $html .= '<tr>';
-            $html .= '  <td class="text-right" colspan="4">';
-            $html .= 'Cash';
-            $html .= '  </td>';
-            $html .= '  <td class="text-right text-info text-bold">';
-            $html .= '      Rp. ' . number_format($transaksiCart->trans_bayar, 0, ',', '.');
-            $html .= '  </td>';
-            $html .= '</tr>';
-            $html .= '<tr>';
-            $html .= '  <td class="text-right" colspan="4">';
-            $html .= 'Kembalian';
-            $html .= '  </td>';
-            $html .= '  <td class="text-right text-success text-bold">';
-            $html .= '      Rp. ' . number_format($transaksiCart->trans_kembalian, 0, ',', '.');
-            $html .= '  </td>';
-            $html .= '</tr>';
-            $html .= '  <td colspan="4">';
-            $html .= '  </td>';
-            $html .= '  <td class="text-right">';
-            $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-success"><i class="fab fa-usb"></i></a>';
-            $html .= '      <a href="#" onclick="printBluethoot(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-primary"><i class="fab fa-bluetooth"></i></a>';
-            $html .= '  </td>';
-            $html .= '<tr>';
-            $html .= '</tr>';
-            $html .= '<br />';
+            if ($transaksiCart->cart->cart_st == 'hutang') {
+                $detailHutang = CartDraft::where('cart_id', $transaksiCart->cart_id)->first();
+                $html .= '<tr>';
+                $html .= '  <td class="text-right" colspan="4">';
+                $html .= 'Uang Muka';
+                $html .= '  </td>';
+                $html .= '  <td class="text-right text-dark text-bold">';
+                $html .= '      Rp. ' . number_format($detailHutang->draft_uang_muka, 0, ',', '.');
+                $html .= '  </td>';
+                $html .= '</tr>';
+                $html .= '<tr>';
+                $html .= '  <td class="text-right" colspan="4">';
+                $html .= 'Kekurangan';
+                $html .= '  </td>';
+                $html .= '  <td class="text-right text-dark text-bold">';
+                $html .= '      Rp. ' . number_format($detailHutang->draft_uang_sisa, 0, ',', '.');
+                $html .= '  </td>';
+                $html .= '</tr>';
+            } else {
+                $html .= '<tr>';
+                $html .= '  <td class="text-right" colspan="4">';
+                $html .= 'Cash';
+                $html .= '  </td>';
+                $html .= '  <td class="text-right text-info text-bold">';
+                $html .= '      Rp. ' . number_format($transaksiCart->trans_bayar, 0, ',', '.');
+                $html .= '  </td>';
+                $html .= '</tr>';
+                $html .= '<tr>';
+                $html .= '  <td class="text-right" colspan="4">';
+                $html .= 'Kembalian';
+                $html .= '  </td>';
+                $html .= '  <td class="text-right text-success text-bold">';
+                $html .= '      Rp. ' . number_format($transaksiCart->trans_kembalian, 0, ',', '.');
+                $html .= '  </td>';
+                $html .= '</tr>';
+                $html .= '  <td colspan="4">';
+                $html .= '  </td>';
+                $html .= '  <td class="text-right">';
+                $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-success"><i class="fab fa-usb"></i></a>';
+                $html .= '      <a href="#" onclick="printBluethoot(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-primary"><i class="fab fa-bluetooth"></i></a>';
+                $html .= '  </td>';
+                $html .= '<tr>';
+                $html .= '</tr>';
+                $html .= '<br />';
+            }
         } else {
             $html .= '<tr>';
             $html .= '  <td class="text-center">';

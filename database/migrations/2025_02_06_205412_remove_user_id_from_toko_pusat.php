@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('toko_pusat', function (Blueprint $table) {
-            $table->dropColumn('user_id');
+            // $table->dropColumn('user_id');
         });
     }
 
