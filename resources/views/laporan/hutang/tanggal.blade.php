@@ -88,73 +88,45 @@
                             </thead>
                             @php
                                 $no = 1;
+                                $ttlPembelian = 0;
+                                $ttlMuka = 0;
+                                $ttlKekurangan = 0;
                             @endphp
                             <tbody>
-                                @foreach ($rs_laba as $key => $laba)
+                                @foreach ($rs_laba as $key => $hutang)
                                 <tr>
-                                    <td>{{ $no++ }}</td>
-                                    <td>{{ $laba->cart_id }}</td>
+                                    <td class="text-center">{{ $no++ }}</td>
+                                    <td>{{ $hutang->cart_id }}</td>
                                     <td class="text-center">
-                                        {{ \Carbon\Carbon::parse($laba->trans_date)->translatedFormat('d F Y H:i') }}
+                                        {{ \Carbon\Carbon::parse($hutang->trans_date)->translatedFormat('d F Y H:i') }}
                                     </td>
-                                    <td>{{ $laba->trans_pelanggan }}</td>
-                                    <td class="text-right text-success text-bold">{{ 'Rp. ' . number_format($laba->trans_total, 0, ',', '.') }}</td>
-                                    <td class="text-right text-info text-bold">{{ 'Rp. ' . number_format($laba->cart->cart_draft->draft_uang_muka, 0, ',', '.') }}</td>
-                                    <td class="text-right text-danger text-bold">{{ 'Rp. ' . number_format($laba->cart->cart_draft->draft_uang_sisa, 0, ',', '.') }}</td>
-                                    <td>{{ $laba->cart->cart_draft->draft_note}}</td>
-                                    <td></td>
+                                    <td>{{ $hutang->trans_pelanggan }}</td>
+                                    <td class="text-right text-success text-bold">{{ 'Rp. ' . number_format($hutang->trans_total, 0, ',', '.') }}</td>
+                                    <td class="text-right text-info text-bold">{{ 'Rp. ' . number_format($hutang->cart->cart_draft->draft_uang_muka, 0, ',', '.') }}</td>
+                                    <td class="text-right text-danger text-bold">{{ 'Rp. ' . number_format($hutang->cart->cart_draft->draft_uang_sisa, 0, ',', '.') }}</td>
+                                    <td>{{ $hutang->cart->cart_draft->draft_note}}</td>
+                                    <td class="text-center">
+                                        <a href="javascript:;" title="Lihat Nota" class="btn btn-sm btn-info show-nota"
+                                            data-cart_id="{{ $hutang->cart_id }}"><i class="fa fa-sticky-note"></i></a>
+                                    </td>
+                                    @php
+                                        $ttlPembelian += $hutang->trans_total;
+                                        $ttlMuka += $hutang->cart->cart_draft->draft_uang_muka;
+                                        $ttlKekurangan += $hutang->cart->cart_draft->draft_uang_sisa;
+                                    @endphp
                                 </tr>
                                 @endforeach
+                                <tr class="text-bold">
+                                    <td colspan="4" class="text-right">Jumlah</td>
+                                    <td class="text-success text-right">{{ 'Rp. ' . number_format($ttlPembelian, 0, ',', '.') }}</td>
+                                    <td class="text-info text-right">{{ 'Rp. ' . number_format($ttlMuka, 0, ',', '.') }}</td>
+                                    <td class="text-danger text-right">{{ 'Rp. ' . number_format($ttlKekurangan, 0, ',', '.') }}</td>
+                                    <td colspan="2" class="text-center">
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
-                    <!-- /.card-body -->
-                    {{-- <div class="">
-                        <h4>Ringkasan Laporan Hutang</h4>
-                        <div class="col-md-4">
-                            <div class="table-responsive">
-                                <table class="">
-                                    <tr>
-                                        <td width="30%">Harga Jual</td>
-                                        <td class="text-right text-info text-bold">{{ 'Rp. ' . number_format($grandTtlCartJual, 0, ',', '.') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Harga Beli</td>
-                                        <td class="text-right text-danger text-bold">{{ 'Rp. ' . number_format($grandTtlCartBeli, 0, ',', '.') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div style="display: flex; align-items: center;">
-                                                <hr style="width: 98%; height: 1px; background-color: black;">
-                                                (<hr style="width: 2%; height: 1px; background-color: red;">)
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Laba</td>
-                                        <td class="text-right text-dark text-bold">{{ 'Rp. ' . number_format(($grandTtlCartJual - $grandTtlCartBeli), 0, ',', '.') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="text-danger text-bold">Hutang</td>
-                                        <td class="text-right text-danger text-bold">{{ 'Rp. ' . number_format(($grandTtlLabaDihutang), 0, ',', '.') }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="2">
-                                            <div style="display: flex; align-items: center;">
-                                                <hr style="width: 98%; height: 1px; background-color: black;">
-                                                (<hr style="width: 2%; height: 1px; background-color: red;">)
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Laba Bersih</td>
-                                        <td class="text-right text-success text-bold">{{ 'Rp. ' . number_format((($grandTtlCartJual - $grandTtlCartBeli) - $grandTtlLabaDihutang) , 0, ',', '.') }}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    </div> --}}
-                    <!-- /.card-footer-->
                 </div>
                 <!-- /.card -->
 
@@ -165,7 +137,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Nota Penjualan</h4>
+                    <h4 class="modal-title">Detail Hutang</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -174,15 +146,20 @@
                 <div class="modal-body">
                     <div class="table-responsive">
                         <table class="table table-bordered">
+                            <h5 class="text-center">Pembeli</h5>
+                            <tbody id="res-pembeli"></tbody>
+                        </table>
+                    </div>
+                    <div class="table-responsive">
+                        <h5 class="text-center">Pembelian</h5>
+                        <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th class="text-center">No</th>
                                     <th class="text-center">Nama Barang</th>
-                                    <th class="text-center">Harga Beli</th>
-                                    <th class="text-center">Harga Jual</th>
-                                    <th class="text-center">Untung</th>
+                                    <th class="text-center">Harga</th>
                                     <th class="text-center">Jumlah</th>
-                                    <th class="text-center">Total Laba</th>
+                                    <th class="text-center">SubTotal</th>
                                 </tr>
                             </thead>
                             <tbody id="res-produk"></tbody>
@@ -204,7 +181,7 @@
                 const cart_id = $(this).data('cart_id');
                 // alert(cart_id);
                 $.ajax({
-                    url: "{{ route('detailLabaRugi') }}",
+                    url: "{{ route('show_hutang') }}",
                     type: 'POST',
                     data: {
                         _token: '{{ csrf_token() }}',
@@ -215,7 +192,7 @@
                             // Tindakan jika permintaan berhasil
                             $('#modal-produk').modal('show');
                             $('#res-produk').html(response.html);
-
+                            $('#res-pembeli').html(response.htmlPembeli);
                         } else {
                             alert(response.message);
                         }

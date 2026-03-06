@@ -5,6 +5,7 @@ use App\Models\BarangCabang;
 use App\Models\BarangMasterLog;
 use App\Models\Cart;
 use App\Models\CartData;
+use App\Models\CartDraft;
 use App\Models\MasterBarang;
 use App\Models\TokoCabang;
 use App\Models\Transaksi;
@@ -65,13 +66,45 @@ class DashboardController extends Controller
             // jlh cabang
             $jlhCabang = TokoCabang::where('pusat_id', $pusat_id)->count();
             // data
-            $transaksi_by_tanggal = $this->get_transaksi($pusat_id, $data['startDateDash'], $data['endDateDash'], $res_cabang);
+            $transaksi_by_range_tanggal = $this->get_transaksi($pusat_id, $data['startDateDash'], $data['endDateDash'], $res_cabang);
+            // loop
+            $ttlTransaksi = 0;
+            $ttlPihutang = 0;
+            $ttlLaba = 0;
+            $ttlBeli = 0;
+            // 
+            foreach ($transaksi_by_range_tanggal->get() as $key => $value) {
+                if ($value->cart->cart_st == 'yes') {
+                    $ttlTransaksi += $value->trans_total;
+                } elseif($value->cart->cart_st == 'hutang') {
+                    $draft = CartDraft::where('cart_id', $value->cart_id)->first();
+                    $ttlTransaksi += $draft->draft_uang_muka;
+                    $ttlPihutang += $draft->draft_uang_sisa;
+                }
+                foreach ($value->cart->cart_data as $cartData) {
+                    $hargaBeli = $cartData->cart_harga_beli;
+                    $qty = $cartData->cart_qty;
+                    $hargaJual = $cartData->cart_harga_jual;
+                    // 
+                    $jual = $hargaJual * $qty;
+                    $beli = $hargaBeli * $qty;
+                    // 
+                    $laba = $jual - $beli;
+                    // total
+                    $ttlLaba += $laba;
+                    $ttlBeli += $beli;
+                }
+            }
             //
-            $data['transaksi'] = $transaksi_by_tanggal->count();
-            $data['transRupiah'] = $transaksi_by_tanggal->sum('trans_total');
+            $data['transaksi'] = $transaksi_by_range_tanggal->count();
+            $data['transRupiah'] = $ttlTransaksi;
+            $data['ttlPihutang'] = $ttlPihutang;
+            $data['ttlPendapatanKotor'] = $transaksi_by_range_tanggal->sum('trans_total');
             $data['kurangStok'] = $kurangStok->count();
             $data['rs_stok'] = $kurangStok->get();
             $data['jlhCabang'] = $jlhCabang;
+            $data['ttlLaba'] = $ttlLaba;
+            $data['ttlBeli'] = $ttlBeli;
             // stok minim digudang
             $kurangStokGudang = MasterBarang::where('pusat_id', $pusat_id)
                 ->where(DB::raw('CONVERT(barang_master_stok, SIGNED)'), '<=', DB::raw('CONVERT(barang_stok_minimal, SIGNED)'));
@@ -83,6 +116,7 @@ class DashboardController extends Controller
                 $tranMonth[$key]['pendapatan'] = (int) $this->get_transaksi_perday($pusat_id, $date->toDateString(), $res_cabang)->sum('trans_total');
                 $tranMonth[$key]['jlh_transaksi'] = $this->get_transaksi_perday($pusat_id, $date->toDateString(), $res_cabang)->count();
                 $tranMonth[$key]['tanggal'] = $date->toDateString();
+                $tranMonth[$key]['laba'] = (int) $this->get_laba_perday($pusat_id, $date->toDateString(), $res_cabang);
             }
             // dd($tranMonth);
             $data['tranMonth'] = $tranMonth;
@@ -134,8 +168,11 @@ class DashboardController extends Controller
 
     private function get_transaksi($pusat_id, $startDateDash, $endtDateDash, $res_cabang)
     {
-        $transaksi = Transaksi::with('cart')
+        $transaksi = Transaksi::with('cart.cart_data')
             ->whereRelation('cart', 'pusat_id', $pusat_id)
+            ->whereHas('cart', function($q){
+                $q->whereIn('cart_st', ['yes', 'hutang']);
+            })
             ->whereBetween(DB::raw('DATE(trans_date)'), [$startDateDash, $endtDateDash])
             ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang);
         return $transaksi;
@@ -150,6 +187,28 @@ class DashboardController extends Controller
             ->where(DB::raw('DATE(trans_date)'), $trans_date)
             ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang);
         return $transaksi;
+    }
+    private function get_laba_perday($pusat_id, $trans_date, $res_cabang)
+    {
+        $transaksi = Transaksi::whereRelation('cart', 'pusat_id', $pusat_id)
+            ->whereHas('cart', function ($q) {
+                $q->whereIn('cart_st', ['yes', 'hutang']);
+            })
+            ->where(DB::raw('DATE(trans_date)'), $trans_date)
+            ->whereRelation('cart', 'cabang_id', 'LIKE', $res_cabang)->get();
+        $ttlLaba = 0;
+        foreach ($transaksi as $trans) {
+            $rsCartData = CartData::where('cart_id', $trans->cart_id)->get();
+            foreach ($rsCartData as $CartData) {
+                $beli = $CartData->cart_harga_beli;
+                $jual = $CartData->cart_harga_jual;
+                $qty = $CartData->cart_qty;
+                // 
+                $laba = ($jual * $qty) - ($beli * $qty);
+                $ttlLaba += $laba;
+            }
+        }
+        return $ttlLaba;
     }
     //
     public function show_barang_minim(string $cabang_id)

@@ -54,12 +54,12 @@
                 </form>
                 <!-- Small boxes (Stat box) -->
                 <div class="row">
-                    <div class="col-lg-3 col-6">
+                    <div class="col-md-4">
                         <!-- small box -->
-                        <div class="small-box bg-info">
+                        <div class="small-box bg-dark">
                             <div class="inner">
-                                <h3>{{ 'Rp. ' . number_format($transRupiah, 0, ',', '.') }}</h3>
-                                <p>Pendapatan</p>
+                                <h3>{{ 'Rp. ' . number_format($ttlPendapatanKotor, 0, ',', '.') }}</h3>
+                                <small>Pendapatan Kotor / Omset</small>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-bag"></i>
@@ -68,13 +68,68 @@
                                 class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
                     </div>
-                    <!-- ./col -->
-                    <div class="col-lg-3 col-6">
+                    <div class="col-md-4">
+                        <!-- small box -->
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3>{{ 'Rp. ' . number_format($transRupiah, 0, ',', '.') }}</h3>
+                                <small>Pendapatan / Uang diterima (termasuk uang muka)</small>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('showTransaksi', ['cabang_id' => $cabang_id]) }}"
+                                class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <!-- small box -->
+                        <div class="small-box bg-danger">
+                            <div class="inner">
+                                <h3>{{ 'Rp. ' . number_format($ttlPihutang, 0, ',', '.') }}</h3>
+                                <small>Pihutang ke pelanggan</small>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('showTransaksi', ['cabang_id' => $cabang_id]) }}"
+                                class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <!-- small box -->
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3>{{ 'Rp. ' . number_format($ttlBeli, 0, ',', '.') }}</h3>
+                                <small>Harga Pokok Penjualan</small>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('showTransaksi', ['cabang_id' => $cabang_id]) }}"
+                                class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <!-- small box -->
                         <div class="small-box bg-success">
                             <div class="inner">
+                                <h3>{{ 'Rp. ' . number_format($ttlLaba, 0, ',', '.') }}</h3>
+                                <small>Laba Bersih</small>
+                            </div>
+                            <div class="icon">
+                                <i class="ion ion-bag"></i>
+                            </div>
+                            <a href="{{ route('showTransaksi', ['cabang_id' => $cabang_id]) }}"
+                                class="small-box-footer">Selengkapnya <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <!-- small box -->
+                        <div class="small-box bg-light">
+                            <div class="inner">
                                 <h3>{{ $transaksi }}</h3>
-                                <p>Transaksi</p>
+                                <small>Transaksi</small>
                             </div>
                             <div class="icon">
                                 <i class="ion ion-stats-bars"></i>
@@ -84,7 +139,9 @@
                         </div>
                     </div>
                     <!-- ./col -->
-                    <div class="col-lg-3 col-6">
+                    {{-- 
+                    <!-- ./col -->
+                    <div class="col-lg col-6">
                         <!-- small box -->
                         <div class="small-box bg-warning">
                             <div class="inner">
@@ -99,9 +156,9 @@
                         </div>
                     </div>
                     <!-- ./col -->
-                    <div class="col-lg-3 col-6">
+                    <div class="col-lg col-6">
                         <!-- small box -->
-                        <div class="small-box bg-danger">
+                        <div class="small-box bg-light">
                             <div class="inner">
                                 @if ($cabang_id != 'gudang')
                                     <h3>{{ $kurangStok }} </h3>
@@ -117,7 +174,7 @@
                                 class="small-box-footer">Selengkapnya
                                 <i class="fas fa-arrow-circle-right"></i></a>
                         </div>
-                    </div>
+                    </div> --}}
                     <!-- ./col -->
                 </div>
                 <!-- Default box -->
@@ -127,8 +184,11 @@
                             <div class="nav nav-tabs" id="product-tab" role="tablist">
                                 <a class="nav-item nav-link active" id="product-desc-tab" data-toggle="tab"
                                     href="#product-desc" role="tab" aria-controls="product-desc"
-                                    aria-selected="true">Pendapatan</a>
-                                <a class="nav-item nav-link" id="product-comments-tab" data-toggle="tab"
+                                    aria-selected="true">Pendapatan Kotor</a>
+                                <a class="nav-item nav-link" id="laba-tab" data-toggle="tab"
+                                    href="#laba" role="tab" aria-controls="laba"
+                                    aria-selected="false">Laba</a>
+                                <a class="nav-item nav-link" id="laba-tab" data-toggle="tab"
                                     href="#product-comments" role="tab" aria-controls="product-comments"
                                     aria-selected="false">Transaksi</a>
                                 @if ($cabang_id != 'gudang')
@@ -150,6 +210,12 @@
                                 aria-labelledby="product-desc-tab">
                                 <figure class="highcharts-figure">
                                     <div id="pendapatan"></div>
+                                </figure>
+                            </div>
+                            <div class="tab-pane fade" id="laba" role="tabpanel"
+                                aria-labelledby="laba-tab">
+                                <figure class="highcharts-figure">
+                                    <div id="laba"></div>
                                 </figure>
                             </div>
                             <div class="tab-pane fade" id="product-comments" role="tabpanel"
@@ -298,11 +364,12 @@
         const pendapatan = datas.map(item => item.pendapatan);
         const tanggal = datas.map(item => item.tanggal);
         const transaksi = datas.map(item => item.jlh_transaksi);
+        const laba = datas.map(item => item.laba);
         // grafik pendapatan
         Highcharts.chart('pendapatan', {
 
             title: {
-                text: 'Grafik Pendapatan',
+                text: 'Grafik Pendapatan Kotor',
                 align: 'left'
             },
             yAxis: {
@@ -327,6 +394,57 @@
             series: [{
                 name: 'Pendapatan',
                 data: pendapatan
+            }],
+            tooltip: {
+                valuePrefix: 'Rp. ',
+                valueDecimals: 0, // Tidak ada desimal
+                valueSuffix: '' // Tambahkan jika perlu
+            },
+            responsive: {
+                rules: [{
+                    condition: {
+                        maxWidth: 500
+                    },
+                    chartOptions: {
+                        legend: {
+                            layout: 'horizontal',
+                            align: 'center',
+                            verticalAlign: 'bottom'
+                        }
+                    }
+                }]
+            }
+
+        });
+        // grafik Laba
+        Highcharts.chart('laba', {
+
+            title: {
+                text: 'Grafik Laba Bersih',
+                align: 'left'
+            },
+            yAxis: {
+                title: {
+                    text: 'Dalam Rupiah'
+                }
+            },
+
+            xAxis: {
+                categories: tanggal, // Nama bulan
+                title: {
+                    text: 'Month'
+                }
+            },
+
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'middle'
+            },
+
+            series: [{
+                name: 'Laba',
+                data: laba
             }],
             tooltip: {
                 valuePrefix: 'Rp. ',

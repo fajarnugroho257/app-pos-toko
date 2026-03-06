@@ -505,6 +505,8 @@ class CartController extends Controller
             'success' => true,
             'message' => $message,
             'cart_id' => $stTransaksi->id,
+            'cartData' => $cartData,
+            'cartDraft' => CartDraft::where('cart_id', $request->cart_id)->first(),
         ]);
     }
 

@@ -204,6 +204,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['hasRole.page:laporanHutang'])->group(function () {
         Route::get('/data-hutang', [laporanHutangController::class, 'index'])->name('laporanHutang');
         Route::get('/show-data-hutang/{slug}', [laporanHutangController::class, 'show'])->name('showLaporanHutang');
+        Route::post('/show-hutang', [laporanHutangController::class, 'show_nota'])->name('show_hutang');
         Route::post('/process-cari-hutang', [laporanHutangController::class, 'search'])->name('cariHutang');
         Route::post('/detail-hutang', [laporanHutangController::class, 'detail_laba'])->name('detailLaporanHutang');
         Route::get('/process-cetak-pdf-hutang/{slug}', [laporanHutangController::class, 'download'])->name('downloadLaporanHutang');
