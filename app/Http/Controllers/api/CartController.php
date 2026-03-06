@@ -393,6 +393,8 @@ class CartController extends Controller
             'success' => true,
             'message' => $message,
             'cart_id' => $request->cart_id,
+            'cartData' => CartData::where('cart_id', $request->cart_id)->get(),
+            'cartDraft' => CartDraft::where('cart_id', $request->cart_id)->first(),
         ]);
     }
 
