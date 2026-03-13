@@ -79,7 +79,10 @@
                 @endforeach
                 <tr>
                     <td style="text-align: center">{{ $no++ }}</td>
-                    <td style="text-align: center">{{ $laba->cart_id }}</td>
+                    <td style="text-align: center">
+                        {{ $laba->cart_id }} <br>
+                        @if ($laba->cart->cart_st == 'hutang')<small style="text-align: right; font-weight: bold; color: red;">Hutang</small>@endif
+                    </td>
                     <td style="text-align: center">
                         {{ \Carbon\Carbon::parse($laba->trans_date)->translatedFormat('d F Y H:i') }}
                     </td>

@@ -333,6 +333,7 @@
             const trans_total = printData.trans_total;
             const trans_bayar = printData.trans_bayar;
             const trans_kembalian = printData.trans_kembalian;
+            const trans_pelanggan = printData.trans_pelanggan;
             try {
                 //
                 const now = new Date();
@@ -344,13 +345,17 @@
                 content += "| Item     |Qty| Price       |" + "\n";
                 content += "=============================" + "\n";
 
+                let pelanggan = (trans_pelanggan ?? "").toString().padStart(16, " ");
+                content += `| Pelanggan  ${pelanggan}|\n`;
+                content += "=============================" + "\n";
+
                 datas.forEach((item) => {
                     let nama = item.cart_nama;
-                    let cart_diskon = item.cart_diskon === "yes" ? " (Grosir)" : "";
-                    let qty = String(item.cart_qty).padStart(1, " ");
+                    let cart_diskon = item.cart_diskon === "yes" ? " (Gros)" : "";
+                    let qty = String(item.cart_qty).padStart(3, " ");
                     let harga = `${formatRupiah(item.cart_harga_jual)}`.padEnd(8, " ");
-                    let subTotal = `${formatRupiah(item.cart_subtotal)}`.padStart(11, " ");
-                    content += `| ${nama}${cart_diskon}\n| ${harga} | ${qty} | ${subTotal} |\n`;
+                    let subTotal = `${formatRupiah(item.cart_subtotal)}`.padStart(10, " ");
+                    content += `| ${nama}${cart_diskon}\n| ${harga} | ${qty} | ${subTotal}|\n`;
                 });
 
                 content += "=============================" + "\n";

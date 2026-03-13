@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class laporanHutangController extends Controller
 {
@@ -177,6 +178,39 @@ class laporanHutangController extends Controller
             'html' => $html,
             'htmlPembeli' => $htmlPembeli,
         ], 200);
+    }
+
+    public function download(string $slug)
+    {
+        // cari
+        $date_start = session()->get('date_start_hutang');
+        $date_end = session()->get('date_end_hutang');
+        //
+        $res_date_start = empty($date_start) ? date('Y-m-01') : $date_start;
+        $res_date_end = empty($date_end) ? date('Y-m-t') : $date_end;
+        //
+        $cabang = TokoCabang::where('slug', $slug)->first();
+        if (empty($cabang)) {
+            return redirect()->route('logBarang')->with('error', 'Data tidak ditemukan');
+        }
+        $data['cabang'] = $cabang;
+        $data['title'] = 'Laporan Hutang';
+        // data transaksi
+        $transaksi = Transaksi::whereRelation('cart.cart_draft', 'cabang_id', $cabang->id)
+            ->orderBy(DB::raw('trans_date'), 'DESC')
+            ->with(['cart.cart_draft', 'cart_data'])
+            ->whereBetween(DB::raw('DATE(trans_date)'), [$res_date_start, $res_date_end])
+            ->whereHas('cart', function ($q) {
+                    $q->whereIn('cart_st', ['hutang']);
+                })
+            ->get();
+        // dd($transaksi);
+        // detail cabang
+        $cabang = TokoCabang::find($cabang->id);
+        $cabang_nama = empty($cabang) ? 'SEMUA-CABANG' : str_replace(' ', '-', $cabang->cabang_nama);
+        $cabang_nama_view = empty($cabang) ? 'SEMUA CABANG' : $cabang->cabang_nama;
+        $pdf = Pdf::loadView('laporan.hutang.cetak', compact('transaksi', 'cabang_nama_view', 'res_date_start', 'res_date_end'))->setPaper('A4', 'landscape');
+        return $pdf->download('LAPORAN-HUTANG-' . strtoupper($cabang_nama) . '-' . $res_date_start . '-' . $res_date_end . '.pdf');
     }
 
 }

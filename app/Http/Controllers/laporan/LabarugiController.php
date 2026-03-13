@@ -175,6 +175,9 @@ class LabarugiController extends Controller
             ->orderBy(DB::raw('trans_date'), 'DESC')
             ->with(['cart', 'cart_data'])
             ->whereBetween(DB::raw('DATE(trans_date)'), [$res_date_start, $res_date_end])
+            ->whereHas('cart', function ($q) {
+                    $q->whereIn('cart_st', ['yes', 'hutang']);
+                })
             ->get();
         $data = $transaksi;
 

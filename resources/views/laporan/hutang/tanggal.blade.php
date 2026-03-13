@@ -62,11 +62,11 @@
                                                 class="fa fa-times"></i>
                                             Reset</button>
                                     </div>
-                                    {{-- <div>
-                                        <a href="{{ route('downloadLabaRugi', ['slug' => $cabang->slug]) }}"
+                                    <div>
+                                        <a href="{{ route('downloadLaporanHutang', ['slug' => $cabang->slug]) }}"
                                             class="btn btn-block btn-primary"><i class="fa fa-file-pdf"></i>
                                             Download</a>
-                                    </div> --}}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -301,7 +301,6 @@ class TransaksiController extends Controller
                 'message' => 'Data tidak ditemukan',
             ], 422);
         }
-
         // cart data
         $cartData = CartData::select('cart_harga_jual', 'cart_nama', 'cart_qty', 'cart_subtotal', 'cart_diskon')
             ->where('cart_id', $transaksiCart->cart_id)
@@ -316,6 +315,7 @@ class TransaksiController extends Controller
             'trans_total' => $transaksiCart->trans_total,
             'trans_bayar' => $transaksiCart->trans_bayar,
             'trans_kembalian' => $transaksiCart->trans_kembalian,
+            'trans_pelanggan' => $transaksiCart->trans_pelanggan,
         ]);
     }
 
