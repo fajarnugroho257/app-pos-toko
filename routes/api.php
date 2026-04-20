@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\api\BarangController;
 use App\Http\Controllers\api\CartController;
-use App\Http\Controllers\api\LoginController;
 use App\Http\Controllers\api\ReturController;
 use App\Http\Controllers\api\TokenController;
 use App\Http\Controllers\api\TransaksiController;
@@ -30,6 +29,8 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::get('/api-data-barang-cabang', [BarangController::class, 'show']);
     Route::get('/api-barcode-data-barang-cabang', [BarangController::class, 'detail']);
     Route::post('/detail-api-barcode-data-barang-cabang', [BarangController::class, 'detail_data']);
+    Route::post('/list-data-barang-by-cabang', [BarangController::class, 'list_data_barang']);
+    Route::post('/list-data-barang-by-cabang-all', [BarangController::class, 'list_data_barang_all']);
     Route::post('/list-transaksi-data-barang-cabang', [TransaksiController::class, 'show']);
     Route::post('/list-transaksi-data-barang-cabang-booking', [TransaksiController::class, 'booking']);
     Route::post('/list-transaksi-data-barang-cabang-hutang', [TransaksiController::class, 'hutang']);
@@ -68,7 +69,7 @@ Route::get('/test-api-barcode-data-barang-cabang', [BarangController::class, 'de
 
 // route untuk get data barang dan user berdasarkan token cabang
 Route::post('/get-data-barang-by-token', [TokenController::class, 'show']);
-// 
+//
 Route::post('/post-data-transaksi', [TokenController::class, 'store']);
 // WEBSITE
 Route::post('/get-banner-by-id', [WebsiteController::class, 'index']);
@@ -80,4 +81,3 @@ Route::post('/get-pref', [WebsiteController::class, 'preference']);
 Route::post('/get-why-choose-me', [WebsiteController::class, 'get_why_choose']);
 Route::post('/get-testimoni', [WebsiteController::class, 'get_testimoni']);
 Route::post('/get-faq', [WebsiteController::class, 'get_faq']);
-
