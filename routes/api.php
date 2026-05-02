@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\api\BarangController;
 use App\Http\Controllers\api\CartController;
+use App\Http\Controllers\api\OfflineController;
 use App\Http\Controllers\api\ReturController;
 use App\Http\Controllers\api\TokenController;
 use App\Http\Controllers\api\TransaksiController;
@@ -55,6 +56,13 @@ Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/store-bayar', [TransaksiController::class, 'store']);
     Route::post('/delete-transaksi', [TransaksiController::class, 'destroy']);
 });
+
+// transaksi
+Route::middleware(['jwt.verify'])->group(function () {
+    Route::post('/store-transaksi-offline', [OfflineController::class, 'store']);
+    Route::post('/store-transaksi-offline-byId', [OfflineController::class, 'store_one_data']);
+});
+
 // retur
 Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/store-retur', [ReturController::class, 'store']);
