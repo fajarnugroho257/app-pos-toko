@@ -21,7 +21,14 @@ class AkunkasirController extends Controller
         $pusat = User::with('toko_pusat_user')->where('user_id', Auth::user()->user_id)->first();
         // dd($pusat->toko_pusat_user->pusat_id);
         $data['title'] = 'Data Akun Kasir';
-        $data['rs_user'] = User::with('users_data.toko_cabang')->whereRelation('users_data.toko_cabang', 'pusat_id', $pusat->toko_pusat_user->pusat_id)->where('role_id', 'R0005')->paginate(5);
+        $data['rs_user'] = User::with('users_data.toko_cabang')
+            ->whereRelation('users_data.toko_cabang', 'pusat_id', $pusat->toko_pusat_user->pusat_id)
+            ->where([
+                ['role_id', '=', 'R0005'],
+                ['username', '!=', 'testing'],
+            ])
+            ->paginate(5);
+
         // dd($data);
         return view('akun.kasir.index', $data);
     }
@@ -34,6 +41,7 @@ class AkunkasirController extends Controller
         $data['title'] = 'Tambah Akun Kasir';
         $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->get();
+
         return view('akun.kasir.add', $data);
     }
 
@@ -58,7 +66,7 @@ class AkunkasirController extends Controller
             $tujuan_upload = 'image/profil';
             $file = $request->file('user_image');
             //
-            if (!$file->move($tujuan_upload, $file->getClientOriginalName())) {
+            if (! $file->move($tujuan_upload, $file->getClientOriginalName())) {
                 return redirect()->route('tambahAkunKasir')->with('error', 'Gagal simpan foto');
             }
             // name
@@ -84,11 +92,13 @@ class AkunkasirController extends Controller
                 'user_st' => $request->user_st,
                 'user_image' => $user_image,
             ]);
-            //redirect
+
+            // redirect
             return redirect()->route('tambahAkunKasir')->with('success', 'Data berhasil disimpan');
         }
     }
-    function last_user_id()
+
+    public function last_user_id()
     {
         // get last user id
         $last_user = User::select('user_id')->orderBy('user_id', 'DESC')->first();
@@ -97,7 +107,8 @@ class AkunkasirController extends Controller
         for ($i = strlen($last_number); $i <= 3; $i++) {
             $zero .= '0';
         }
-        $new_id = 'U' . $zero . $last_number;
+        $new_id = 'U'.$zero.$last_number;
+
         //
         return $new_id;
     }
@@ -120,6 +131,7 @@ class AkunkasirController extends Controller
         $data['detail'] = $detail;
         $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->get();
+
         // dd($detail);
         return view('akun.kasir.edit', $data);
     }
@@ -131,7 +143,7 @@ class AkunkasirController extends Controller
     {
         $request->validate([
             'user_id' => 'required',
-            'username' => 'required|unique:users,username,' . $request->user_id . ',user_id',
+            'username' => 'required|unique:users,username,'.$request->user_id.',user_id',
             'name' => 'required',
             'cabang_id' => 'required',
             'user_alamat' => 'required',
@@ -150,7 +162,7 @@ class AkunkasirController extends Controller
         }
         $detail->name = $request->name;
         $detail->username = $request->username;
-        if (!empty($request->password)) {
+        if (! empty($request->password)) {
             $detail->password = bcrypt($request->password);
         }
         if ($detail->save()) {
@@ -161,13 +173,13 @@ class AkunkasirController extends Controller
                 $tujuan_upload = 'image/profil';
                 $file = $request->file('user_image');
                 //
-                if (!$file->move($tujuan_upload, $file->getClientOriginalName())) {
+                if (! $file->move($tujuan_upload, $file->getClientOriginalName())) {
                     return redirect()->route('addAkunAdmin')->with('error', 'Gagal simpan foto');
                 }
                 // name
                 $user_image = $file->getClientOriginalName();
             }
-            if (!empty($detailUser)) {
+            if (! empty($detailUser)) {
                 $detailUser->cabang_id = $request->cabang_id;
                 $detailUser->user_alamat = $request->user_alamat;
                 $detailUser->user_nama_lengkap = $request->name;
