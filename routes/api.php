@@ -61,6 +61,8 @@ Route::middleware(['jwt.verify'])->group(function () {
 Route::middleware(['jwt.verify'])->group(function () {
     Route::post('/store-transaksi-offline', [OfflineController::class, 'store']);
     Route::post('/store-transaksi-offline-byId', [OfflineController::class, 'store_one_data']);
+    Route::post('/store-hutang-offline', [OfflineController::class, 'store_hutang']);
+    Route::post('/store-booking-offline', [OfflineController::class, 'store_booking']);
 });
 
 // retur

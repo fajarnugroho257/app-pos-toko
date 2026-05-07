@@ -9,13 +9,12 @@ use App\Models\CartDraft;
 use App\Models\TokoCabang;
 use App\Models\TokoPusat;
 use App\Models\Transaksi;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Route;
 use Illuminate\Support\Facades\Validator;
-use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\Printer;
 
 class TransaksiController extends Controller
 {
@@ -27,6 +26,7 @@ class TransaksiController extends Controller
         $data['title'] = 'Transaksi';
         $pusat = TokoPusat::with('toko_pusat_user')->whereRelation('toko_pusat_user', 'user_id', Auth::user()->user_id)->first();
         $data['rs_cabang'] = TokoCabang::where('pusat_id', $pusat->id)->paginate(10);
+
         // dd($data);
         return view('transaksi.penjualan.index', $data);
     }
@@ -70,14 +70,15 @@ class TransaksiController extends Controller
         $rs_transaksi = Transaksi::with(['cart.cart_data', 'cart.cart_draft',  'users'])
             ->whereRelation('cart', 'cabang_id', $cabang->id)
             ->whereHas('cart', function ($q) {
-                    $q->whereIn('cart_st', ['yes', 'hutang']);
-                })
+                $q->whereIn('cart_st', ['yes', 'hutang']);
+            })
             ->whereRelation('cart', 'pusat_id', $cabang->toko_pusat->id)
             ->orderBy('trans_date', 'DESC')
             ->whereBetween(DB::raw('DATE(trans_date)'), [$data['date_start'], $data['date_end']])
             ->get();
         // dd($rs_transaksi);
         $data['rs_transaksi'] = $rs_transaksi;
+
         // return response()->json($rs_transaksi, 200);
         return view('transaksi.penjualan.detail', $data);
     }
@@ -95,7 +96,7 @@ class TransaksiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
         $transaksiCart = Transaksi::with('cart')->where('cart_id', $request->cart_id)->first();
@@ -111,7 +112,7 @@ class TransaksiController extends Controller
         $html = '';
         $no = 1;
         $grandTotal = 0;
-        if (!empty($cartData)) {
+        if (! empty($cartData)) {
             foreach ($cartData as $key => $value) {
                 $cart_diskon = $value['cart_diskon'] == 'yes' ? 'Grosir' : '';
                 $grandTotal += $value['cart_subtotal'];
@@ -124,14 +125,14 @@ class TransaksiController extends Controller
                 $html .= $value['cart_nama'];
                 $html .= '  </td>';
                 $html .= '  <td class="d-flex justify-content-between ">';
-                $html .= '      <div class="text-danger"><b>' . $cart_diskon . '</b></div>';
-                $html .= '      <div>Rp. ' . number_format($value['cart_harga_jual'], 0, ',', '.') . '</div>';
+                $html .= '      <div class="text-danger"><b>'.$cart_diskon.'</b></div>';
+                $html .= '      <div>Rp. '.number_format($value['cart_harga_jual'], 0, ',', '.').'</div>';
                 $html .= '  </td>';
                 $html .= '  <td class="text-center">';
                 $html .= $value['cart_qty'];
                 $html .= '  </td>';
                 $html .= '  <td class="text-right">';
-                $html .= '      Rp. ' . number_format($value['cart_subtotal'], 0, ',', '.');
+                $html .= '      Rp. '.number_format($value['cart_subtotal'], 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '</tr>';
             }
@@ -140,7 +141,7 @@ class TransaksiController extends Controller
             $html .= 'Grand Total';
             $html .= '  </td>';
             $html .= '  <td class="text-right text-danger text-bold">';
-            $html .= '      Rp. ' . number_format($grandTotal, 0, ',', '.');
+            $html .= '      Rp. '.number_format($grandTotal, 0, ',', '.');
             $html .= '  </td>';
             $html .= '</tr>';
             if ($transaksiCart->cart->cart_st == 'hutang') {
@@ -150,7 +151,7 @@ class TransaksiController extends Controller
                 $html .= 'Uang Muka';
                 $html .= '  </td>';
                 $html .= '  <td class="text-right text-dark text-bold">';
-                $html .= '      Rp. ' . number_format($detailHutang->draft_uang_muka, 0, ',', '.');
+                $html .= '      Rp. '.number_format($detailHutang->draft_uang_muka, 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '</tr>';
                 $html .= '<tr>';
@@ -158,7 +159,7 @@ class TransaksiController extends Controller
                 $html .= 'Kekurangan';
                 $html .= '  </td>';
                 $html .= '  <td class="text-right text-dark text-bold">';
-                $html .= '      Rp. ' . number_format($detailHutang->draft_uang_sisa, 0, ',', '.');
+                $html .= '      Rp. '.number_format($detailHutang->draft_uang_sisa, 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '</tr>';
             } else {
@@ -167,7 +168,7 @@ class TransaksiController extends Controller
                 $html .= 'Cash';
                 $html .= '  </td>';
                 $html .= '  <td class="text-right text-info text-bold">';
-                $html .= '      Rp. ' . number_format($transaksiCart->trans_bayar, 0, ',', '.');
+                $html .= '      Rp. '.number_format($transaksiCart->trans_bayar, 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '</tr>';
                 $html .= '<tr>';
@@ -175,14 +176,14 @@ class TransaksiController extends Controller
                 $html .= 'Kembalian';
                 $html .= '  </td>';
                 $html .= '  <td class="text-right text-success text-bold">';
-                $html .= '      Rp. ' . number_format($transaksiCart->trans_kembalian, 0, ',', '.');
+                $html .= '      Rp. '.number_format($transaksiCart->trans_kembalian, 0, ',', '.');
                 $html .= '  </td>';
                 $html .= '</tr>';
                 $html .= '  <td colspan="4">';
                 $html .= '  </td>';
                 $html .= '  <td class="text-right">';
-                $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-success"><i class="fab fa-usb"></i></a>';
-                $html .= '      <a href="#" onclick="printBluethoot(this)" data-cart_id="' . $transaksiCart->cart_id . '" class="btn btn-primary"><i class="fab fa-bluetooth"></i></a>';
+                $html .= '      <a href="#" onclick="printThermal(this)" data-cart_id="'.$transaksiCart->cart_id.'" class="btn btn-success"><i class="fab fa-usb"></i></a>';
+                $html .= '      <a href="#" onclick="printBluethoot(this)" data-cart_id="'.$transaksiCart->cart_id.'" class="btn btn-primary"><i class="fab fa-bluetooth"></i></a>';
                 $html .= '  </td>';
                 $html .= '<tr>';
                 $html .= '</tr>';
@@ -218,6 +219,7 @@ class TransaksiController extends Controller
                 'date_end' => $request->date_end,
             ]);
         }
+
         return redirect()->route('transaksiCabang', ['slug' => $cabang->slug]);
     }
 
@@ -230,7 +232,7 @@ class TransaksiController extends Controller
             // Nama printer sesuai konfigurasi sistem (lihat di 'Devices and Printers')
             // $connector = new WindowsPrintConnector("POS-58");
             // $connector = new WindowsPrintConnector("\\\\LAPTOP-1OLVA8NB\\POS-58");
-            $connector = new WindowsPrintConnector("smb://LAPTOP-1OLVA8NB/POS-58");
+            $connector = new WindowsPrintConnector('smb://LAPTOP-1OLVA8NB/POS-58');
             // $connector = new FilePrintConnector("LPT1");
 
             // data
@@ -251,17 +253,18 @@ class TransaksiController extends Controller
             $printer->text("------------------------------\n");
             foreach ($cartData as $key => $value) {
                 $grandTotal += $value['cart_subtotal'];
-                $printer->text($value['cart_nama'] . "\n");
-                $printer->text(str_pad('Rp.' . number_format($value['cart_harga_jual'], 0, ',', '.'), 13) . str_pad($value['cart_qty'], 4) . str_pad('Rp.' . number_format($value['cart_subtotal'], 0, ',', '.'), 14) . "\n");
+                $printer->text($value['cart_nama']."\n");
+                $printer->text(str_pad('Rp.'.number_format($value['cart_harga_jual'], 0, ',', '.'), 13).str_pad($value['cart_qty'], 4).str_pad('Rp.'.number_format($value['cart_subtotal'], 0, ',', '.'), 14)."\n");
             }
             $printer->text("------------------------------\n");
-            $printer->text(str_pad("Total", 17) . str_pad('Rp.' . number_format($grandTotal, 0, ',', '.'), 15));
-            $printer->text(str_pad("Cash", 17) . str_pad('Rp.' . number_format($transaksiCart->trans_bayar, 0, ',', '.'), 15));
-            $printer->text(str_pad("Kembalian", 17) . str_pad('Rp.' . number_format($transaksiCart->trans_kembalian, 0, ',', '.'), 15));
+            $printer->text(str_pad('Total', 17).str_pad('Rp.'.number_format($grandTotal, 0, ',', '.'), 15));
+            $printer->text(str_pad('Cash', 17).str_pad('Rp.'.number_format($transaksiCart->trans_bayar, 0, ',', '.'), 15));
+            $printer->text(str_pad('Kembalian', 17).str_pad('Rp.'.number_format($transaksiCart->trans_kembalian, 0, ',', '.'), 15));
             // $printer->feed(2);
             // Akhiri cetakan
             $printer->cut();
             $printer->close();
+
             // return
             return response()->json([
                 'success' => true,
@@ -272,7 +275,7 @@ class TransaksiController extends Controller
             // return "Terjadi kesalahan: " . $e->getMessage();
             return response()->json([
                 'success' => false,
-                'message' => "Terjadi kesalahan cetak: " . $e->getMessage(),
+                'message' => 'Terjadi kesalahan cetak: '.$e->getMessage(),
                 // 'data' => $request->all(),
             ]);
         }
@@ -318,5 +321,4 @@ class TransaksiController extends Controller
             'trans_pelanggan' => $transaksiCart->trans_pelanggan,
         ]);
     }
-
 }
