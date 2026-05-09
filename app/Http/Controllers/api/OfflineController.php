@@ -534,7 +534,7 @@ class OfflineController extends Controller
         $validator = Validator::make($request->all(), [
             '*.cart_id' => 'required|string',
             '*.user_id' => 'required|string',
-            '*.cart_st' => 'required|in:hutang,lunas,draft',
+            '*.cart_st' => 'required|in:hutang,lunas,draft,booking',
 
             '*.cabang_id' => 'required|string',
 
@@ -640,8 +640,10 @@ class OfflineController extends Controller
                     'draft_pelanggan' => $data['trans_pelanggan'],
                     'draft_note' => $data['draft_note'],
                     'draft_st' => 'no',
+                    'draft_end' => $data['draft_end'],
+                    'draft_start' => $data['draft_start'],
                 ]);
-                $message = 'Berhasil simpan ke daftar hutang Transaksi';
+                $message = 'Berhasil simpan ke daftar Draft Transaksi';
                 $cart_draft_id = $stCartDtaft->id;
 
                 $list_cart[] = $data['cart_id'];
@@ -658,7 +660,7 @@ class OfflineController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Tidak ada data hutang yang terupload',
+                'message' => 'Tidak ada data Draft yang terupload',
                 'data_sukses' => $data_sukses,
                 'list_cart' => $list_cart,
             ], 200);
