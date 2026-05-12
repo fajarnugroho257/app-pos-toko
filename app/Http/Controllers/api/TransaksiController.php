@@ -10,13 +10,13 @@ use App\Models\CartData;
 use App\Models\ReturHistory;
 use App\Models\Transaksi;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Http;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Mike42\Escpos\Printer;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
+use Mike42\Escpos\Printer;
 
 class TransaksiController extends Controller
 {
@@ -52,14 +52,14 @@ class TransaksiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
         //
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return response()->json([
                 'success' => false,
-                'errors' => 'user belum melakukan login'
+                'errors' => 'user belum melakukan login',
             ], 422);
         }
         // cart datas
@@ -67,7 +67,7 @@ class TransaksiController extends Controller
         if (empty($cart)) {
             return response()->json([
                 'success' => false,
-                'errors' => 'Data keranjang tidak tersedia..'
+                'errors' => 'Data keranjang tidak tersedia..',
             ], 422);
         }
         // insert to transaksi
@@ -78,7 +78,7 @@ class TransaksiController extends Controller
             'trans_total' => $request->ttlBayar,
             'trans_bayar' => $request->valInputBayar,
             'trans_kembalian' => $request->kembalian,
-            'trans_date' => date('Y-m-d H:i:s')
+            'trans_date' => date('Y-m-d H:i:s'),
         ]);
         if ($stTransaksi) {
             // kurangi stok barang cabang
@@ -196,6 +196,7 @@ class TransaksiController extends Controller
             ->orderBy('trans_date', 'DESC')
             ->whereBetween(DB::raw('DATE(trans_date)'), [$request['start'], $request['end']])
             ->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil mendapatkan data',
@@ -208,10 +209,11 @@ class TransaksiController extends Controller
     {
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
         $rs_booking = Cart::with('cart_draft', 'cart_data')
-                        ->whereBetween(DB::raw('DATE(created_at)'), [$request['start'], $request['end']])
-                        ->where('cart_st', 'booking')
-                        ->where('cabang_id', $dataUser->users_data->cabang_id)
-                        ->orderBy('created_at', 'DESC')->get();
+            ->whereBetween(DB::raw('DATE(created_at)'), [$request['start'], $request['end']])
+            ->where('cart_st', 'booking')
+            ->where('cabang_id', $dataUser->users_data->cabang_id)
+            ->orderBy('created_at', 'DESC')->get();
+
         return response()->json([
             'success' => true,
             'message' => 'Berhasil mendapatkan data',
@@ -223,7 +225,12 @@ class TransaksiController extends Controller
     {
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
         // $rs_hutang = Cart::with('cart_draft')->where('cart_st', 'hutang')->where('cabang_id', $dataUser->users_data->cabang_id)->orderBy('created_at', 'DESC')->get();
-        $rs_hutang = Transaksi::with(['cart.cart_data', 'cart.cart_draft', 'users'])
+        $rs_hutang = Transaksi::with([
+            'cart.cart_data',
+            'cart.cart_draft',
+            'users',
+            'cart.cart_draft.tagihan_cicilan',
+        ])
             ->whereRelation('cart', 'cart_st', 'hutang')
             ->whereRelation('cart', 'cabang_id', $dataUser->users_data->cabang_id)
             ->whereRelation('cart', 'pusat_id', $dataUser->users_data->toko_cabang->toko_pusat->id)
@@ -247,7 +254,7 @@ class TransaksiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
         $dataUser = User::with('users_data.toko_cabang.toko_pusat')->where('user_id', Auth::user()->user_id)->where('role_id', 'R0005')->first();
@@ -274,7 +281,8 @@ class TransaksiController extends Controller
         $detailCart->cart_st = 'draft';
         $detailCart->user_id = $dataUser->user_id;
         $detailCart->save();
-        // 
+
+        //
         return response()->json([
             'success' => true,
             'message' => 'Berhasil melakukan perubahan status',
@@ -292,7 +300,7 @@ class TransaksiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
         $transaksiCart = Transaksi::where('cart_id', $request->cart_id)->first();
@@ -315,7 +323,7 @@ class TransaksiController extends Controller
                 'rs_retur' => $rs_retur->get(),
             ];
         }
-        
+
         // return
         return response()->json([
             'success' => true,
@@ -345,7 +353,7 @@ class TransaksiController extends Controller
         } else {
             return response()->json([
                 'success' => false,
-                'errors' => 'user belum melakukan login'
+                'errors' => 'user belum melakukan login',
             ], 422);
         }
         // validasi
@@ -355,7 +363,7 @@ class TransaksiController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
         // detail cart
@@ -394,8 +402,9 @@ class TransaksiController extends Controller
             $barangCabang->update();
         }
         // update jadi delete
-        $cart->cart_st = "delete";
+        $cart->cart_st = 'delete';
         $cart->update();
+
         // return
         return response()->json([
             'success' => true,
@@ -411,10 +420,8 @@ class TransaksiController extends Controller
             // Nama printer sesuai konfigurasi sistem (lihat di 'Devices and Printers')
             // $connector = new WindowsPrintConnector("POS-58");
             // $connector = new WindowsPrintConnector("\\\\LAPTOP-1OLVA8NB\\POS-58");
-            $connector = new WindowsPrintConnector("smb://LAPTOP-1OLVA8NB/POS-58");
+            $connector = new WindowsPrintConnector('smb://LAPTOP-1OLVA8NB/POS-58');
             // $connector = new FilePrintConnector("LPT1");
-
-
 
             // Inisialisasi printer
             $printer = new Printer($connector);
@@ -438,9 +445,9 @@ class TransaksiController extends Controller
             $printer->cut();
             $printer->close();
 
-            return "Nota berhasil dicetak.";
+            return 'Nota berhasil dicetak.';
         } catch (\Exception $e) {
-            return "Terjadi kesalahan: " . $e->getMessage();
+            return 'Terjadi kesalahan: '.$e->getMessage();
         }
     }
 }

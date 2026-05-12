@@ -4,6 +4,7 @@ use App\Http\Controllers\api\BarangController;
 use App\Http\Controllers\api\CartController;
 use App\Http\Controllers\api\OfflineController;
 use App\Http\Controllers\api\ReturController;
+use App\Http\Controllers\api\StatistikController;
 use App\Http\Controllers\api\TokenController;
 use App\Http\Controllers\api\TransaksiController;
 use App\Http\Controllers\api\WebsiteController;
@@ -80,6 +81,11 @@ Route::get('/test-api-barcode-data-barang-cabang', [BarangController::class, 'de
 // route untuk get data barang dan user berdasarkan token cabang
 Route::post('/get-data-barang-by-token', [TokenController::class, 'show']);
 //
+// statistik
+Route::middleware(['jwt.verify'])->group(function () {
+    Route::post('/get-data-statistik', [StatistikController::class, 'index']);
+});
+
 Route::post('/post-data-transaksi', [TokenController::class, 'store']);
 // WEBSITE
 Route::post('/get-banner-by-id', [WebsiteController::class, 'index']);
